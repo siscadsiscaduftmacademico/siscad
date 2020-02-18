@@ -1,0 +1,53 @@
+.vEnabled input:not([type="button"]):not([type="submit"]), .vEnabled select, .vEnabled textarea
+{
+	border-left: 3px solid #AAA;
+}
+
+.vEnabled .vInvalid:not([type="button"]):not([type="submit"]), .vEnabled .vInvalid select, .vEnabled .vInvalid textarea
+{
+	border-left: 3px solid rgb(250, 210, 50);
+}
+
+.vEnabled .vRequired:not([type="button"]):not([type="submit"]), .vEnabled .vRequired select, .vEnabled .vRequired textarea
+{
+	border-left: 3px solid #ee6159;
+}
+
+.vEnabled .vRequired.vValid:not([type="button"]):not([type="submit"])
+{
+	border-left: 3px solid #5eb95e;
+}
+
+.vEnabled label.vInvalid
+{
+	border-left: none !important;
+	color: rgb(250, 210, 50) !important
+}
+
+.vEnabled label.vRequired
+{
+	border-left: none !important;
+	color: #ee6159 !important;
+}
+
+.vEnabled label.vRequired.vValid
+{
+	color: #4a503c !important;
+}
+
+.vInvalidTab
+{
+    border-left: 3px solid #ee6159 !important;
+    border-top-left-radius: .5em !important;
+}
+
+.vValidTab
+{
+    border-left: 3px solid #5eb95e !important;
+    border-top-left-radius: .5em !important;
+}
+
+.vValidationOutput .vValidationOutputHide
+{
+	display: none;
+}

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)https://sistemas.uftm.edu.br/integrado/?id=448&somenteMiolo=1 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>UFTMNet</title>
+		<!-- <script src="js/jquery/jquery-1.11.1.min.js"></script> -->
+		<link rel="icon" type="image/png" href="https://sistemas.uftm.edu.br/integrado/img/android-chrome-512x512.png">
+		<script src="./jquery-2.2.4.min.js.download"></script>
+		<script src="./jquery-ui.min.js.download"></script>
+		<script src="./jquery.maskedinput.min.js.download"></script>
+		<script src="./jquery.maskMoney.js.download"></script>
+		<script src="./jquery.inputmask.bundle.js.download"></script>
+		<script src="./jquery.validate.js.download"></script>
+		<script src="./util.js.download"></script>
+		<script src="./index.js.download"></script>
+		<script src="./input.js.download"></script>
+		<script src="./uftmGrid.js.download"></script>
+		<script src="./uftmForm.js.download"></script>
+		<script src="./validations.js.download"></script>
+		<script src="./tether.min.js.download"></script>
+        		
+	<link rel="stylesheet" type="text/css" href="./index.css">
+	  <link rel="stylesheet" type="text/css" href="./input.css">
+		<link rel="stylesheet" type="text/css" href="./uftmGrid.css">
+		<link rel="stylesheet" type="text/css" href="./uftmGridForm.css">
+		<link rel="stylesheet" type="text/css" href="./jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="./util.css">
+		<link rel="stylesheet" type="text/css" href="./validations.css">
+		<link rel="stylesheet" type="text/css" href="./validationOutput.css">
+		<link href="./metro-icons.css" rel="stylesheet">
+		<link href="./iconFont.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="./tether.min.css">
+        <link rel="stylesheet" href="./font-awesome.min.css">
+		<meta name="google" content="notranslate">
+		<meta http-equiv="Content-Language" content="pt_BR">
+	</head>
+	<body>
+		<input type="hidden" id="idxHdnAlertTimeout" value="0">
+		<input type="hidden" id="idxHdnReturnTo" value="">
+		<div id="idxDivLoading" style="display: none; opacity: 1;"> </div>
+		<div id="idxDivMenu" style="height: 2036px; display: none;">
+			<span id="idxSpanPin" class="mif-pin mif-2x idxSpanPinPinned"></span>
+			<div id="idxDivMenuTitle">UFTMNet</div>
+			<div id="idxDivUser">
+				<div id="idxDivLoggedOut" style="display: none">
+					<div id="idxDivLoggedOutHeader">Entrar no Sistema</div>
+					<form id="idxFrmLogin" action="https://sistemas.uftm.edu.br/integrado/?id=448&amp;somenteMiolo=1">
+						<table id="idxTblLogin" class="formTable" style="border-spacing: 0.2em; border-collapse: separate;">
+							<tbody><tr><th>Usuário:</th><td><input id="idxTxtUsuario" type="text"></td></tr>
+							<tr><th>Senha:</th><td><input id="idxTxtSenha" type="password" autocomplete="off"></td></tr>
+							<tr><th>&nbsp;</th><td><input id="idxBtnLogin" type="button" value="Entrar" class="submit"></td></tr>
+						</tbody></table>
+					</form>
+					<div id="idxDivLoginError" class="errorMessage"></div>
+					<div id="idxDivLinks">
+						<a id="idxLnkNewUser">Novo Usuário</a><br>
+						<a id="idxLnkResetPassword">Recuperar a senha</a>
+					</div>			
+				</div>
+				<div id="idxDivLoggedIn">
+					Olá, <a id="idxLnkUserName" style="display: inline">12262995630</a>
+					<br style="margin-bottom: .5em;">
+					<div id="idxDivOpcoesMenuLoggedIn" style="position: relative; line-height: 1.7">
+
+						<a id="idxLnkMensagens" style="padding-left: 10px;   margin: 0; display: block; " class="fa-ul" title="Total de mensagens não lidas ainda não expiradas">
+							<span style="font-size: 0.9em;"><i class="fa fa-commenting-o fa-flip-horizontal  "></i></span>							
+							Mensagens e Notificações
+							<i class="fa"> 
+								<strong id="idxStrContarMensagensNaoLidas">(0)</strong>
+							</i>
+						</a>
+
+						<div style="position: relative; top: -3px;">
+							<a id="idxLnkAssinarRelatorios" class="fa-ul" title="Total de relatórios ativos não assinados" style="padding-left: 10px !important; margin: 0; width: 100%; display: block;">
+								<span style="font-size: 0.9em;"><i class="fa fa-pencil-square-o"></i></span>
+								Assinatura de Relatórios
+								<i class="fa">  
+									<strong id="idxStrContarRelatoriosNaoAssinados">(0)</strong>
+								</i>
+							</a>
+						</div>
+						
+						<div style="position: relative; top: -6px;">
+							<a id="idxLnkModificarConta" style="padding-left: 10px;   margin: 0; display: block; " class="fa-ul">
+								<span style="font-size: 0.9em;"><i class="fa fa-user"></i></span>							
+								Modificar dados da Conta
+							</a>
+						</div>
+
+						<div id="divIdxLnkMeusEmails" style="position: relative; top: -9px;" hidden="">
+							<a id="idxLnkMeusEmails" style="padding-left: 10px;   margin: 0; display: block;" class="fa-ul">
+								<span style="font-size: 0.9em;"><i class="fa fa-envelope-o"></i></span>
+								Meus E-mails Setoriais
+							</a>
+						</div>						
+				
+					</div>	
+					
+					<a id="idxLnkLogout" style="padding-left: 10px;   margin: 0; margin-top: 2em;" class="fa-ul">
+						<span style="font-size: 0.9em;">
+							<i class="fa fa-times"></i>
+						</span>  
+						Sair do Sistema
+					</a>
+				</div>
+			</div>
+			<div id="idxDivPesquisaMenuContainer" style=""><span class="mif-search idxPesquisaMenuIcon"></span><input id="txtPesquisaMenu" type="text" accesskey="3" placeholder="Pesquisar Menu..."></div>
+			<div id="idxDivInnerMenu"><ul id="idxUlMenu"><li><a style="padding-left: 1em;">Acadêmico</a></li><ul style=""><li><a style="padding-left: 2em;">Cadastros</a></li><ul style=""><li class="liLnkMenuItem" data-menu="427" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem427" href="https://sistemas.uftm.edu.br/integrado/?id=427" style="padding-left: 3em;">Consultar Horários de Atendimento</a></li><li class="liLnkMenuItem" data-menu="448" data-params="null">
+											<a class="aLinkMenuItem idxDivMenuSelected" id="idxLnkMenuItem448" href="https://sistemas.uftm.edu.br/integrado/?id=448" style="padding-left: 3em;">Datas dos Trabalhos de Conclusão</a></li></ul><li><a style="padding-left: 2em;">Certificados</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="436" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem436" href="https://sistemas.uftm.edu.br/integrado/?id=436" style="padding-left: 3em;">Certificados de Extensão</a></li><li class="liLnkMenuItem" data-menu="410" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem410" href="https://sistemas.uftm.edu.br/integrado/?id=410" style="padding-left: 3em;">Certificados em Eventos</a></li></ul><li><a style="padding-left: 2em;">Diplomas</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="459" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem459" href="https://sistemas.uftm.edu.br/integrado/?id=459" style="padding-left: 3em;">Publicização</a></li></ul><li><a style="padding-left: 2em;">Eventos</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="382" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem382" href="https://sistemas.uftm.edu.br/integrado/?id=382" style="padding-left: 3em;">Inscrições em Eventos</a></li><li class="liLnkMenuItem" data-menu="361" data-params="{tela: &#39;participante&#39;}">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem361" href="https://sistemas.uftm.edu.br/integrado/?id=361&amp;data-params=e3RlbGE6ICdwYXJ0aWNpcGFudGUnfQ==" style="padding-left: 3em;">Eventos</a></li></ul><li><a style="padding-left: 2em;">Iniciação Científica</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="535" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem535" href="https://sistemas.uftm.edu.br/integrado/?id=535" style="padding-left: 3em;">Acessar Menu de Projetos</a></li></ul><li><a style="padding-left: 2em;">Projetos</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="484" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem484" href="https://sistemas.uftm.edu.br/integrado/?id=484" style="padding-left: 3em;">Propostas</a></li><li class="liLnkMenuItem" data-menu="487" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem487" href="https://sistemas.uftm.edu.br/integrado/?id=487" style="padding-left: 3em;">Produções Científicas</a></li><li class="liLnkMenuItem" data-menu="519" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem519" href="https://sistemas.uftm.edu.br/integrado/?id=519" style="padding-left: 3em;">Dados Pessoais</a></li></ul></ul><li><a style="padding-left: 1em;">Administração</a></li><ul style="display: none;"><li><a style="padding-left: 2em;">Almoxarifado</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="320" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem320" href="https://sistemas.uftm.edu.br/integrado/?id=320" style="padding-left: 3em;">Requisição eletrônica de materiais</a></li></ul><li><a style="padding-left: 2em;">Segurança</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="315" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem315" href="https://sistemas.uftm.edu.br/integrado/?id=315" style="padding-left: 3em;">Assinar Relatórios</a></li><li><a style="padding-left: 3em;">Cadastros</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="6" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem6" href="https://sistemas.uftm.edu.br/integrado/?id=6" style="padding-left: 4em;">Modificar Conta de Usuário</a></li></ul><li class="liLnkMenuItem" data-menu="512" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem512" href="https://sistemas.uftm.edu.br/integrado/?id=512" style="padding-left: 3em;">Meus E-mails Setoriais</a></li><li class="liLnkMenuItem" data-menu="526" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem526" href="https://sistemas.uftm.edu.br/integrado/?id=526" style="padding-left: 3em;">Mensagens e Notificações</a></li></ul><li><a style="padding-left: 2em;">Processos Seletivos</a></li><ul style="display: none;"><li><a style="padding-left: 3em;">Inscrições</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="405" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem405" href="https://sistemas.uftm.edu.br/integrado/?id=405" style="padding-left: 4em;">Eventos</a></li><li class="liLnkMenuItem" data-menu="406" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem406" href="https://sistemas.uftm.edu.br/integrado/?id=406" style="padding-left: 4em;">Processos</a></li></ul></ul></ul><li><a style="padding-left: 1em;">Processos Seletivos</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="396" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem396" href="https://sistemas.uftm.edu.br/integrado/?id=396" style="padding-left: 2em;">Inscrições em Processos Seletivos</a></li><li class="liLnkMenuItem" data-menu="441" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem441" href="https://sistemas.uftm.edu.br/integrado/?id=441" style="padding-left: 2em;">Inscrições em Outros Processos Seletivos</a></li><li class="liLnkMenuItem" data-menu="445" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem445" href="https://sistemas.uftm.edu.br/integrado/?id=445" style="padding-left: 2em;">Educação à distância</a></li></ul></ul></div>
+		</div>
+		
+		<table id="idxTableContent">
+			<tbody><tr style="display: none;">
+				<td id="idxTdContentTopLeft"></td>
+				<td id="idxTdContentTopRight">
+					<div id="divHeader">
+						<span style="top: 12px; position:relative">Sistema Integrado - UFTMNet</span>
+<!--                        <img src="img/hat.svg" alt="hhhhh" style="position: relative;bottom: -22px;left: -16px;">-->
+						<br><span style="font-size: 60%;">Universidade Federal do Triângulo Mineiro - UFTM</span>
+					</div>
+				</td>
+			</tr>
+			<tr style="display: none;">
+				<td id="idxTdContentPathLeft"></td>
+				<td id="idxTdContentPathRight" style="display: table-cell;"><ul class="breadcrumb"><li><a onclick="javascript:openPageById(&#39;1&#39;, null)">Início</a></li><li><a onclick="javascript:openPageById(&#39;5&#39;, {__menuId: 205})">Acadêmico</a></li><li><a onclick="javascript:openPageById(&#39;5&#39;, {__menuId: 308})">Cadastros</a></li><li><a onclick="javascript:openPageById(&#39;448&#39;, null)">Datas dos Trabalhos de Conclusão</a></li></ul></td>
+			</tr>
+			<tr>
+				<td id="idxTdContentLeft" style="display: none;"></td>
+				<td id="idxTdContentRight">
+					<div id="idxDivContent" style="display: block;">
+                        <form id="post"></form>
+						<h3 id="idxH3ContentTitle">Datas dos Trabalhos de Conclusão</h3>
+						<div id="idxDivInnerContent">
+
+
+	
+		<title>Exames</title>
+
+		<script src="./exames.js.download"></script>
+		<meta name="google" content="notranslate">
+		<meta http-equiv="Content-Language" content="pt_BR">
+	
+	
+		<input type="hidden" id="gerarExcel" value="0">
+		<div id="gridExames" class="uftmGrid" style="padding-bottom: 36px;">
+			<h4>
+				Lista de Exames
+			</h4>						
+			<table>
+				<thead>
+					<tr>
+						<td colspan="10">
+							<div class="manutencao">
+								<span class="button">
+									<span class="refresh" title="Recarregar"></span>
+								</span>
+								<span class="button">
+									<span class="excel" title="Exportar"></span>
+								</span>										
+								<span class="separador"></span>
+
+							</div>
+							<div class="paginacao"><span class="button"><span class="primeiro" title="Primeira página"></span></span><span class="button"><span class="anterior" title="Página anterior"></span></span><span class="separador"></span><span class="text">Página <input type="text" name="ufPage" value="1"> de <span class="ufTotalPages">16</span></span><span class="separador"></span><span class="button"><span class="proximo" title="Próxima página"></span></span><span class="button"><span class="ultimo" title="Última página"></span></span></div>
+							<div class="info">Registros 1 - 20 de 310</div>
+							
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="10">
+							<div style="display:flex; flex-wrap: wrap;" class="vEnabled"><div id="divValidation" class="vValidationOutput">
+	<h3>Favor verificar as observações abaixo:</h3>
+	<ol id="divValidationList">
+	</ol>
+</div>
+								<div style="flex: 1 0 100%; padding: 0; padding-top: 1em;  break-after: always;">
+									<h4 style="text-align: center; padding: 0; margin: 0;">
+										Filtrar da Data Inicial até à Data Final
+									</h4>
+								</div>
+								<div style="padding: 1em; flex: 1 0 auto;">
+									<label for="data_inicio"> Data Inicial</label>
+									<input type="text" id="data_inicio" class="vDate filtro_p vValid" name="data_inicio" placeholder="Deixe em branco caso não deseje filtrar a data inicial" value="">
+								</div>
+								
+								<div style="padding: 1em; flex: 1 0 auto;">
+									<label for="data_termino"> Data Final</label>
+									<input type="text" id="data_termino" class="vDate filtro_p vValid" name="data_termino" placeholder="Deixe em branco caso não deseje filtrar a data final" value="">
+								</div>
+								
+							</div>
+						</td>
+					</tr>
+					
+					
+					
+					<tr class="campos">
+						<th hidden="" abbr="id" class="ordena" width="80px">Id<span class="ico"></span></th>
+						
+						<th abbr="data_exame" class="ordena">Data Realizada/Prevista<span class="ico"><span class="ufOrder_desc"></span></span></th>
+						<th abbr="dia_semana" class="ordena">Dia da Semana<span class="ico"></span></th>								
+						<th abbr="tipo" class="ordena">Tipo<span class="ico"></span></th>
+						
+						<th abbr="titulo" class="ordena">Título<span class="ico"></span></th>
+
+						<th abbr="pessoa_nome" class="ordena" width="300px">Nome<span class="ico"></span></th>
+						<th abbr="rga" class="ordena">RGA<span class="ico"></span></th>
+						<th abbr="curso_descricao" class="ordena">Curso<span class="ico"></span></th>
+						
+						
+						<th abbr="exame_nacional" class="ordena">Exame Nacional<span class="ico"></span></th>
+						
+						<th abbr="aprovado" class="ordena">Status de Aprovação<span class="ico"></span></th>
+					</tr>
+					
+					<tr class="filtros">
+						<th hidden=""><input type="text" name="id" class="filtro" placeholder="Filtrar" title="Preencha para filtrar os resultados" value=""></th>
+						
+						<th></th>
+						<th>
+							<select name="dia_semana" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="1">Domingo</option>
+								<option value="2">Segunda-feira</option>
+								<option value="3">Terça-Feira</option>
+								<option value="4">Quarta-Feira</option>
+								<option value="5">Quinta-Feira</option>
+								<option value="6">Sexta-Feira</option>
+								<option value="7">Sábado</option>
+							</select>								
+						
+						</th>								
+						
+						<th>
+							<select name="tipo" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="Qualificação">Qualificação</option>
+								<option value="Defesa">Defesa</option>
+							</select>												
+						</th>								
+						
+						<th><input type="text" name="titulo" class="filtro" placeholder="Filtrar" title="Preencha para filtrar os resultados" value=""></th>
+
+						<th><input type="text" name="pessoa_nome" class="filtro" placeholder="Filtrar" title="Preencha para filtrar os resultados" value=""></th>
+						<th><input type="text" name="rga" class="filtro" placeholder="Filtrar" title="Preencha para filtrar os resultados" value=""></th>
+						<th><input type="text" name="curso_descricao" class="filtro" placeholder="Filtrar" title="Preencha para filtrar os resultados" value=""></th>
+
+						
+						<th>
+							<select name="exame_nacional" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="1">Sim</option>
+								<option value="0">Não</option>
+							</select>
+						</th>
+						<th>
+							<select name="aprovado" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="Aprovado">Aprovado</option>
+								<option value="Reprovado">"Reprovado"</option>
+								<option value="Em Aberto">Em Aberto</option>
+							</select>								
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+						<tr><td hidden="">373<input type="hidden" name="id" value="373">
+		                    		</td>
+				                    		
+							<td>05/02/2020</td>
+							<td>Quarta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>​Síndrome do Túnel do Carpo: Avaliação e Intervenção Fisioterapêutica com Interface entre a Mão e a Coluna Vertebral</td>
+ 							<td>Amanda Santos Simão</td>
+ 		 					<td>201811036</td>
+ 		 		 			<td>MESTRADO EM FISIOTERAPIA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">388<input type="hidden" name="id" value="388">
+		                    		</td>
+				                    		
+							<td>04/02/2020</td>
+							<td>Terça-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Robô explorador térmico de ambientes utilizando rede neural e algoritmo Bug</td>
+ 							<td>WILLIAN BAUNIER DE MELO</td>
+ 		 					<td>201811558</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM INOVAÇÃO TECNOLÓGICA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">398<input type="hidden" name="id" value="398">
+		                    		</td>
+				                    		
+							<td>28/01/2020</td>
+							<td>Terça-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Análise do comportamento mecânico e biológico do bambu gigante (Dendrocalamus asper) tratado com cobre e boro</td>
+ 							<td>Hugo Rocha Scharfenberg</td>
+ 		 					<td>201811545</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM INOVAÇÃO TECNOLÓGICA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">358<input type="hidden" name="id" value="358">
+		                    		</td>
+				                    		
+							<td>20/01/2020</td>
+							<td>Segunda-feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Desenvolvimento e avaliação da eficácia das vacinas de células dendríticas e células NK em modelos experimentais induzidos ao câncer de mama com células 4T1</td>
+ 							<td>Eduardo Arthur Rodovalho Alves</td>
+ 		 					<td>201611522</td>
+ 		 		 			<td>DOUTORADO EM CIÊNCIAS DA SAÚDE</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">378<input type="hidden" name="id" value="378">
+		                    		</td>
+				                    		
+							<td>18/12/2019</td>
+							<td>Quarta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Possibilidades de aplicação do Gamification para Serviços de Referência (SR) de Bibliotecas Universitárias</td>
+ 							<td>AMANDA FRANZAO RODRIGUES DA SILVA</td>
+ 		 					<td>201811505</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM INOVAÇÃO TECNOLÓGICA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">382<input type="hidden" name="id" value="382">
+		                    		</td>
+				                    		
+							<td>16/12/2019</td>
+							<td>Segunda-feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Redes Industriais Utilizando Módulos Xbee e Comunicação com Dispositivos Móveis</td>
+ 							<td>Gustavo Oliveira Martins</td>
+ 		 					<td>201811503</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM INOVAÇÃO TECNOLÓGICA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">359<input type="hidden" name="id" value="359">
+		                    		</td>
+				                    		
+							<td>13/12/2019</td>
+							<td>Sexta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Avaliação morfológica e funcional em podócitos de pacientes com Podocitopatias</td>
+ 							<td>CRISLAINE APARECIDA DA SILVA</td>
+ 		 					<td>201611523</td>
+ 		 		 			<td>DOUTORADO EM CIÊNCIAS DA SAÚDE</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">307<input type="hidden" name="id" value="307">
+		                    		</td>
+				                    		
+							<td>13/12/2019</td>
+							<td>Sexta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>AVALIAÇÃO DE CITOCINAS E QUIMIOCINAS EM PACIENTES DIABÉTICOS COM E SEM ALTERAÇÃO RENAL</td>
+ 							<td>LILIANE SILVANO ARAUJO</td>
+ 		 					<td>201611516</td>
+ 		 		 			<td>DOUTORADO EM CIÊNCIAS DA SAÚDE</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">327<input type="hidden" name="id" value="327">
+		                    		</td>
+				                    		
+							<td>12/12/2019</td>
+							<td>Quinta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Influência dos aspectos psicossociais na mobilidade de idosos da comunidade.</td>
+ 							<td>Mariana Thays Carvalho</td>
+ 		 					<td>201810154</td>
+ 		 		 			<td>MESTRADO EM FISIOTERAPIA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">310<input type="hidden" name="id" value="310">
+		                    		</td>
+				                    		
+							<td>12/12/2019</td>
+							<td>Quinta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>ASSOCIAÇÃO CLÍNICO-MORFOLÓGICA NA NEFROPATIA POR IGA PRIMÁRIA: PREDIÇÃO DE PARÂMETROS MORFOLÓGICOS A PARTIR DE DADOS CLÍNICOS, AVALIAÇÃO DO PAPEL DOS SUBTIPOS DE GLOMERULOESCLEROSE SEGMENTAR E DAS ALTERAÇÕES ULTRAESTRUTURAIS PODOCITÁRIAS</td>
+ 							<td>Maria Luíza Gonçalves dos Reis Monteiro</td>
+ 		 					<td>201611515</td>
+ 		 		 			<td>DOUTORADO EM CIÊNCIAS DA SAÚDE</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">403<input type="hidden" name="id" value="403">
+		                    		</td>
+				                    		
+							<td>11/12/2019</td>
+							<td>Quarta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>“Estudo das vias de sinalização e resposta ao dano oxidativo de DNA em Leishmania major”.</td>
+ 							<td>Raíssa Bernardes da Silva</td>
+ 		 					<td>201520620</td>
+ 		 		 			<td>DOUTORADO EM MEDICINA TROPICAL E INFECTOLOGIA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">322<input type="hidden" name="id" value="322">
+		                    		</td>
+				                    		
+							<td>09/12/2019</td>
+							<td>Segunda-feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Análise de variáveis existentes na usinagem de blocos de Zircônia estabilizada com 3% de Ítria e a possível reutilização do cavaco produzido</td>
+ 							<td>RAPHAEL SILVA LINS</td>
+ 		 					<td>201811554</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM INOVAÇÃO TECNOLÓGICA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">369<input type="hidden" name="id" value="369">
+		                    		</td>
+				                    		
+							<td>09/12/2019</td>
+							<td>Segunda-feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Efeito da Cavitação Hidrodinâmica na purificação de águga contaminada com oocistos de Crypstosporidium parvum</td>
+ 							<td>Carlos Eduardo Borges Oliveira</td>
+ 		 					<td>201720704</td>
+ 		 		 			<td>MESTRADO EM CIÊNCIA E TECNOLOGIA AMBIENTAL</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">376<input type="hidden" name="id" value="376">
+		                    		</td>
+				                    		
+							<td>28/11/2019</td>
+							<td>Quinta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Avaliação do desempenho das lagartas Spodoptera frugiperda após contaminação por bactérias e leveduras</td>
+ 							<td>Sarah Lúcia Pantaleão Pereira</td>
+ 		 					<td>201720708</td>
+ 		 		 			<td>MESTRADO EM CIÊNCIA E TECNOLOGIA AMBIENTAL</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">371<input type="hidden" name="id" value="371">
+		                    		</td>
+				                    		
+							<td>25/11/2019</td>
+							<td>Segunda-feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Avaliação do comportamento do efluente líquido da indústria de fertilizante foliar por biopolímero M22</td>
+ 							<td>Fernanda Rezende Terra</td>
+ 		 					<td>201720725</td>
+ 		 		 			<td>MESTRADO EM CIÊNCIA E TECNOLOGIA AMBIENTAL</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">332<input type="hidden" name="id" value="332">
+		                    		</td>
+				                    		
+							<td>22/11/2019</td>
+							<td>Sexta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Uma proposta de sequência didática para a abordagem do tema metais no ensino médio</td>
+ 							<td>Sérgio de Oliveira Freitas</td>
+ 		 					<td>201720319</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM QUÍMICA EM REDE NACIONAL</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">326<input type="hidden" name="id" value="326">
+		                    		</td>
+				                    		
+							<td>19/11/2019</td>
+							<td>Terça-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Ensinando hidrólise salina por meio de blog na perspectiva do ensino híbrido</td>
+ 							<td>Claudinei Osorio de Oliveira</td>
+ 		 					<td>201720321</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM QUÍMICA EM REDE NACIONAL</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">317<input type="hidden" name="id" value="317">
+		                    		</td>
+				                    		
+							<td>14/11/2019</td>
+							<td>Quinta-Feira</td>					                    		
+				            <td>Qualificação</td>
+									
+		                    <td>Avaliação morfológica e funcional em podócitos de pacientes com Podocitopatias</td>
+ 							<td>CRISLAINE APARECIDA DA SILVA</td>
+ 		 					<td>201611523</td>
+ 		 		 			<td>DOUTORADO EM CIÊNCIAS DA SAÚDE</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">311<input type="hidden" name="id" value="311">
+		                    		</td>
+				                    		
+							<td>13/11/2019</td>
+							<td>Quarta-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>"Enterococcus ssp. DE ORIGEM CLÍNICA E AMBIENTAL: PERFIL DE SENSIBILIDADE AOS ANTIMICROBIANOS, FATORES DE VIRULÊNCIA E CARACTERIZAÇÃO MOLECULAR"</td>
+ 							<td>Fábio Ederson Lopes Correa</td>
+ 		 					<td>201511225</td>
+ 		 		 			<td>DOUTORADO EM CIÊNCIAS DA SAÚDE</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+						<tr><td hidden="">380<input type="hidden" name="id" value="380">
+		                    		</td>
+				                    		
+							<td>12/11/2019</td>
+							<td>Terça-Feira</td>					                    		
+				            <td>Defesa</td>
+									
+		                    <td>Vídeos Introdutórios sobre “Redação de Pedidos de Patentes"</td>
+ 							<td>DEMIAN OLIVER VIDAL</td>
+ 		 					<td>201811540</td>
+ 		 		 			<td>MESTRADO PROFISSIONAL EM INOVAÇÃO TECNOLÓGICA</td>
+							<td>Não</td>
+							<td>Aprovado</td>				
+						</tr>
+					
+			
+			
+			
+			</tbody>
+				<tfoot></tfoot>
+			</table>
+				
+				</div>		
+	
+
+</div>
+						
+						<h4 id="idxH4HelpLinkContent" hidden="true" style="display: none;"></h4>
+					</div>
+				</td>
+			</tr>
+		</tbody></table>
+		<div id="modalAlteracaoLogin" class="modalAlteracaoLogin" hidden="" style="font-size: 0.9em;">
+		
+			<div style="text-align: center; margin: 1em; ">
+				<a href="http://www.uftm.edu.br/component/content/article?id=1933" target="_blank">
+					
+				<figure>
+				<img src="./gsuite.png" style="max-width: 700px; max-height: 240px; ">
+				 <figcaption style="font-size: 0.8em">Fig.1 -
+				  UFTM utilizará o G Suite e contará com novo serviço de e-mail.</figcaption>
+				</figure>					
+				</a>
+			</div>
+		
+			<div style="text-align: justify; padding: 1.5em 1em;">
+			A partir do dia 8 de setembro a UFTM passará a utilizar o G Suite for Education, da Google em seu serviço de e-mail.
+			As <b>contas de usuário</b> e <b>senhas</b> de todos os <b>Sistemas UFTM</b> (UFTMNet, SEI, SISCAD, eduroam e Moodle) 
+			serão as <b>mesmas do e-mail institucional</b>. 
+			<br>
+			
+			<div style="display: flex;">
+			<div style="text-align: center; margin: 1em; float:right; position: relative;">
+				<figure>
+				<img src="./nome-sobrenome-gmail.png" style="max-width: 700px; max-height: 300px; ">
+				 <figcaption style="font-size: 0.8em">Fig.2 - Autenticação no Gmail.</figcaption>
+				</figure>	
+			</div>	
+			<div style="text-align: center; margin: 1em;  float:left; position: relative;">
+				<br>
+				<br>
+				<figure>
+				<img src="./nome-sobrenome-integrado.png" style="max-width: 700px; max-height: 350px; ">
+				 <figcaption style="font-size: 0.8em">Fig.3 - Autenticação no UFTMNet.</figcaption>
+				</figure>
+
+			</div>			
+			
+				
+			</div>
+			
+			Por exemplo, um usuário cujo email institucional seja <b>nome.sobrenome@uftm.edu.br</b> 
+			realizará a autenticação no Sistema Integrado através do usuário <b>nome.sobrenome</b>.
+			<br><br>
+ 			Em caso de dúvidas utilize a opção de <a href="https://sistemas.uftm.edu.br/integrado/?id=3" target="_blank">
+ 			Recuperar a senha</a> para obter novamente o nome de usuário e poder criar uma nova senha.
+			</div>
+
+		</div>
+		<div id="modalScreenSizeError" hidden="" style="font-size: 0.9em;">
+		
+			O sistema UFTMNet foi desenvolvido para a resolução <b>1366 x 768 ou superior</b>.<br>
+			<br>
+			Ao acessar o sistema através de dispositivos móveis, tais como, smartphones ou tablets, podem ocorrer problemas inesperados durante a sua utilização.<br>
+			É aconselhável acessar o sistema através de computadores de mesa ou notebooks.
+		</div>
+		<div id="modalMensagem" hidden="">
+		
+			<input type="hidden" id="idxHdnMensagem">
+			<h5 id="idxH5DataExpiracao">
+				Data de Expiração: 
+				<span id="idxSpanDataExpiracao"></span> 
+			</h5>	
+
+			<fieldset style="margin-bottom: 1em; padding: 1em;">
+				<legend style="">Informações</legend>
+				
+				<div style="display: flex; padding: .2em;">
+					<div style="flex: 1 1 48%; margin-right: .25em;">
+						<span>
+							Tipo
+						</span>
+						<input type="text" disabled="" id="idxMsgMensagemTipo">
+						
+					</div>
+					
+					<div style="flex: 1 1 48%; margin-left: .25em;">
+						<span>
+							Módulo
+						</span>	
+						<input type="text" disabled="" id="idxMsgMensagemModulo">
+						
+					</div>
+				</div>	
+			</fieldset>
+			
+			<fieldset style="padding: 1em;">
+				<legend style="">Mensagem</legend>
+				<div>
+					<span>
+						Remetente
+					</span>
+					<input type="text" disabled="" id="idxMsgRemetente">
+				</div>
+					
+					
+				<div>
+					<span>
+						Assunto
+					</span>
+					<input type="text" disabled="" id="idxMsgAssunto">
+				</div>					
+	
+				<div style="margin-bottom: 1em;">
+					<span>
+						Mensagem
+					</span>
+					<textarea disabled="" id="idxMsgTexto" style="height: 10em; ">					
+					</textarea>
+				</div>	
+		
+				<div id="idxDivAcessarPaginaMensagem">
+					<h4 style="text-align: right;padding: 0; flex: 1 0 49%;">
+						<a id="idxAAcessarPaginaMensagem">
+							<i class="fa fa-external-link" aria-hidden="true" style="position: relative; top: 1px;"></i>
+	  						Clique aqui para acessar a página
+	  					</a>
+					</h4>
+				</div>		
+		
+				<div>
+					<div>	
+					
+						<label>
+							<input type="checkbox" style="position: relative; top: 1px;" id="idxMsgLido">
+							Marcar como lida
+						</label>	
+							
+					</div>				
+					
+					<div>
+						<label style="">
+							<input type="checkbox" style="position: relative; top: 1px;" id="idxMsgResolvido">			
+							Marcar como resolvida
+						</label>
+					</div>
+				</div>		
+			</fieldset>		
+			
+		</div>		
+		
+	
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>

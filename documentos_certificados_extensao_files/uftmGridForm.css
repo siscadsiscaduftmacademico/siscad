@@ -1,0 +1,53 @@
+.uftmGridForm{
+	width: 100%;
+	padding-bottom: 1.5em;
+}
+
+.uftmGridForm table{
+	width: 100%;
+}
+
+.uftmGridForm table tr th{
+	/*width: 15em;*/
+	padding-right: .5em;
+	vertical-align: middle;
+}
+
+.uftmGridForm input:not([type="button"]),
+.uftmGridForm select{
+	/*width: 100%;*/
+}
+
+.uftmGridForm textarea{
+    height: 8em;
+	width: 100%;
+	resize: none;
+}
+
+.uftmGridForm .tituloForm{
+	font-weight: bold;
+	padding: 1.5em;
+}
+
+.uftmGridForm .uftmGridButtons{
+	padding: 1.5em 0em 1.5em 1.5em;
+}
+
+.uftmGridForm table tr td span.error{
+	color: red;
+	display: block;
+}
+
+.campoInput span.error{
+	color: red;
+	display: block;
+}
+
+
+
+
+
+
+
+
+

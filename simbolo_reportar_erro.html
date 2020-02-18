@@ -1,0 +1,166 @@
+
+<!-- saved from url=(0102)titan.php?toSection=6&toAction=report&url=siscad.uftm.edu.br%2Ftitan.php%3F -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+        <title>Reportar Erros</title>
+        
+		<script type="text/javascript" language="javascript" src="./simbolo_reportar_erro_files/jquery.min.js.download"></script>
+		
+		<script language="javascript" type="text/javascript">
+			function Valida()
+			{
+				var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+				
+				if(jQuery("#email").val() == '')
+				{
+					alert("Por favor, preencha seu e-mail!");
+					jQuery("#email").focus();
+					return false;
+				}
+				
+				if(!emailReg.test(jQuery("#email").val())) {
+					alert("Por favor, preencha um e-mail válido!");
+					jQuery("#email").focus();
+					return false;
+				}
+
+				if(jQuery("#desc").val() == '')
+				{
+					alert("O campo de Descrição não pode ser vazio");
+					jQuery("#desc").focus();
+					return false;
+				}
+				return true;
+			}
+		</script>
+		<style type="text/css">
+		   	.classe
+			{
+				border-color: #87A019;
+				border-style: dotted;
+				border-width: 1px;
+				padding: 8;
+				font-size:12px;
+				font-family:Verdana, Arial, Helvetica, sans-serif;
+			}
+			input, textarea, select
+			{
+				margin-bottom: 0;
+				margin-top: 10;
+				font-size: 11px;
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				border-width: 1px;
+				height: 20px;
+				border-style: solid;
+				border-color: #AAAAAA;
+				-webkit-border-radius:3px;
+				-moz-border-radius:3px;
+				border-radius:3px;
+			}
+			
+			textarea
+			{
+				margin-bottom: 0;
+				margin-top: 10;
+				font-size: 11px;
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				border-width: 1px;
+				width: 475px;
+				height:250px; 
+				border-style: solid;
+				border-color: #AAAAAA;
+				-webkit-border-radius:3px;
+				-moz-border-radius:3px;
+				border-radius:3px;
+			}
+			
+			body
+			{
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				font-size: 11px;
+				background: #FFFFFF;
+				margin: 0px;
+				padding: 5px;
+				color: #666666;	
+			}
+			
+			.botao
+			{
+				font-size: 10px;
+				height: 30px;
+				margin-bottom: 0;
+				margin-top: 10;
+				font-size: 11px;
+				color: #666666;
+				font-weight: bold;
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				border-top-width: 1px;
+				border-right-width: 1px;
+				border-bottom-width: 1px;
+				border-left-width: 1px;
+				border-top-style: solid;
+				border-right-style: solid;
+				border-bottom-style: solid;
+				border-left-style: solid;
+				border-top-color: #AAAAAA;
+				border-right-color: #AAAAAA;
+				border-bottom-color: #AAAAAA;
+				border-left-color: #AAAAAA;
+				background-color: #F5F5F5;
+				-webkit-border-radius:3px;
+				-moz-border-radius:3px;
+				border-radius:3px;
+			}
+
+		</style>
+    </head>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+        <form name="bug_form" action="" method="post" onsubmit="">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tbody><tr>
+                    <td colspan="2"><img src="./simbolo_reportar_erro_files/bannerReport.jpg"></td>
+                </tr>
+                <tr class="classe">
+                    <td>&nbsp;<input type="hidden" name="data" value="15/02/2020"></td>
+                </tr>
+                <tr class="classe">
+                    <td align="right">Tipo:</td>
+                    <td>
+                        <select name="tipo" class="campo">
+                                                        <option value="1">Falha</option>
+                                                                <option value="2">Crítica</option>
+                                                                <option value="3">Sugestão</option>
+                                                                <option value="0"></option>
+                                                        </select>
+                    </td>
+                </tr>
+                <tr class="classe">
+                    <td align="right" title="Local do site onde o problema ocorreu">
+						Url:</td>
+                    <td title="Local do site onde o problema ocorreu">
+                        <input type="text" size="76" name="furl" value="siscad.uftm.edu.br/titan.php?" class="campo">
+                        <input type="hidden" name="url" value="siscad.uftm.edu.br/titan.php?">
+                    </td>
+                </tr>   
+                <tr class="classe">
+                    <td align="right" title="Endereço de e-mail usado para contato">E-mail:</td>
+                    <td title="Endereço de e-mail usado para contato">
+                        <input type="text" size="76" name="femail" id="email" value="victoroliveira16@hotmail.com" class="campo">
+                    </td>
+                </tr>
+                <tr class="classe">
+                    <td align="right" valign="top" title="Descrição do ocorrido. Por favor, descreva com detalhes qual é o problema ou sugestão.">
+						Descrição:</td>
+                    <td title="Descrição do ocorrido. Por favor, descreva com detalhes qual é o problema ou sugestão.">
+						<textarea name="desc" id="desc" class="campo" cols="74" rows="20"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="submit" value="Relatar!" class="botao">&nbsp;&nbsp;
+                        <input type="button" onclick="window.close();" value="Fechar" class="botao">
+                    </td>
+                </tr>
+            </tbody></table>
+        </form>
+    
+
+</body></html>

@@ -1,0 +1,46 @@
+$(document).ready(function()
+{
+	
+	var gridCertificadosExtensao = $("#gridCertificadosExtensao").uftmGrid
+	({
+		ufKey: "certificado_pessoa",
+		ufOrderField: "certificado_pessoa",
+		ufUrl: "sistemas/ext/ajax.php",
+		ufTotalRows: 20,
+		functionName: "CertificadosExtensaoBLL::getGridCertificadosExtensao",
+		ignorarAcentos: true,
+	});
+	
+	
+	$(gridCertificadosExtensao).on("click", ".pdf", function()
+	{
+		var selectedRow = gridCertificadosExtensao.getSelectedRow();
+		if((selectedRow == "") || (selectedRow == null))
+		{
+			msgAlert("Atenção", "Selecione um registro!", true);
+		}
+		else
+		{
+			gerarCertificado(selectedRow);
+		}		
+	});	
+	
+	$(gridCertificadosExtensao).on("click", ".refresh", function()
+	{
+		gridCertificadosExtensao.refresh();
+	});		
+	
+});
+
+function gerarCertificado(certificadoPessoa)
+{
+	
+	openReport
+	(
+		{
+			reportId: 63,
+			certificadoPessoa: certificadoPessoa
+		}	
+	);
+	
+}

@@ -1,0 +1,657 @@
+@font-face
+{
+	font-family: "Open Sans";
+	src: url("fonts/OpenSans.woff");
+}
+
+*
+{
+	font-family: "Open Sans", "Segoe UI", sans-serif, verdana;
+}
+
+
+
+td > label, th > label
+{
+	text-align: right;
+	display: block;
+	padding-right: .5em;
+	line-height: 2em;
+	width: 100%;	
+	box-sizing: border-box;
+}
+
+a
+{
+	text-decoration: none;
+	color: #84b800;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+a:hover
+{
+	color: #97cb27;
+}
+
+p
+{
+	text-indent: 50px;
+	text-align: justify;	
+}
+
+h1, h2, h3, h4, h5, h6, p
+{
+	margin: 0px;
+}
+
+h1, p
+{
+	padding: .67em 0
+}
+
+h2
+{
+	padding: .75em 0
+}
+
+h3
+{
+	padding: .83em 0
+}
+
+h4
+{
+	padding: 1.12em 0
+}
+
+h5
+{
+	padding: 1.5em 0
+}
+
+h6
+{
+	padding: 1.67em 0
+}
+
+th
+{
+	vertical-align: text-top;
+	line-height: 2em;
+}
+
+table
+{
+	padding: 0px;
+    border-spacing: 0px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td
+{
+	padding: 0px;
+}
+
+tr
+{
+	padding: 3px;
+}
+
+.table td, th
+{
+	padding: .5em;
+}
+.table tr:first-child
+{
+	border-bottom: 1px solid #AAA;
+	border-top: 1px solid #AAA;
+}
+.table tr:last-child
+{
+	border-bottom: 1px solid #AAA;
+}
+.table tr
+{
+	border-bottom: 1px solid #F5F5F5;
+}
+.table tr:not(:first-child):hover
+{
+	background-color: #FAFAFA;
+}
+
+body, html
+{
+	width: 100%;
+	*height: 100%;
+}
+
+body, html, div
+{
+	padding: 0px;
+	margin: 0px;
+}
+
+body
+{
+	background-color: white;
+	color: #4a503c;
+}
+
+div
+{
+	border: none;
+	text-indent: justify;
+}
+
+table
+{
+	border: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+#idxFrmLogin th, #idxFrmLogin td
+{
+	padding: 0px;
+}
+
+#idxDivPesquisaMenuContainer
+{
+	width: 100%;
+	margin: 1em auto;
+	display: flex;
+	border-bottom:	1px solid #575e47;
+	border-top:	1px solid #575e47;
+	background-color: rgba(0,0,0,.25);
+}
+#txtPesquisaMenu
+{
+	*background-color: #4a503c;
+	background-color: transparent;
+	color:lemonchiffon;
+    border: none;
+    box-shadow: none;
+	border-radius: 0px;
+	*width: 80%;
+	margin:0 auto;
+	line-height: 2em;
+}
+
+.idxPesquisaMenuIcon
+{
+	font-size: 1rem;
+	padding-top: .25em;
+	margin-left: .25em;
+	color: #575e47
+}
+
+#divTabs
+{
+	margin-bottom: 1em;
+}
+
+#idxDivLoginLinks
+{
+	line-height: auto;
+}
+
+#idxDivLoading
+{
+	z-index: 1000;
+	width: 130px;
+	height: 18px;
+	position: absolute;
+	right: 10px;
+	top: 122px;
+	background-color: white;
+	background-image: url("../img/ajax-loader.gif");
+	display: none;
+}
+
+#idxDivMenuTitle
+{
+	padding: .5em;
+	font-size: 150%;
+}
+
+#idxUlMenu
+{
+	margin:0px;
+}
+
+#idxDivMenu ul
+{
+	padding-left: 0px;
+}
+
+#idxDivMenuTitle, #idxDivMenu ul li
+{
+	text-shadow: 3px 3px 4px black;
+}
+
+#idxDivMenu ul a
+{
+	display: block;
+	color: white;
+	cursor: pointer;
+	padding-top: .25em;
+	padding-bottom: .25em;
+	padding-left: 1em;
+	font-weight: normal;
+}
+
+#idxDivMenu ul a.menuSubstituicao
+{
+	color: lemonchiffon !important;
+}
+
+#idxDivMenu ul a:hover
+{
+	background-color: #393d2e;
+}
+
+#idxDivMenu ul li
+{
+	list-style: none;
+	display: block;
+	border-bottom: 1px solid #575e47;
+	font-size: 125%;
+}
+
+#idxDivMenu ul ul
+{
+	background-color: rgba(87, 94, 71, 0.75);
+}
+
+#idxDivMenu ul ul li
+{
+	padding: 0px;
+	font-size: 100%;
+	text-shadow: none;
+	border: none;
+}
+
+#idxDivMenu ul ul a
+{
+	color: #a1a990;
+}
+
+#idxDivMenu ul ul a.menuSubstituicao
+{
+	color: #cdc79d !important;
+}
+
+#idxDivMenu ul ul a[id]
+{
+	color: white;
+}
+
+#idxDivMenu ul ul a[id].menuSubstituicao
+{
+	color: lemonchiffon !important;
+}
+
+#idxDivMenu ul ul ul
+{
+	background-color: transparent;
+}
+
+#idxDivMenu
+{
+	background-color: #4a503c;
+	width: 260px;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	z-index: 3;
+	overflow-y: auto;
+	padding-top: 0px;
+	width: 20em;
+	color: white;
+	vertical-align: top;
+	font-size: 80%;
+	box-shadow: -5px 0px 10px 5px black;
+}
+
+#idxDivMenu::-webkit-scrollbar
+{
+    width: .6em;
+}
+ 
+#idxDivMenu::-webkit-scrollbar-thumb
+{
+	background-color: #697155;
+}
+
+.idxDivMenuSelected
+{
+	background-color: #79a900 !important;
+	color: white !important;
+}
+
+#divMenuTitle
+{
+	padding: 0px;
+	padding-left: .1em;
+}
+
+#idxDivUser
+{
+	background-color: #647932;
+	background-image: url("../img/idxDivUser_bg.png");
+	background-repeat: repeat-y;
+	background-position: right top;
+	padding: 5px;
+	color: #DDD;
+	line-height: 2em;
+	box-shadow: 0px 0px 12px -5px black;
+}
+
+#idxDivUser a, #idxDivLinks a
+{
+	display: inline;
+	color: white;
+	font-weight: normal;
+}
+
+#idxDivUser a:hover, #idxDivLinks a:hover
+{
+	color: #9bd900;
+	cursor: pointer;
+}
+
+#idxDivLinks
+{
+	line-height: normal;
+}
+
+#idxDivLoggedOut
+{
+	text-align: center;
+}
+
+#idxDivLoggedOut table
+{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#idxDivLoggedOutHeader
+{
+	border-bottom: 1px solid #575e47;
+	margin-bottom: 10px;
+}
+
+#idxDivContent
+{
+	position: relative;
+	width: 100%;
+	height: 100%;
+	font-size: 80%;
+}
+
+#idxDivInnerContent
+{
+	width: 96%;
+	margin: auto;
+}
+
+#idxSpanPin
+{
+	width: 24px;
+	height: 24px;
+	margin-left: auto;
+	float: right;
+	margin-right: 6px;
+	margin-top: 10px;
+	display: inline;
+	cursor: pointer;
+	padding: 0px;
+}
+
+#idxSpanPin.idxSpanPinUnpinned
+{
+	color: rgba(0,0,0,.5);
+}
+
+#idxSpanPin.idxSpanPinUnpinned:hover
+{
+	color: white;
+}
+
+#idxSpanPin.idxSpanPinPinned, #idxSpanPin.idxSpanPinPinned:hover
+{
+	color: white;
+	padding: .1em;
+}
+
+#idxTableContent
+{
+	width: 100%;
+	height: 100%;
+}
+
+[id^=idxTdContentPath]
+{
+	text-align: left;
+	height: 16px;
+	color: #333;
+}
+
+#idxTdContentPathRight
+{
+	text-align: left;
+	font-size: 80%;
+	padding-bottom: 1em;
+	padding-left: 0.25em;
+}
+
+#idxTdContentPathRight div
+{
+	color: #aaa;
+	display: inline;
+	cursor: pointer;
+}
+
+#idxTdContentPathRight div:hover
+{
+	color: #79a900;
+}
+
+[id^=idxTdContentTop]
+{
+	background-color: #79a900;
+	background-image: url("../img/top_bg.png");
+	height: 12px;
+	color: white;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 150%;
+	text-shadow: 2px 2px 8px black;
+}
+
+#tdContentTop a
+{
+	color: white;
+	font-weight: bold;
+}
+
+#tdContentTop a:hover
+{
+	color: #0088d1;
+}
+
+#tdBottom
+{
+	text-align: right;
+}
+
+#idxTdContentLeft
+{
+	width: 260px;
+}
+
+#idxTdContentRight
+{
+	padding-left:  20px;
+	vertical-align: top;
+}
+
+#divHeader
+{
+	background-image: url(../img/logo.png);
+	background-position: 5px 5px;
+	background-repeat: no-repeat;
+	text-align: center;
+	height: 85px;
+}
+
+.breadcrumb
+{
+	padding: 0px;
+	margin: 0px;
+	margin-left: -8px;
+	list-style: none; 
+	overflow: hidden;
+	cursor: pointer;
+}
+.breadcrumb li
+{ 
+	float: left; 
+}
+.breadcrumb li a
+{
+	color: white;
+	text-decoration: none; 
+	padding: 2px 0px 4px 50px;
+	background: #4a503c;
+	position: relative; 
+	display: block;
+	float: left;
+}
+
+.breadcrumb li a:after
+{ 
+	content: ""; 
+	display: block; 
+	width: 0; 
+	height: 0;
+	border-top: 50px solid transparent;
+	border-bottom: 50px solid transparent;
+	border-left: 30px solid #4a503c;
+	position: absolute;
+	top: 50%;
+	margin-top: -50px; 
+	left: 100%;
+	z-index: 2; 
+}
+
+.breadcrumb li a:before
+{
+	content: " "; 
+	display: block; 
+	width: 0; 
+	height: 0;
+	border-top: 50px solid transparent;       
+	border-bottom: 50px solid transparent;
+	border-left: 30px solid white;
+	position: absolute;
+	top: 50%;
+	margin-top: -50px; 
+	margin-left: 1px;
+	left: 100%;
+	z-index: 1; 
+}
+
+.breadcrumb li:first-child a
+{
+	padding-left: 10px;
+}
+
+.breadcrumb li:last-child a
+{
+	background-color: #CCC;
+	color: #333;
+}
+
+.breadcrumb li:last-child a:after
+{
+	border-left-color: #CCC;
+}
+
+.breadcrumb li a:hover
+{
+	background: #79a900; 
+}
+
+.breadcrumb li a:hover:after
+{
+	border-left-color: #79a900 !important;
+}
+
+.errorMessage, .infoMessage, .warningMessage
+{
+	display: none;
+	*text-align: center;
+	font-weight: bold;
+	font-size: .9em;
+}
+
+.errorMessage
+{
+	color: #ee6159;
+}
+
+.infoMessage
+{
+	color: #0e90d2;
+}
+
+.warningMessage
+{
+	color: rgb(243, 123, 29);
+}
+
+.scrolling
+{
+	position: fixed !important;
+	top: 0 !important;
+}
+
+.formTable td
+{
+	padding-left: .5em;
+}
+*:focus {
+    outline: 0 !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close{
+	background-image: url(../img/icones/remove2.png);
+}
+#idxH4HelpLinkContent
+{
+	margin-left: 2em;
+}
+
+#idxH5DataExpiracao
+{
+	text-align: right; 
+	margin: 0; 
+	padding: 0; 
+	font-size: 0.85em; 
+	margin-right: .4em;
+}
+#idxDivAcessarPaginaMensagem
+{
+	display: flex; 
+	margin-bottom: 1em;
+}
+
+#modalMensagem
+{
+	font-size: 0.88em; 
+	padding: 2em;
+}

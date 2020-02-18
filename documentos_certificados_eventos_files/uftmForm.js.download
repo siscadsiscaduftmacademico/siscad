@@ -1,0 +1,223 @@
+(function($){
+	$.fn.uftmForm = function(settings){
+		// settings
+		var config = {
+			ufUrl: "", /** URL dos dados da página **/
+			functionNameDados: "", /** Nome da funcão dentro do arquivo php, para recuperar os dados do form **/
+			functionNameSalvar: "", /** Nome da funcão dentro do arquivo php, para salvar os dados do form **/
+			validation: true, /** Caso verdadeiro, o formulário será validado **/
+			uftmGrid: null /** Uftm Grid que será atualizado após alteração do registro **/
+		};
+		if (settings){$.extend(config, settings);}
+	    
+	    this.config=config;
+	    //variaveis
+	    var $obj= $(this);
+
+	    /** Abrir o formulário preparado para um novo registro */
+	    this.novoRegistro = novoRegistro;
+	    function novoRegistro(){
+	    	resetForm();
+	    	$obj.find(".tituloForm").html("Novo registro");
+	    	$obj.slideDown(1000);
+	    	
+	    	if(config.uftmGrid != null){
+	    		config.uftmGrid.unsetSelectedRow(); 
+	    	}
+
+	    	if(config.validation){
+	    		vValidate($obj,null);
+	    	}
+	    }
+	    
+	    this.setUftmGrid = setUftmGrid;
+	    function setUftmGrid(uftmGrid){
+	    	config.uftmGrid = uftmGrid;
+	    }
+
+	    /** INICIO - Funções para editar registro **/
+	    
+	    /**
+	     * Abrir o formulário preparado para editar o registro conforme especificado em ajaxData
+	     * @param array ajaxData: parametros utilizado na variavel "data" da requisicao ajax.
+	     * Aplicado o valor de config.functionNameDados em ajaxData["functionName"]
+	     */
+	    this.editarRegistro = editarRegistro;
+	    function editarRegistro(ajaxData){
+	    	ajaxData["functionName"] = config.functionNameDados;
+	    	
+	    	var result = null;
+	    	
+			ajax({
+				type: "post",
+				url: config.ufUrl,
+				dataType: "html",
+				async: false,
+				cache: false,
+				data: ajaxData,
+				success: function(html) {
+					result = $.parseJSON(html);
+					
+					if(result.success){
+						preencherFom(result.data);
+					}else{
+						msgError("Falha ao executar a operação", result.msg);
+					}
+				}					
+			});
+			
+			return result;
+	    }
+
+	    /**
+	     * Prepara o formulario para edicao, preenchendo com os parametro em data
+	     * @param array data: utilizar o retorno do resultado ajax (result.data)
+	     */
+	    function preencherFom(data){
+	    	resetForm();
+	    	$obj.find(".tituloForm").html("Editar registro");
+	    	$obj.slideDown(1000);
+	    	
+	    	setElements(data);	
+	    	
+	    	if(config.validation){
+	    		vValidate($obj,null);
+	    	}
+	    }
+	    
+	    /**
+	     * Preenche o formulário com os parametro em data
+	     * @param array data: utilizar o retorno do resultado ajax (result.data)
+	     */
+	    function setElements(data){
+	    	if(!$obj.triggerHandler("setElements", data)){
+		        for(var key in data){
+		        	if (typeof data[key] !== 'function'){
+		        		$obj.find(".campos").find("input[name='"+key+"'], textarea[name='"+key+"']").not(":checkbox, :radio").val(data[key]);
+		        		
+		        		$obj.find(".campos").find(":checkbox[name='"+key+"'][value='"+data[key]+"']").prop( "checked", true);
+		        		$obj.find(".campos").find(":radio[name='"+key+"'][value='"+data[key]+"']").prop( "checked", true);
+		        		
+		        		$obj.find(".campos").find("[name='"+key+"']").not("textarea, input, select").html(data[key]);
+		        		
+		        		if(data[key]===true){
+		        			data[key] = "true"
+		        		}else if(data[key]===false){
+		        			data[key] = "false"
+		        		}
+		        		$obj.find(".campos").find("select[name='"+key+"']").val(data[key]);
+		        	}
+		        }
+	    	}
+	    }
+	    /** TERMINO - Funções para editar registro **/
+	    
+	    /** Função utilizada para salvar os dados do formulário, serializa os dados e encaminha para o endereco informado em config.ufUrl  */
+	    this.salvarForm = salvarForm;
+	    function salvarForm(){
+	    	var dados = $obj.triggerHandler("salvarFormGetDados");
+	    	if(!dados){
+	    		if($obj.find("input[name='functionName']").length==0){
+	    			$('<input>').attr({
+		    		    type: 'hidden',
+		    		    name: 'functionName',
+		    		    value: config.functionNameSalvar
+		    		}).appendTo($obj.find('form'));	
+	    		}
+	    		dados = $obj.find('form').serialize();
+	    	}
+	    	
+	    	ajax({
+				type: "post",
+				url: config.ufUrl,
+				dataType: "html",
+				async: false,
+				cache: false,
+				data: dados,
+				success: function(result){
+					var result = $.parseJSON(result);
+					if(!$obj.triggerHandler("salvarFormAjaxSuccess", result)){
+						if(result.success){
+
+						     $obj.slideUp(400, function()
+						    {
+						    	 msgSuccess("Operação concluída!", result.msg==""?"Registro salvo com sucesso!":result.msg);
+						     });
+						     
+						     if(config.uftmGrid != null){
+						    	 config.uftmGrid.refresh(); 
+						     }
+						     
+						}else{
+							msgError("Falha ao executar a operação", result.msg);
+						}
+					}
+				}
+			});
+	    }
+	    	    
+	    /** Reseta o formulário limpando os valores e validações aplicadas */
+	    this.resetForm = resetForm;
+	    function resetForm(){
+	    	$obj.find(".vValidationOutput").hide();
+	    	$obj.find(".campos").find("input, textarea, select").each(function() {
+	            var t = this.type, tag = this.tagName.toLowerCase();
+	            if (t == 'hidden' || t == 'text' || t == 'password' || tag == 'textarea')
+	                this.value = '';
+	            else if (t == 'checkbox' || t == 'radio'){
+	                this.checked = false;
+	                $(this).change();
+	        	}
+	            else if (tag == 'select')
+	                this.selectedIndex = -1;
+	        });
+	    }
+	    
+	    /** Cancela o formulário, resetando e fechando */
+	    this.cancelarForm = cancelarForm;
+	    function cancelarForm(){
+	    	resetForm();
+			$obj.slideUp(1000);
+	    }
+	    
+	    return this.each(function(){
+	    	if(config.validation){
+	    		vApplyValidations(true, null);
+	    	}
+	    	
+	    	$obj.submit(function(event){
+	    		event.preventDefault();
+    			return false;
+	    	});
+	    	
+	    	$obj.find("input[type='submit']").each(function(){
+	    		$(this).click(function(){
+	    			if(!config.validation || (config.validation && vValidate(this))){
+	    				$obj.find(".vMoney").each(function(){
+	    					$(this).val($(this).maskMoney('unmasked')[0]);
+	    				});
+	    				
+	    		    	var dados = $obj.triggerHandler("salvarForm");
+	    		    	
+	    		    	if(!dados){
+	    		    		salvarForm();
+	    		    	}
+	    		    	
+	    		    	$obj.find(".vMoney").each(function(){
+	    					$(this).val($(this).maskMoney('masked')[0]);
+	    				});
+	    			}
+	    			return false;
+	    		});
+	    	});
+	    	
+	    	$obj.find("input[type='button'].cancelar").each(function(){
+	    		$(this).click(function(){
+	    			cancelarForm();
+	    			return false;
+	    		});
+	    	});
+	    });
+	    
+	};
+})(jQuery);

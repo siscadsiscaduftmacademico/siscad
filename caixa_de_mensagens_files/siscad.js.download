@@ -1,0 +1,127 @@
+/**
+ * @SISCAD
+ * @author SISCAD TEAM
+ * verificaÁ„o de codificaÁ„o ISO-8859-1
+ */
+
+var currentGreenMenu = undefined;
+
+function hideMenu(div){
+	var menu = document.getElementById(div);
+    if(menu != undefined)
+        menu.style.visibility = "hidden";
+	currentGreenMenu = undefined;
+}
+
+function showMenu(obj, div){
+	var menu = document.getElementById(div);
+    if(menu != undefined)
+    {
+		if(currentGreenMenu != undefined) {
+			currentGreenMenu.style.visibility = "hidden";
+		}
+		
+        if(obj != undefined) {
+            var labelLeft = jQuery(obj).offset().left - jQuery("#" + div).width() + jQuery(obj).width();
+            menu.style.left = labelLeft;
+        }
+        menu.style.visibility = "visible";
+		currentGreenMenu = menu;
+    }
+}
+
+/**
+ * Arruma os di·logos no IE
+ * Deve ser passado como parametro um Array contendo a lista de dialogos da tela
+ */
+function dialogFix(dialogArray) {
+    if (! dialogArray instanceof Array) {
+        return;
+    }
+
+    if ( jQuery.browser.msie ) {
+
+        //alert('tamanho ' + dialogArray.length);
+        for( i = 0; i < dialogArray.length; i++)
+        {
+            //alert('i ' + i + ' val ' + dialogArray[i]);
+            var o = null;
+            var height;
+            try {
+                o = jQuery(dialogArray[i]);
+                if(o == null) continue;
+                height = o.dialog( "option", "height" );
+                height *= 2;
+                o.dialog( "option", "height", height );
+            }
+            catch (e) {
+                o = null;
+                alert('name: ' + e.name + ' message: ' + e.message);
+            }
+        }
+    }
+}
+
+/* Gif animado p/ quando est· buscando os dados INICIO */
+var loading = false;
+var table = null;
+
+function showLoader(nomeGrid) {
+    //var tbl0 = jQuery("#jGrid_" + nomeGrid + " #jTableBody").parent();
+    var tbl = jQuery("#jGrid_" + nomeGrid + " #jTableBody").parent();
+
+    if(tbl != null) {
+        //alert(tbl.html());
+        if(!loading) {
+            table = tbl.html();
+            tbl.attr('id','paizao' + nomeGrid);
+        }
+
+        loading = true;
+
+        tbl.html("<div style='vertical-align: middle; height: 50px; width: 220px; text-align: center; margin: 50px auto;'><img src='image/ajax-bar.gif' /></div>");
+        //alert(tbl.html());
+    }
+}
+
+function hideLoader(nomeGrid) {
+
+    var tbl = jQuery("#jGrid_" + nomeGrid + " #paizao" + nomeGrid); //jQuery(".ui-jgridbody:eq(4)");
+    if(tbl != null) {
+        tbl.html(table);
+        loading = false;
+		jQuery("div#notFound").remove();
+    }
+    //alert(loading);
+}
+/* Gif animado FIM */
+
+
+function validaRetorno(message){
+    switch(message[0]){
+        case 'warning':
+            jQuery(".texto_alert").text(message[message.length-1]);
+            jQuery("#alert").dialog('open');
+            return true;
+        case 'success':
+            return true;
+        case 'error':
+            jQuery(".texto_alert").text(message[1]);
+            jQuery("#alert").dialog('open');
+            return false;
+        default:
+            jQuery(".texto_alert").text("Falha desconhecida.");
+            jQuery("#alert").dialog('open');
+            return false;
+    }
+}
+
+function removeAcentos(text) {
+	text = text.replace(new RegExp('[¡¿¬√]','gi'), 'A');
+	text = text.replace(new RegExp('[…» ]','gi'), 'E');
+	text = text.replace(new RegExp('[ÕÃŒ]','gi'), 'I');
+	text = text.replace(new RegExp('[”“‘’]','gi'), 'O');
+	text = text.replace(new RegExp('[⁄Ÿ€]','gi'), 'U');
+	text = text.replace(new RegExp('[«]','gi'), 'C');
+	return text;
+}

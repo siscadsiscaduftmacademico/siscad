@@ -1,0 +1,222 @@
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+jQuery.noConflict();
+jQuery(document).ready(function()
+{
+    messageLoading = '<h2><img src="./image/ajaxLoader.gif" /><span style="color:#2E6E9E">Por favor aguarde.....<br />Sua requisição está sendo processada.</sap></h2>';
+    totalBloqueio = 0;
+
+    jQuery("#alert").dialog({
+        autoOpen: false,
+        bgiframe: true,
+        resizable: false,
+        height: 160,
+        modal: true,
+        overlay: {
+            color:'#9944CC',
+            top:500,
+            backgroundColor: '#000',
+            opacity: 0.5
+        },
+        buttons: {
+            'Ok': function()
+            {
+                jQuery(this).dialog('close');
+            }
+        }
+    });
+
+    jQuery("#confirmCancel").dialog({
+        autoOpen: false,
+        bgiframe: true,
+        resizable: false,
+        height: 220,
+        width:400,
+        modal: true,
+        buttons: {
+            'Não': function()
+            {
+                jQuery(this).dialog('close');
+            },
+            'Sim':function()
+            {
+                jQuery(this).dialog('close');
+
+                // Trava a tela do usuario.
+                jQuery.blockUI({
+                    message: messageLoading ,
+                    baseZ: 10000
+                });
+
+                totalBloqueio = 0;
+                
+                jQuery("input[type='checkbox']:checked",jQuery(".InboxTable")).each(
+                    function(){
+
+                        totalBloqueio++; // controla o bloqueio e desbloqueio da tela.
+                        
+                        emailRecebidoId = jQuery(this).val();                        
+                        siscad_jquery_ajax(excluirEmailRecebido, 'excluirEmailRecebido',
+                            emailRecebidoId );
+
+                    });               
+            }
+        }
+    });
+
+    jQuery("#confirmCancelExclusao").dialog({
+        autoOpen: false,
+        bgiframe: true,
+        resizable: false,
+        height: 220,
+        width:400,
+        modal: true,
+        buttons: {
+            'Não': function()
+            {
+                jQuery(this).dialog('close');
+            },
+            'Sim':function()
+            {
+                jQuery(this).dialog('close');
+
+                var emailRecebidoId = jQuery("#emailRecebidoId").val();
+
+                siscad_jquery_ajax(excluirEmailOneRecebido, "excluirEmailRecebido",  emailRecebidoId );
+            }
+        }
+    });
+
+
+    function excluirEmailOneRecebido(retorno)
+    {
+        var message = retorno.split("#");
+        if( ! validaRetorno(message) ) return;
+
+        var href = jQuery(location).attr('href');
+
+        var end = href.search("toAction=");
+
+        href = href.substr(0,end) + "toAction=listEmailRecebido";
+
+        jQuery(location).attr('href',href);
+
+    }
+
+    function excluirEmailRecebido(retorno)
+    {
+        totalBloqueio--;
+
+        if( totalBloqueio <= 0 )            
+            jQuery.unblockUI();
+        
+
+        message = retorno.split("#");
+
+        if( message.length > 0 && message[0] == 'success')
+        {
+            var emailRecebidoId = trim(message[1]);
+
+            var obj = jQuery("input[type='checkbox'][value='"+emailRecebidoId+"']" ,jQuery(".InboxTable"));
+            
+            jQuery(obj).parent().parent().remove();
+
+            
+            var totalDeEmails = parseInt(jQuery("#totalDeEmails").text(),10);
+
+            if( ! isNaN(totalDeEmails) )
+            {
+                totalDeEmails -= 1;
+                jQuery("#totalDeEmails").text(totalDeEmails)
+            }
+        }
+    }
+    
+    //dialogFix(new Array("#alert","#confirmCancel","#confirmCancelExclusao"));
+    // vetor abaixo contem as classes
+    // de configuração da tabela
+
+    jQuery('#inputAssunto').focus(
+        function(){
+
+            var text = jQuery(this).val();
+            if( trim(text) == 'Assunto...' )
+                jQuery(this).val('');
+        }
+        );
+
+    jQuery('#selectAll').click(
+        function(){
+            if( jQuery(this).is(':checked') )
+                jQuery("input[type='checkbox']" ,jQuery(".InboxTable")).attr('checked','checked');
+            else
+                jQuery("input[type='checkbox']" ,jQuery(".InboxTable")).attr('checked','');
+        }
+        );
+
+    jQuery('#actionExcluirOneEmail').click(
+        function(){                            
+                jQuery("#confirmCancelExclusao").dialog('open');
+        });
+
+    jQuery('#inputAssunto').blur(
+        function(){
+            var text = jQuery(this).val();
+            if( trim(text) == '' )
+                jQuery(this).val('Assunto...');
+        }
+        );
+
+    jQuery("#actionExcluir").click(
+        function(){
+            var vetor = jQuery("input[type='checkbox']:checked", jQuery(".InboxTable"));
+            
+            if( vetor.length <= 0 )
+            {                
+                validaRetorno(new Array('error','Selecione uma mensagem!'));
+                return;
+            }
+            else
+            {
+                jQuery("#confirm").html('<br>Sera(ão) excluído(s) '+ vetor.length+' mensagen(s) !<br>');
+                jQuery("#confirmCancel").dialog('open');
+            }
+
+
+        } );
+
+
+    jQuery(".InboxTable tr").each(
+        function(){
+            var countLinha = 0;
+            jQuery("td", this).each(
+                function ()
+                {
+                    if( countLinha == 2 ) // from
+                    {
+                        var texto = jQuery(this).children().html();
+                        if( texto.length > 45 ){
+                            texto = texto.substring(0,35) + '...';
+                            jQuery(this).children().html(texto);
+                        }
+                    }
+                    else if( countLinha == 4 ) // subject
+                    {
+                        var texto = jQuery(this).children().html();
+                        if( texto.length > 80 ){
+                            texto = texto.substring(0,80) + '...';
+                            jQuery(this).children().html(texto);
+                        }
+                    }
+
+                    countLinha++;
+                }
+                )
+        }
+
+        );
+});

@@ -1,0 +1,342 @@
+/* ThemeOffice2Menu Style Sheet */
+
+.ThemeOffice2Menu,.ThemeOffice2SubMenuTable
+{
+	font-family:	verdana, arial, sans-serif;
+	font-size:	10px;
+	padding:	0;
+	white-space:	normal;
+	cursor:	pointer;
+	height: 25px;
+}
+
+.ThemeOffice2SubMenu
+{
+	position:	absolute;
+	visibility:	hidden;
+	
+	z-index:	100;
+	border:		0;
+	padding:	0;
+
+	overflow:	visible;
+	border:		1px solid #FFFFFF;
+
+	/*filter:progid:DXImageTransform.Microsoft.Shadow(color=#BDC3BD, Direction=135, Strength=4);*/
+}
+
+.ThemeOffice2SubMenuTable
+{
+	overflow:	visible;
+}
+
+.ThemeOffice2MainItem,.ThemeOffice2MainItemHover,.ThemeOffice2MainItemActive,
+.ThemeOffice2MenuItem,.ThemeOffice2MenuItemHover,.ThemeOffice2MenuItemActive
+{
+	border:		0;
+	cursor:		default;
+	white-space:	nowrap;
+}
+
+.ThemeOffice2MainItem
+{
+	/*background-color:	#EFEBDE;*/
+}
+
+.ThemeOffice2MainItemHover,.ThemeOffice2MainItemActive
+{
+	background-color:	#B5CDE8;
+}
+
+.ThemeOffice2MenuItem
+{
+	background-color:	#F1F3F5;
+}
+
+.ThemeOffice2MenuItemHover,.ThemeOffice2MenuItemActive
+{
+	background-color:	#B5CDE8;
+}
+
+
+/* horizontal main menu */
+
+.ThemeOffice2MainItem
+{
+	padding: 1px 1px 1px 1px;
+	border: 0;
+}
+
+td.ThemeOffice2MainItemHover,td.ThemeOffice2MainItemActive
+{
+	padding:	0px;
+	border-top:	1px solid #30559C;
+	border-right:	1px solid #30559C;
+	border-left:	1px solid #30559C;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+.ThemeOffice2MainFolderLeft,.ThemeOffice2MainItemLeft,
+.ThemeOffice2MainFolderText,.ThemeOffice2MainItemText,
+.ThemeOffice2MainFolderRight,.ThemeOffice2MainItemRight
+{
+	background-color:	inherit;
+}
+
+/* vertical main menu sub components */
+
+td.ThemeOffice2MainFolderLeft,td.ThemeOffice2MainItemLeft
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border-top:	1px solid #30559C;
+	border-bottom:	1px solid #30559C;
+	border-left:	1px solid #30559C;
+
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+td.ThemeOffice2MainFolderText,td.ThemeOffice2MainItemText
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border-top:	1px solid #30559C;
+	border-bottom:	1px solid #30559C;
+
+	background-color:	inherit;
+	white-space:	nowrap;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+td.ThemeOffice2MainFolderRight,td.ThemeOffice2MainItemRight
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border-top:	1px solid #30559C;
+	border-bottom:	1px solid #30559C;
+	border-right:	1px solid #30559C;
+
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+tr.ThemeOffice2MainItem td.ThemeOffice2MainFolderLeft,
+tr.ThemeOffice2MainItem td.ThemeOffice2MainItemLeft
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	white-space:	nowrap;
+
+	border:		0;
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+tr.ThemeOffice2MainItem td.ThemeOffice2MainFolderText,
+tr.ThemeOffice2MainItem td.ThemeOffice2MainItemText
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border:		0;
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+tr.ThemeOffice2MainItem td.ThemeOffice2MainItemRight,
+tr.ThemeOffice2MainItem td.ThemeOffice2MainFolderRight
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border:		0;
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+/* sub menu sub components */
+
+.ThemeOffice2MenuFolderLeft,.ThemeOffice2MenuItemLeft
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border-top:	1px solid #30559C;
+	border-bottom:	1px solid #30559C;
+	border-left:	1px solid #30559C;
+
+	background-color:	inherit;
+	white-space:	nowrap;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+.ThemeOffice2MenuFolderText,.ThemeOffice2MenuItemText
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border-top:	1px solid #30559C;
+	border-bottom:	1px solid #30559C;
+
+	background-color:	inherit;
+	white-space:	nowrap;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+.ThemeOffice2MenuFolderRight,.ThemeOffice2MenuItemRight
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border-top:	1px solid #30559C;
+	border-bottom:	1px solid #30559C;
+	border-right:	1px solid #30559C;
+
+	background-color:	inherit;
+	white-space:	nowrap;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+.ThemeOffice2MenuItem .ThemeOffice2MenuFolderLeft,
+.ThemeOffice2MenuItem .ThemeOffice2MenuItemLeft
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	white-space:	nowrap;
+
+	border: 	0px;
+	background-color:	#87A019;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+
+}
+
+.ThemeOffice2MenuItem .ThemeOffice2MenuFolderText,
+.ThemeOffice2MenuItem .ThemeOffice2MenuItemText
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border:		0px;
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+	
+}
+
+.ThemeOffice2MenuItem .ThemeOffice2MenuFolderRight,
+.ThemeOffice2MenuItem .ThemeOffice2MenuItemRight
+{
+	padding-top:	0px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	0px;
+
+	border:		0;
+	background-color:	inherit;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+
+/* menu splits */
+
+.ThemeOffice2MenuSplit
+{
+	margin:		2px;
+	height:		1px;
+	overflow:	hidden;
+	background-color:	inherit;
+	border-top:	1px solid #C6C3BD;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+
+/* image shadow animation */
+
+/*
+	seq1:	image for normal
+	seq2:	image for hover and active
+
+	To use, in the icon field, input the following:
+	<img class="seq1" src="normal.gif" /><img class="seq2" src="hover.gif" />
+*/
+
+.ThemeOffice2MenuItem img.seq1
+{
+	display:	inline;
+}
+
+.ThemeOffice2MenuItemHover seq2,
+.ThemeOffice2MenuItemActive seq2
+{
+	display:	inline;
+}
+
+.ThemeOffice2MenuItem .seq2,
+.ThemeOffice2MenuItemHover .seq1,
+.ThemeOffice2MenuItemActive .seq1
+{
+	display:	none;
+}

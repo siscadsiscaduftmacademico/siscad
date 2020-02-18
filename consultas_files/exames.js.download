@@ -1,0 +1,68 @@
+$(document).ready(function()
+{
+	
+	var gridExames = $("#gridExames").uftmGrid
+	({
+		ufKey: "id",
+		ufOrderField: "data_exame",
+		ufOrder: "desc",
+		ufUrl: "sistemas/acad/ajax.php",
+		ufTotalRows: 20,
+		functionName: "trabalhosConclusao.ExamesBLL::getGridExames",
+		ignorarAcentos: true
+	});
+
+	
+	$(gridExames).on("click", ".refresh", function()
+	{
+		gridExames.refresh();
+	});	
+	
+	$(gridExames).on("click", ".excel", function()
+	{
+		$("#gerarExcel").val("1");
+		gridExames.refresh();
+	});		
+				
+			
+	$(gridExames).bind("uftmGridRefreshSuccess",function()
+	{
+		if($("#gerarExcel").val() == "1")
+		{
+			exportarExames();
+			$("#gerarExcel").val("0");
+		}
+	});		
+	
+	vApplyValidations(true, null);
+	
+	
+	
+	
+	$("#data_inicio, #data_termino").bind("change", atualizarGrid);
+	
+});
+
+
+function exportarExames()
+{
+	var filtros = $("#gridExames").data("uftmGrid").config.filtros;
+	
+	openReport
+	(
+		{
+			reportId: 66,
+			filtros: filtros,
+			excel: true,
+			ufOrderField:"data_exame",
+			ufOrder:"desc",
+			ufPage:1			
+			
+		}
+	);
+}
+
+function atualizarGrid()
+{
+	$("#gridExames").data("uftmGrid").refresh();
+}

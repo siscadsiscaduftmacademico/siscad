@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)https://sistemas.uftm.edu.br/integrado/?id=410&somenteMiolo=1 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>UFTMNet</title>
+		<!-- <script src="js/jquery/jquery-1.11.1.min.js"></script> -->
+		<link rel="icon" type="image/png" href="https://sistemas.uftm.edu.br/integrado/img/android-chrome-512x512.png">
+		<script src="./jquery-2.2.4.min.js.download"></script>
+		<script src="./jquery-ui.min.js.download"></script>
+		<script src="./jquery.maskedinput.min.js.download"></script>
+		<script src="./jquery.maskMoney.js.download"></script>
+		<script src="./jquery.inputmask.bundle.js.download"></script>
+		<script src="./jquery.validate.js.download"></script>
+		<script src="./util.js.download"></script>
+		<script src="./index.js.download"></script>
+		<script src="./input.js.download"></script>
+		<script src="./uftmGrid.js.download"></script>
+		<script src="./uftmForm.js.download"></script>
+		<script src="./validations.js.download"></script>
+		<script src="./tether.min.js.download"></script>
+        		
+	<link rel="stylesheet" type="text/css" href="./index.css">
+	  <link rel="stylesheet" type="text/css" href="./input.css">
+		<link rel="stylesheet" type="text/css" href="./uftmGrid.css">
+		<link rel="stylesheet" type="text/css" href="./uftmGridForm.css">
+		<link rel="stylesheet" type="text/css" href="./jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="./util.css">
+		<link rel="stylesheet" type="text/css" href="./validations.css">
+		<link rel="stylesheet" type="text/css" href="./validationOutput.css">
+		<link href="./metro-icons.css" rel="stylesheet">
+		<link href="./iconFont.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="./tether.min.css">
+        <link rel="stylesheet" href="./font-awesome.min.css">
+		<meta name="google" content="notranslate">
+		<meta http-equiv="Content-Language" content="pt_BR">
+	</head>
+	<body>
+		<input type="hidden" id="idxHdnAlertTimeout" value="0">
+		<input type="hidden" id="idxHdnReturnTo" value="">
+		<div id="idxDivLoading" style="display: none; opacity: 1;"> </div>
+		<div id="idxDivMenu" style="height: 293px; display: none;">
+			<span id="idxSpanPin" class="mif-pin mif-2x idxSpanPinPinned"></span>
+			<div id="idxDivMenuTitle">UFTMNet</div>
+			<div id="idxDivUser">
+				<div id="idxDivLoggedOut" style="display: none">
+					<div id="idxDivLoggedOutHeader">Entrar no Sistema</div>
+					<form id="idxFrmLogin" action="https://sistemas.uftm.edu.br/integrado/?id=410&amp;somenteMiolo=1">
+						<table id="idxTblLogin" class="formTable" style="border-spacing: 0.2em; border-collapse: separate;">
+							<tbody><tr><th>Usuário:</th><td><input id="idxTxtUsuario" type="text"></td></tr>
+							<tr><th>Senha:</th><td><input id="idxTxtSenha" type="password" autocomplete="off"></td></tr>
+							<tr><th>&nbsp;</th><td><input id="idxBtnLogin" type="button" value="Entrar" class="submit"></td></tr>
+						</tbody></table>
+					</form>
+					<div id="idxDivLoginError" class="errorMessage"></div>
+					<div id="idxDivLinks">
+						<a id="idxLnkNewUser">Novo Usuário</a><br>
+						<a id="idxLnkResetPassword">Recuperar a senha</a>
+					</div>			
+				</div>
+				<div id="idxDivLoggedIn">
+					Olá, <a id="idxLnkUserName" style="display: inline">12262995630</a>
+					<br style="margin-bottom: .5em;">
+					<div id="idxDivOpcoesMenuLoggedIn" style="position: relative; line-height: 1.7">
+
+						<a id="idxLnkMensagens" style="padding-left: 10px;   margin: 0; display: block; " class="fa-ul" title="Total de mensagens não lidas ainda não expiradas">
+							<span style="font-size: 0.9em;"><i class="fa fa-commenting-o fa-flip-horizontal  "></i></span>							
+							Mensagens e Notificações
+							<i class="fa"> 
+								<strong id="idxStrContarMensagensNaoLidas">(0)</strong>
+							</i>
+						</a>
+
+						<div style="position: relative; top: -3px;">
+							<a id="idxLnkAssinarRelatorios" class="fa-ul" title="Total de relatórios ativos não assinados" style="padding-left: 10px !important; margin: 0; width: 100%; display: block;">
+								<span style="font-size: 0.9em;"><i class="fa fa-pencil-square-o"></i></span>
+								Assinatura de Relatórios
+								<i class="fa">  
+									<strong id="idxStrContarRelatoriosNaoAssinados">(0)</strong>
+								</i>
+							</a>
+						</div>
+						
+						<div style="position: relative; top: -6px;">
+							<a id="idxLnkModificarConta" style="padding-left: 10px;   margin: 0; display: block; " class="fa-ul">
+								<span style="font-size: 0.9em;"><i class="fa fa-user"></i></span>							
+								Modificar dados da Conta
+							</a>
+						</div>
+
+						<div id="divIdxLnkMeusEmails" style="position: relative; top: -9px;" hidden="">
+							<a id="idxLnkMeusEmails" style="padding-left: 10px;   margin: 0; display: block;" class="fa-ul">
+								<span style="font-size: 0.9em;"><i class="fa fa-envelope-o"></i></span>
+								Meus E-mails Setoriais
+							</a>
+						</div>						
+				
+					</div>	
+					
+					<a id="idxLnkLogout" style="padding-left: 10px;   margin: 0; margin-top: 2em;" class="fa-ul">
+						<span style="font-size: 0.9em;">
+							<i class="fa fa-times"></i>
+						</span>  
+						Sair do Sistema
+					</a>
+				</div>
+			</div>
+			<div id="idxDivPesquisaMenuContainer" style=""><span class="mif-search idxPesquisaMenuIcon"></span><input id="txtPesquisaMenu" type="text" accesskey="3" placeholder="Pesquisar Menu..."></div>
+			<div id="idxDivInnerMenu"><ul id="idxUlMenu"><li><a style="padding-left: 1em;">Acadêmico</a></li><ul style=""><li><a style="padding-left: 2em;">Cadastros</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="427" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem427" href="https://sistemas.uftm.edu.br/integrado/?id=427" style="padding-left: 3em;">Consultar Horários de Atendimento</a></li><li class="liLnkMenuItem" data-menu="448" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem448" href="https://sistemas.uftm.edu.br/integrado/?id=448" style="padding-left: 3em;">Datas dos Trabalhos de Conclusão</a></li></ul><li><a style="padding-left: 2em;">Certificados</a></li><ul style=""><li class="liLnkMenuItem" data-menu="436" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem436" href="https://sistemas.uftm.edu.br/integrado/?id=436" style="padding-left: 3em;">Certificados de Extensão</a></li><li class="liLnkMenuItem" data-menu="410" data-params="null">
+											<a class="aLinkMenuItem idxDivMenuSelected" id="idxLnkMenuItem410" href="https://sistemas.uftm.edu.br/integrado/?id=410" style="padding-left: 3em;">Certificados em Eventos</a></li></ul><li><a style="padding-left: 2em;">Diplomas</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="459" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem459" href="https://sistemas.uftm.edu.br/integrado/?id=459" style="padding-left: 3em;">Publicização</a></li></ul><li><a style="padding-left: 2em;">Eventos</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="382" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem382" href="https://sistemas.uftm.edu.br/integrado/?id=382" style="padding-left: 3em;">Inscrições em Eventos</a></li><li class="liLnkMenuItem" data-menu="361" data-params="{tela: &#39;participante&#39;}">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem361" href="https://sistemas.uftm.edu.br/integrado/?id=361&amp;data-params=e3RlbGE6ICdwYXJ0aWNpcGFudGUnfQ==" style="padding-left: 3em;">Eventos</a></li></ul><li><a style="padding-left: 2em;">Iniciação Científica</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="535" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem535" href="https://sistemas.uftm.edu.br/integrado/?id=535" style="padding-left: 3em;">Acessar Menu de Projetos</a></li></ul><li><a style="padding-left: 2em;">Projetos</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="484" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem484" href="https://sistemas.uftm.edu.br/integrado/?id=484" style="padding-left: 3em;">Propostas</a></li><li class="liLnkMenuItem" data-menu="487" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem487" href="https://sistemas.uftm.edu.br/integrado/?id=487" style="padding-left: 3em;">Produções Científicas</a></li><li class="liLnkMenuItem" data-menu="519" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem519" href="https://sistemas.uftm.edu.br/integrado/?id=519" style="padding-left: 3em;">Dados Pessoais</a></li></ul></ul><li><a style="padding-left: 1em;">Administração</a></li><ul style="display: none;"><li><a style="padding-left: 2em;">Almoxarifado</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="320" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem320" href="https://sistemas.uftm.edu.br/integrado/?id=320" style="padding-left: 3em;">Requisição eletrônica de materiais</a></li></ul><li><a style="padding-left: 2em;">Segurança</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="315" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem315" href="https://sistemas.uftm.edu.br/integrado/?id=315" style="padding-left: 3em;">Assinar Relatórios</a></li><li><a style="padding-left: 3em;">Cadastros</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="6" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem6" href="https://sistemas.uftm.edu.br/integrado/?id=6" style="padding-left: 4em;">Modificar Conta de Usuário</a></li></ul><li class="liLnkMenuItem" data-menu="512" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem512" href="https://sistemas.uftm.edu.br/integrado/?id=512" style="padding-left: 3em;">Meus E-mails Setoriais</a></li><li class="liLnkMenuItem" data-menu="526" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem526" href="https://sistemas.uftm.edu.br/integrado/?id=526" style="padding-left: 3em;">Mensagens e Notificações</a></li></ul><li><a style="padding-left: 2em;">Processos Seletivos</a></li><ul style="display: none;"><li><a style="padding-left: 3em;">Inscrições</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="405" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem405" href="https://sistemas.uftm.edu.br/integrado/?id=405" style="padding-left: 4em;">Eventos</a></li><li class="liLnkMenuItem" data-menu="406" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem406" href="https://sistemas.uftm.edu.br/integrado/?id=406" style="padding-left: 4em;">Processos</a></li></ul></ul></ul><li><a style="padding-left: 1em;">Processos Seletivos</a></li><ul style="display: none;"><li class="liLnkMenuItem" data-menu="396" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem396" href="https://sistemas.uftm.edu.br/integrado/?id=396" style="padding-left: 2em;">Inscrições em Processos Seletivos</a></li><li class="liLnkMenuItem" data-menu="441" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem441" href="https://sistemas.uftm.edu.br/integrado/?id=441" style="padding-left: 2em;">Inscrições em Outros Processos Seletivos</a></li><li class="liLnkMenuItem" data-menu="445" data-params="null">
+											<a class="aLinkMenuItem" id="idxLnkMenuItem445" href="https://sistemas.uftm.edu.br/integrado/?id=445" style="padding-left: 2em;">Educação à distância</a></li></ul></ul></div>
+		</div>
+		
+		<table id="idxTableContent">
+			<tbody><tr style="display: none;">
+				<td id="idxTdContentTopLeft"></td>
+				<td id="idxTdContentTopRight">
+					<div id="divHeader">
+						<span style="top: 12px; position:relative">Sistema Integrado - UFTMNet</span>
+<!--                        <img src="img/hat.svg" alt="hhhhh" style="position: relative;bottom: -22px;left: -16px;">-->
+						<br><span style="font-size: 60%;">Universidade Federal do Triângulo Mineiro - UFTM</span>
+					</div>
+				</td>
+			</tr>
+			<tr style="display: none;">
+				<td id="idxTdContentPathLeft"></td>
+				<td id="idxTdContentPathRight" style="display: table-cell;"><ul class="breadcrumb"><li><a onclick="javascript:openPageById(&#39;1&#39;, null)">Início</a></li><li><a onclick="javascript:openPageById(&#39;5&#39;, {__menuId: 205})">Acadêmico</a></li><li><a onclick="javascript:openPageById(&#39;5&#39;, {__menuId: 435})">Certificados</a></li><li><a onclick="javascript:openPageById(&#39;410&#39;, null)">Certificados em Eventos</a></li></ul></td>
+			</tr>
+			<tr>
+				<td id="idxTdContentLeft" style="display: none;"></td>
+				<td id="idxTdContentRight">
+					<div id="idxDivContent" style="display: block;">
+                        <form id="post"></form>
+						<h3 id="idxH3ContentTitle">Certificados em Eventos</h3>
+						<div id="idxDivInnerContent">
+
+
+	
+		<title>Resumos</title>
+
+		<meta name="google" content="notranslate">
+		<meta http-equiv="Content-Language" content="pt_BR">
+		
+		<link rel="stylesheet" href="./certificados.css">   
+		
+		<script src="./certificados.js.download"></script>
+	
+	
+		<div id="gridCertificados" class="uftmGrid" style="padding-bottom: 36px;">
+			<table>
+				<thead>
+					<tr>
+						<td colspan="16">
+							<div class="manutencao">
+								<span class="button">
+									<span class="refresh" title="Recarregar"></span>
+								</span>
+								<span class="separador"></span>
+							</div>
+							<div class="paginacao"><span class="button"><span class="primeiro" title="Primeira página"></span></span><span class="button"><span class="anterior" title="Página anterior"></span></span><span class="separador"></span><span class="text">Página <input type="text" name="ufPage" value="1"> de <span class="ufTotalPages">1</span></span><span class="separador"></span><span class="button"><span class="proximo" title="Próxima página"></span></span><span class="button"><span class="ultimo" title="Última página"></span></span></div>
+							<div class="info">Registros 0 - 0 de 0</div>
+						</td>
+					</tr>
+					<tr class="campos">
+						<th hidden="" abbr="signed_report" class="ordena" width="80px">Signed Report<span class="ico"></span></th>
+						<th hidden="" abbr="crc" class="ordena" width="80px">CRC<span class="ico"></span></th>
+						<th hidden="" abbr="tipo_codigo" class="ordena" width="80px">Tipo Código<span class="ico"></span></th>
+						<th hidden="" abbr="id" class="ordena" width="80px">ID<span class="ico"></span></th>
+
+						<th abbr="pessoa_nome" class="ordena" width="180px">Pessoa<span class="ico"><span class="ufOrder_asc"></span></span></th>
+						
+						<th abbr="usuario_gestor" class="" width="180px">Categoria</th>
+						
+						<th abbr="processo_nome" class="ordena" width="180px"> Processo<span class="ico"></span></th>
+						<th abbr="vaga_nome" class="ordena" width="180px">Vaga<span class="ico"></span></th>
+						
+						<th abbr="modalidade_nome" class="" width="180px">Modalidade</th>
+						<th abbr="papel_nome" class="" width="180px">Papel</th>
+						<th abbr="titulo" class="" width="180px">Título</th>
+						<th abbr="autor_nome" class="" width="180px">Autor</th>
+						<th abbr="orientador_nome" class="" width="180px">Orientador</th>
+						
+						<th abbr="tipo_certificado" class="ordena" width="180px">Tipo do Certificado<span class="ico"><span class="ufOrder_asc"></span></span></th>
+						<th abbr="ja_gerado" class="ordena" width="180px">Já Gerado<span class="ico"><span class="ufOrder_asc"></span></span></th>
+						<th abbr="certificado" class="" width="180px">Certificado</th>
+					</tr>
+					<tr class="filtros">
+						<th hidden=""><input type="text" name="signed_report" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th hidden=""><input type="text" name="crc" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th hidden=""><input type="text" name="tipo_codigo" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th hidden=""><input type="text" name="id" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						
+						<th><input type="text" name="pessoa_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						
+						<th>
+							<select name="usuario_gestor" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="1">Meus Certificados</option>
+								<option value="2">Todos que sou Gestor</option>
+								<option value="3">Ambos</option>
+							</select>						
+						
+						</th>
+						
+						<th><input type="text" name="processo_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th><input type="text" name="vaga_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						
+						<th>
+							<input type="text" name="modalidade_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados">
+						</th>
+						<th><input type="text" name="papel_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th><input type="text" name="titulo" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th><input type="text" name="autor_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						<th><input type="text" name="orientador_nome" class="filtro" value="" placeholder="Filtrar" title="Preencha para filtrar os resultados"></th>
+						
+						<th>
+							<!--  <input type="text" name="tipo_certificado" class="filtro" />  -->
+							<select name="tipo_certificado" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="Membro de Projeto">Membro de Projeto</option>
+								<option value="Organizador">Organizador</option>
+								<option value="Ouvinte">Ouvinte</option>
+							</select>							
+						</th>
+						<th>
+							<select name="ja_gerado" class="filtro">
+								<option value="" selected="selected">...</option>
+								<option value="1">Sim</option>
+								<option value="0">Não</option>
+							</select>
+						</th>	
+						<th></th>					
+						
+						
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="16">Não existe registros!</td>
+					</tr>
+				
+		
+		
+		
+		
+				<script>
+					$(document).ready(function()
+					{
+						$('certificado').unbind('click');
+						$('.certificado').bind('click',gerarCertificado);
+						$('.cogs').bind('click', abrirMenuGestor);
+					});
+				</script>
+         </tbody>
+				<tfoot></tfoot>
+			</table>
+		</div>
+	
+		<div id="divMenuGestor" style="margin: 0; padding: 0; padding-bottom: .5em;" hidden="">
+			
+			<input type="hidden" id="certificadoCorrente" value="">
+			<input type="hidden" id="pessoaCorrente" value="">
+			
+			<div style="display: inline-flex;">
+				<input class="novoCertificado" type="button" value="Gerar Nova Versão do Certificado" style="margin: 1em 0.5em ;">
+			
+				<input class="cancelarCertificado" type="button" value="Cancelar Certificado" style="margin: 1em 0.5em ;" disabled="disabled">
+			</div>
+		</div>
+	
+
+</div>
+						
+						<h4 id="idxH4HelpLinkContent" hidden="true" style="display: block;"><a href="https://www.youtube.com/embed/fvEND6NKPXc" target="_blank">Dúvidas sobre como visualizar o certificado? Assista ao vídeo Criação de Eventos no Sistema UFTMNet - ETAPA 8 - Emissão do Certificado.<br></a></h4>
+					</div>
+				</td>
+			</tr>
+		</tbody></table>
+		<div id="modalAlteracaoLogin" class="modalAlteracaoLogin" hidden="" style="font-size: 0.9em;">
+		
+			<div style="text-align: center; margin: 1em; ">
+				<a href="http://www.uftm.edu.br/component/content/article?id=1933" target="_blank">
+					
+				<figure>
+				<img src="./gsuite.png" style="max-width: 700px; max-height: 240px; ">
+				 <figcaption style="font-size: 0.8em">Fig.1 -
+				  UFTM utilizará o G Suite e contará com novo serviço de e-mail.</figcaption>
+				</figure>					
+				</a>
+			</div>
+		
+			<div style="text-align: justify; padding: 1.5em 1em;">
+			A partir do dia 8 de setembro a UFTM passará a utilizar o G Suite for Education, da Google em seu serviço de e-mail.
+			As <b>contas de usuário</b> e <b>senhas</b> de todos os <b>Sistemas UFTM</b> (UFTMNet, SEI, SISCAD, eduroam e Moodle) 
+			serão as <b>mesmas do e-mail institucional</b>. 
+			<br>
+			
+			<div style="display: flex;">
+			<div style="text-align: center; margin: 1em; float:right; position: relative;">
+				<figure>
+				<img src="./nome-sobrenome-gmail.png" style="max-width: 700px; max-height: 300px; ">
+				 <figcaption style="font-size: 0.8em">Fig.2 - Autenticação no Gmail.</figcaption>
+				</figure>	
+			</div>	
+			<div style="text-align: center; margin: 1em;  float:left; position: relative;">
+				<br>
+				<br>
+				<figure>
+				<img src="./nome-sobrenome-integrado.png" style="max-width: 700px; max-height: 350px; ">
+				 <figcaption style="font-size: 0.8em">Fig.3 - Autenticação no UFTMNet.</figcaption>
+				</figure>
+
+			</div>			
+			
+				
+			</div>
+			
+			Por exemplo, um usuário cujo email institucional seja <b>nome.sobrenome@uftm.edu.br</b> 
+			realizará a autenticação no Sistema Integrado através do usuário <b>nome.sobrenome</b>.
+			<br><br>
+ 			Em caso de dúvidas utilize a opção de <a href="https://sistemas.uftm.edu.br/integrado/?id=3" target="_blank">
+ 			Recuperar a senha</a> para obter novamente o nome de usuário e poder criar uma nova senha.
+			</div>
+
+		</div>
+		<div id="modalScreenSizeError" hidden="" style="font-size: 0.9em;">
+		
+			O sistema UFTMNet foi desenvolvido para a resolução <b>1366 x 768 ou superior</b>.<br>
+			<br>
+			Ao acessar o sistema através de dispositivos móveis, tais como, smartphones ou tablets, podem ocorrer problemas inesperados durante a sua utilização.<br>
+			É aconselhável acessar o sistema através de computadores de mesa ou notebooks.
+		</div>
+		<div id="modalMensagem" hidden="">
+		
+			<input type="hidden" id="idxHdnMensagem">
+			<h5 id="idxH5DataExpiracao">
+				Data de Expiração: 
+				<span id="idxSpanDataExpiracao"></span> 
+			</h5>	
+
+			<fieldset style="margin-bottom: 1em; padding: 1em;">
+				<legend style="">Informações</legend>
+				
+				<div style="display: flex; padding: .2em;">
+					<div style="flex: 1 1 48%; margin-right: .25em;">
+						<span>
+							Tipo
+						</span>
+						<input type="text" disabled="" id="idxMsgMensagemTipo">
+						
+					</div>
+					
+					<div style="flex: 1 1 48%; margin-left: .25em;">
+						<span>
+							Módulo
+						</span>	
+						<input type="text" disabled="" id="idxMsgMensagemModulo">
+						
+					</div>
+				</div>	
+			</fieldset>
+			
+			<fieldset style="padding: 1em;">
+				<legend style="">Mensagem</legend>
+				<div>
+					<span>
+						Remetente
+					</span>
+					<input type="text" disabled="" id="idxMsgRemetente">
+				</div>
+					
+					
+				<div>
+					<span>
+						Assunto
+					</span>
+					<input type="text" disabled="" id="idxMsgAssunto">
+				</div>					
+	
+				<div style="margin-bottom: 1em;">
+					<span>
+						Mensagem
+					</span>
+					<textarea disabled="" id="idxMsgTexto" style="height: 10em; ">					
+					</textarea>
+				</div>	
+		
+				<div id="idxDivAcessarPaginaMensagem">
+					<h4 style="text-align: right;padding: 0; flex: 1 0 49%;">
+						<a id="idxAAcessarPaginaMensagem">
+							<i class="fa fa-external-link" aria-hidden="true" style="position: relative; top: 1px;"></i>
+	  						Clique aqui para acessar a página
+	  					</a>
+					</h4>
+				</div>		
+		
+				<div>
+					<div>	
+					
+						<label>
+							<input type="checkbox" style="position: relative; top: 1px;" id="idxMsgLido">
+							Marcar como lida
+						</label>	
+							
+					</div>				
+					
+					<div>
+						<label style="">
+							<input type="checkbox" style="position: relative; top: 1px;" id="idxMsgResolvido">			
+							Marcar como resolvida
+						</label>
+					</div>
+				</div>		
+			</fieldset>		
+			
+		</div>		
+		
+	
+</body></html>

@@ -1,0 +1,771 @@
+(function($){
+	$.fn.uftmGrid = function(settings){
+		// settings
+		var config = {
+			ufKey: 'id', /** Chave da tabela **/
+			ufMultiOrder: false, /** Campo que defini multiordenações **/
+			ufOrderField: 'id', /** Campo que será ordenado **/
+			ufOrder: 'asc', /** Tipo de ordenação **/
+			ufUrl: '', /** URL dos dados da página **/
+			ufPage: 1, /** Página atual **/
+			ufTotalPages: 1, /** Total de páginas retornadas pela url**/
+			ufTotalRecords: 0, /** Total de registros retornados pela url **/
+			ufTotalRows: 20,/** Total de linhas por página **/
+			functionName: '', /** Nome da funcão dentro do arquivo php, se ouver**/
+			functionNameExcluir: "", /** Nome da funcão dentro do arquivo php, para excluir os dados selecionado no grid **/
+			uftmForm: null,
+			filtros: null, /** Campo que armazena os filtros enviados anteriormente **/
+			ignorarAcentos: false, /** Campo que quando habilitado irá ignorar os acentos em filtros sem aspas **/
+			configExtra: null, /** Campo que será passado no ajax com configurações customizadas conforme a necessidade **/
+			filtrosAdicionais: null, /** Filtros adicionais que são passados na grid, mas que não ativam o refresh **/
+			refreshAoInstanciar: true, /** Campo para indicar se deve ocorrer um ajax imediatamente ao instanciar o objeto da grid			**/
+			bloquearTelaAoDarRefresh: false, /** Apresenta um dialog que não pode ser fechado qdo ocorrer um refresh até o término da requisição **/
+			refreshRetornaJson: false, /** se true o refresh retornará um JSON para ser aproveitado no uftmGridRefreshSuccess após o refresh da grid **/
+			retornoGrid: null /** armazena um possível retorno da grid **/
+	    };
+	    if (settings){$.extend(config, settings);}
+	    
+	    this.config=config;
+	    //variaveis
+	    var $obj= $(this);
+	    var timeoutRefresh = 0;
+	    var selectedRow = "";
+	    var filtroGlobal = "";
+
+	    this.setUftmForm = setUftmForm;
+	    function setUftmForm(uftmForm){
+	    	config.uftmForm = uftmForm;
+	    }
+	    
+	    this.setUfUrl = setUfUrl;
+	    function setUfUrl(ufUrl){
+	    	config.ufUrl = ufUrl;
+	    }
+	    
+	    $obj.data("uftmGrid", this);
+	    
+	    //Funções
+	    function toggleOrder(ufOrder){
+	    	if(ufOrder=="asc"){
+	    		return "desc";
+	    	}else if(ufOrder=="desc"){
+	    		return "";
+	    	}else{
+				return "asc";
+			}
+	    };
+	    
+	    //retorna a coluna selecionada
+	    this.getSelectedRow = getSelectedRow;
+	    function getSelectedRow(alertErroSelecao=false){
+	    	if(alertErroSelecao){
+	    		if((selectedRow == "") || (selectedRow == null)){
+	    			msgAlert("Atenção", "Selecione um registro!");
+	    			return null;
+	    		}
+	    	}
+	    	return selectedRow;
+	    };
+	    
+		//apaga o valor da variavel "selectedRow"
+	    this.unsetSelectedRow = unsetSelectedRow;
+		function unsetSelectedRow(){
+	    	selectedRow = "";
+	    	$obj.find('tbody tr.down').removeClass("down");
+	    };
+
+        //retorna a coluna selecionada
+        this.getfiltros = getfiltros;
+        function getfiltros(){
+            return filtroGlobal;
+        };
+
+		/** Deve ser executada sempre quando o <tbody> for atualizado**/
+		function funcoesTbody(){
+			/** Função para adicionar estilo .down em <tr> quando a linha estiver com check verdadeiro **/
+			$obj.find('tbody tr input[name="'+config.ufKey+'[]"][type="checkbox"]').click(function(){
+				if(this.checked){
+					$(this).closest("tr").addClass("down");
+				}else{
+					$(this).closest("tr").removeClass("down");
+				}
+			});
+			
+			/** Função para adicionar para cada <td> o evento de click pra o <checkbox> **/
+			$obj.find('tbody tr td').each( function(){
+				$(this).click(function(){
+					if($(this).find('input[type="checkbox"]').attr('name') == undefined){
+						if($(this).closest("tr").find('input[type="checkbox"]').attr('name') != undefined){
+							var checkbox = $(this).closest("tr").find('input[name="'+config.ufKey+'[]"]');
+							$(checkbox).click();
+						}
+					}
+				});
+			});
+			
+			/** Função para adicionar estilo .down em <tr> sem o uso de <checkbox> **/
+			$obj.find('tbody tr').each( function(){
+				$(this).click(function(){
+			        unsetSelectedRow();
+					$(".down").each(function (){
+					    if($(this).find(":checkbox").length == 1)
+					    {
+                            if($(this).find(":checkbox:checked").length == 0)
+                                $(this).removeClass("down");
+                        }
+                        else
+                            $(this).removeClass("down");
+                    })
+                    if($(this).find(":checkbox").length == 0 || $(this).find(":checkbox:checked").length == 1 || $(this).hasClass("addTrDown"))
+					    $(this).addClass("down");
+					
+					if($(this).find('input[type="hidden"]').attr('name') != undefined){
+						var res = config.ufKey.replace(/\s+/g, '');
+						res = res.split(',');
+						
+						if(res.length > 1){
+						    
+							for(var ix = 0; ix < res.length; ix++){
+								if(ix != 0){
+									selectedRow += ",";
+									
+								}
+								
+								selectedRow += $(this).find('input[name="'+res[ix]+'"]').val();
+								
+							}
+						}else{
+							selectedRow = $(this).find('input[name="'+config.ufKey+'"]').val();
+							
+						}
+					}
+					
+			    	if(config.uftmForm!=null){
+			    		if(config.uftmForm.is(':visible')){
+			    			$obj.find(".edit").click();
+			    		}
+			    	}
+				});
+			});
+			
+			/** Função para carregar a variável abaixo "selectFiltro" com os valores referentes do filtro **/
+			var selectFiltro = [];
+			$obj.find('thead tr.filtros').each( function(){
+				
+				$(this).find("input.filtro").each(function(index, elem)
+				{
+					if($(elem).attr("placeholder") == undefined || $(elem).attr("placeholder") == "")
+					{
+						$(elem).attr("placeholder", "Filtrar");
+					}
+					if($(elem).attr("title") == undefined || $(elem).attr("title") == "")
+					{
+						$(elem).attr("title", "Preencha para filtrar os resultados");
+					}					
+					
+				});
+				
+				var coluna = 1;
+				$(this).find('th').each( function(){
+					var optionsSelect = [];
+					$(this).find('select').each( function(){
+						$(this).find('option').each( function(){
+							optionsSelect[$(this).val()] = $(this).html();
+						});
+					});
+					
+					selectFiltro[coluna] = optionsSelect;
+					
+					if($(this).attr("colspan") != undefined){
+						for(var pos=2; pos<=$(this).attr("colspan"); pos++){ /** Se colspan > 1 **/
+							coluna++;
+							selectFiltro[coluna] = optionsSelect;		
+						}
+					}
+					coluna++;
+				});
+			});
+			
+			/** Função para alterar os valores de <td> referente ao valor no filtro em <th> **/
+			$obj.find('tbody tr').each( function(){
+				var coluna = 1;
+				$(this).find('td').each( function(){
+					if(selectFiltro[coluna]!=undefined && selectFiltro[coluna][$(this).html()] != undefined){
+						$(this).html(selectFiltro[coluna][$(this).html()]);
+					}
+					if($(this).attr("colspan") != undefined){
+						coluna = coluna + ($(this).attr("colspan")-1);
+					}					
+					coluna++;
+				});
+			});
+			
+			/** Função para executar a url da tag <a> via ajax, mostrar por alerta o seu retorno e recarregar os dados do Grid **/
+			$obj.find('a.refresh').each(function(){
+				var href= $(this).attr("href");
+				var textConfirm = $(this).attr("title");
+				if(textConfirm==undefined){
+					textConfirm = "Deseja realmente realizar essa ação?";
+				}
+				$(this).click(function(){
+					var confirmar = confirm(textConfirm);
+					if(confirmar){
+						$.ajax({
+							url: href,
+							cache: false,
+							dataType: 'html',
+							type: 'GET',
+							beforeSend: function(){},
+							complete: function(){},
+							success: function(data){
+								refresh();
+								alert(data);							
+							}
+						});
+					}
+				});
+				
+				$(this).attr("href","javascript:void(0);");
+				$(this).removeAttr("title");
+			});
+		};
+		
+		function funcoesPaginacao(){
+			$obj.find('tfoot div.paginacao, thead div.paginacao').each(function(){
+				$(this).html(
+						'<span class="button">'+
+							'<span class="primeiro" title="Primeira página"></span>'+
+						'</span>'+
+						'<span class="button">'+
+							'<span class="anterior" title="Página anterior"></span>'+
+						'</span>'+
+						'<span class="separador"></span>'+
+						'<span class="text">'+
+						    'Página '+
+							'<input type="text" name="ufPage" value="1" />'+
+							' de '+
+							'<span class="ufTotalPages"></span>'+
+						'</span>'+
+						'<span class="separador"></span>'+
+						'<span class="button">'+
+							'<span class="proximo" title="Próxima página"></span>'+
+						'</span>'+
+						'<span class="button">'+
+							'<span class="ultimo" title="Última página"></span>'+
+						'</span>'+
+						'');
+			});
+			
+			
+			$obj.find('tfoot div.paginacao span.primeiro, thead div.paginacao span.primeiro').each(function(){
+				$(this).click(function(){
+					config.ufPage=1;
+					refresh();
+				});
+			});
+			
+			$obj.find('tfoot div.paginacao span.anterior, thead div.paginacao span.anterior').each(function(){
+				$(this).click(function(){
+					config.ufPage--;
+					if(config.ufPage<1){
+						config.ufPage=1;
+					}
+					refresh();
+				});
+			});	
+			
+			$obj.find('tfoot div.paginacao span.proximo, thead div.paginacao span.proximo').each(function(){
+				$(this).click(function(){
+					config.ufPage++;
+					if(config.ufPage>config.ufTotalPages){
+						config.ufPage=config.ufTotalPages;
+					}
+					refresh();
+				});
+			});
+
+			
+			$obj.find('tfoot div.paginacao span.ultimo, thead div.paginacao span.ultimo').each(function(){
+				$(this).click(function(){
+					config.ufPage=config.ufTotalPages;
+					refresh();
+				});
+			});
+			
+			$obj.find('tfoot div.paginacao input[name="ufPage"], thead div.paginacao input[name="ufPage"]').each(function(){
+				$(this).keyup(function(){
+					clearTimeout(timeoutRefresh);
+					config.ufPage=$(this).val();
+					//timeoutRefresh = setTimeout('refresh()', 800);
+					timeoutRefresh = setTimeout(function (){refresh();}, 800);
+				});				
+			});
+		};
+		
+		function atualizaTfoot(){
+			var de = 0;
+			if(config.ufTotalRecords != 0){
+				de = config.ufPage*config.ufTotalRows - config.ufTotalRows + 1;
+			}
+			var ate = config.ufPage*config.ufTotalRows;
+			if(ate>config.ufTotalRecords){
+				ate=config.ufTotalRecords;
+			}
+			$obj.find('tfoot div.info, thead div.info').html("Registros "+de+" - "+ate+" de "+config.ufTotalRecords);			
+			$obj.find('tfoot div.paginacao span.ufTotalPages, thead div.paginacao span.ufTotalPages').html(config.ufTotalPages);		
+			$obj.find('tfoot div.paginacao input[name="ufPage"], thead div.paginacao input[name="ufPage"]').val(config.ufPage);
+		};
+		
+		this.refresh = refresh;
+		/** Função para efetuar o refresh da Grid**/
+		function refresh(params, doAjax = true){
+			unsetSelectedRow();
+	    	if(config.uftmForm!=null){
+	    		config.uftmForm.cancelarForm();
+	    	}
+			
+			var filtros = "";
+
+			if(params != null && (params !== null && typeof params === "string"))
+			{
+				filtros = params; 
+			}
+			else if(params != null && (params !== null && typeof params === "object"))
+			{
+				var filtros = new Array();
+				for(var prop in params)
+				{
+					filtros[filtros.length] = "\"" + prop + "\": \"" + params[prop]+"\"";
+				}
+				filtros=filtros.join(",");
+				filtros='{'+filtros+'}';
+			}
+			else
+			{
+				$("#"+$($obj).attr('id')+" .filtro").each(function(index, elemento){
+					
+					var usarIlike = true;
+					if($(elemento).hasClass("filtroIgual"))
+					{
+						usarIlike = false;
+					}
+					else
+					{
+						usarIlike = true;
+					}
+					
+					var serializado = $(elemento).serializeArray()[0];
+					
+					if( serializado && (serializado["value"] != null) && (serializado["value"] != ""))
+					{
+						if(usarIlike == false)
+						{
+							serializado["value"] = "%22" + serializado["value"] + "%22";
+						}
+						else
+						{
+							serializado["value"] = serializado["value"].replace(/"/g, "%22");
+						}
+						
+						
+						if(filtros == "")
+						{
+							filtros += "\"" + serializado["name"] + "\": \"" + serializado["value"] + "\"";
+							
+						}
+						else
+						{
+							filtros += ", \"" + serializado["name"] + "\": \"" + serializado["value"] + "\"";
+						}
+						
+					}
+				});
+				//validação de caso de filtros personalizados, utilizados externamente à grid
+				
+				$("#"+$($obj).attr('id')+" .filtro_p").serializeArray().forEach(function(elemento){
+					if((elemento["value"] != null) && (elemento["value"] != "") && (elemento["value"] != "0")){
+						elemento["value"] = elemento["value"].replace(/"/g, "%22");
+						
+						if(filtros == ""){
+							filtros += "\"" + elemento["name"] + "\": \"" + elemento["value"] + "\"";
+							
+						}else{
+							filtros += ", \"" + elemento["name"] + "\": \"" + elemento["value"] + "\"";
+						}
+					}
+				});
+				filtros='{'+filtros+'}';
+			}
+			if(params == null && (filtros == "" || filtros=="{}"))
+			{
+				var objRetorno = {};
+				$obj.trigger("executarFiltroCustomizadoGrid", objRetorno);
+				if(objRetorno && objRetorno.valor)
+					filtros=objRetorno.valor;
+					
+			}
+			if(filtros == "")
+			{
+				filtros="{}";
+			}
+			
+			var filtrosAdicionais = {};
+			$("#"+$($obj).attr('id')).find(".filtrosAdicionais").each(function(index, elem)
+			{
+				if(	$(elem).attr("data-gridchave") && $(elem).attr("data-gridvalor") )
+				{
+					filtrosAdicionais[$(elem).attr("data-gridchave")] = filtrosAdicionais[$(elem).attr("data-gridvalor")];
+				}
+			});
+			
+			if(!Object.keys(filtrosAdicionais).length)
+			{
+				filtrosAdicionais = null;
+			}
+			else
+			{
+				filtrosAdicionais = JSON.parse(filtrosAdicionais);
+			}
+
+            filtroGlobal = filtros;
+			atualizaTfoot();
+			
+			var dadosAjax = JSON.parse(
+					'{' + 
+					'"ufMultiOrder": "' + config.ufMultiOrder + '",' + 
+					'"ufOrderField": "' + config.ufOrderField + '",' + 
+					'"ufOrder": "' + config.ufOrder + '",' + 
+					'"ufTotalRows": "' + config.ufTotalRows + '",' + 
+					'"ufPage": "' + config.ufPage + '",' + 
+					'"filtros": ' + filtros + ',' + 
+					'"functionName": "' + config.functionName + '",' + 
+					'"ignorarAcentos": "'+ config.ignorarAcentos + '",' +
+					'"configExtra": "'+ config.configExtra + '",' +
+					'"filtrosAdicionais": "'+ filtrosAdicionais + '"' +
+				'}');
+
+			
+			if(doAjax)
+			{
+				if(config.bloquearTelaAoDarRefresh)
+				{
+					msgAguardeProcessamento();
+				}
+				$.ajax({
+					type: 'post',
+					url: config.ufUrl,
+					dataType: 'html',
+					cache: false,
+					data: dadosAjax,
+					beforeSend: function(){},
+					complete: function(){},
+					success: function(data){
+						
+						if(config.bloquearTelaAoDarRefresh)
+						{
+							$('#dialogMsg').remove();
+						}						
+						
+						preencherGrid(data,filtros, config.refreshRetornaJson);
+					},
+					error: function(){}
+				});
+			}
+			else
+			{
+				return dadosAjax;
+			}
+		};
+		
+		function preencherGrid(data,filtros, dataEJson)
+		{
+			if(dataEJson == false)
+			{
+			
+				$obj.find('tbody').html(data);
+				config.ufPage = $obj.find('tbody input[name="ufPage"]').val();
+				$obj.find('tbody input[name="ufPage"]').remove();
+				
+				config.ufTotalPages = $obj.find('tbody input[name="ufTotalPages"]').val();
+				$obj.find('tbody input[name="ufTotalPages"]').remove();
+				
+				config.ufTotalRecords = $obj.find('tbody input[name="ufTotalRecords"]').val();
+				$obj.find('tbody input[name="ufTotalRecords"]').remove();
+				
+				atualizaTfoot();
+				funcoesTbody();
+	
+				if(parseInt(config.ufPage)>parseInt(config.ufTotalPages)){
+					config.ufPage=config.ufTotalPages;
+					refresh();
+				}
+			}
+			else
+			{
+				var json = JSON.parse(data);
+				config.retornoGrid = JSON.stringify(json);
+			}
+			
+			config.filtros = filtros;
+			$obj.trigger("uftmGridRefreshSuccess");
+				
+			
+		}
+		
+		
+	    /**
+	     * Função utilizada para excluir um registro conforme especificado em ajaxData
+	     * @param array ajaxData: parametros utilizado na variavel "data" da requisicao ajax.
+	     * Aplicado o valor de functionNameExcluir em ajaxData["functionName"]
+	     */
+	    this.excluirRegistro = excluirRegistro;
+	    function excluirRegistro(ajaxData){
+	    	if(config.uftmForm!=null){
+	    		config.uftmForm.cancelarForm();
+	    	}
+	    	
+	    	ajaxData["functionName"] = config.functionNameExcluir;
+	    	
+			ajax({
+				type: "post",
+				url: config.ufUrl,
+				dataType: "html",
+				async: false,
+				cache: false,
+				data: ajaxData,
+				success: function(result) {
+					var result = $.parseJSON(result);
+					if(result.success){
+					     msgSuccess("Operação concluída!", "Registro excluído com sucesso!");
+					     refresh(); 
+					}
+					else{
+						msgError("Falha ao executar a operação", result.msg);
+					}
+				}					
+			});
+	    }		
+
+		this.refreshParam = refreshParam;
+		/** Função para efetuar o refresh da Grid**/
+		function refreshParam(parametrosReferencia, params){
+			unsetSelectedRow();
+			
+			var filtros = "";
+			var parametros = "";
+			
+			if(params != null && (params !== null && typeof params === "object")){
+				for(var prop in params){
+					filtros += "\"" + prop + "\": \"" + params[prop] + "\"";
+					
+				}
+			}
+			
+			if(parametrosReferencia != null && (parametrosReferencia !== null && typeof parametrosReferencia === "object")){
+				for(var prop in parametrosReferencia){
+					if(parametros == ""){
+						parametros += "\"" + prop + "\": \"" + parametrosReferencia[prop] + "\"";
+						
+					}else{
+						parametros += ", \"" + prop + "\": \"" + parametrosReferencia[prop] + "\"";
+						
+					}
+					
+				}
+			}
+			
+			$("#"+$($obj).attr('id')+" .filtro").serializeArray().forEach(function(elemento){
+				if((elemento["value"] != null) && (elemento["value"] != "")){
+					elemento["value"] = elemento["value"].replace(/"/g, "%22");
+					
+					if(filtros == ""){
+						filtros += "\"" + elemento["name"] + "\": \"" + elemento["value"] + "\"";
+						
+					}else{
+						filtros += ", \"" + elemento["name"] + "\": \"" + elemento["value"] + "\"";
+					}
+				}
+			});
+			
+			atualizaTfoot();
+			
+			$.ajax({
+				type: 'post',
+				url: config.ufUrl,
+				dataType: 'html',
+				cache: false,
+				data: JSON.parse(
+					'{' +
+						'"ufMultiOrder": "' + config.ufMultiOrder + '",' + 
+						'"ufOrderField": "' + config.ufOrderField + '",' + 
+						'"ufOrder": "' + config.ufOrder + '",' + 
+						'"ufTotalRows": "' + config.ufTotalRows + '",' + 
+						'"ufPage": "' + config.ufPage + '",' + 
+						'"filtros": {' + filtros + '},' + 
+						'"parametros": {' + parametros + '},' + 
+						'"functionName": "'+ config.functionName + '",' + 
+						'"ignorarAcentos": "'+ config.ignorarAcentos + '"' + 
+					'}'
+				),
+				beforeSend: function(){},
+				complete: function(){},
+				success: function(data){
+					$obj.find('tbody').html(data);
+					config.ufPage = $obj.find('tbody input[name="ufPage"]').val();
+					$obj.find('tbody input[name="ufPage"]').remove();
+					
+					config.ufTotalPages = $obj.find('tbody input[name="ufTotalPages"]').val();
+					$obj.find('tbody input[name="ufTotalPages"]').remove();
+					
+					config.ufTotalRecords = $obj.find('tbody input[name="ufTotalRecords"]').val();
+					$obj.find('tbody input[name="ufTotalRecords"]').remove();
+					
+					atualizaTfoot();
+					funcoesTbody();
+
+					if(parseInt(config.ufPage)>parseInt(config.ufTotalPages)){
+						config.ufPage=config.ufTotalPages;
+						refresh();
+					}
+				},
+				error: function(){}
+			});
+		};
+	
+		return this.each(function(){
+			/** Função para mudar valor de todos checkbox a partir do checkbox em <thead> **/
+			$obj.find('thead th input[type="checkbox"]').each( function(){
+				$(this).val("");
+				$(this).click(function(){
+					var checkAll = this.checked;
+					var nameAll = this.name;
+					var tmp = new Array();
+					//$obj.find('tbody tr input[name="'+nameAll+'"][type="checkbox"]').each( function(){
+                    $obj.find('tbody tr input.seleciona').each( function(){
+						if((checkAll && !this.checked) || this.checked && !checkAll){
+                            tmp[tmp.length] = $(this);
+							//$(this).trigger("click");
+						}
+					});
+                    for(var i= 0; i < tmp.length; i++){
+                    	tmp[i].prop("checked", checkAll);
+					}
+				});
+			});
+			
+			/** Função select onchange atualizar <tbody> **/
+			$obj.find('thead th select.filtro').each( function(){
+				$(this).change(function(){
+					config.ufPage=1;
+					refresh();
+				});
+			});
+			
+			/** Função input onkeyup atualizar <tbody> **/
+			$obj.find('thead th input.filtro').each( function(){
+				$(this).keyup(function(){
+					clearTimeout(timeoutRefresh);
+					config.ufPage=1;
+					timeoutRefresh = setTimeout(function (){refresh();}, 500);
+				});
+			});			
+			
+			/** Função para ordenação dos campos de acordo com o valor em abbr de <th> **/
+			$obj.find('thead th.ordena').each( function(){
+				if(config.ufMultiOrder === true || config.ufMultiOrder === "true"){
+					$(this).html($(this).html()+"<span class='ico'></span>");
+
+					var campo = "";
+					var campo = $(this).closest("th").attr("abbr");
+
+					config.ufOrderField = config.ufOrderField.replace(/\s/g,'');
+					config.ufOrder = config.ufOrder.replace(/\s/g,'');
+
+					var arrayUFOrderField = config.ufOrderField.split(",");
+					var arrayUFOrder = config.ufOrder.split(",");
+
+					if(arrayUFOrderField.includes(campo)){
+						$(this).find("span.ico").html("<span class='ufOrder_" + arrayUFOrder[arrayUFOrderField.indexOf(campo)] + "'></span>");
+
+					}
+
+					$(this).click(function(){
+						arrayUFOrderField = config.ufOrderField.split(",");
+						arrayUFOrder = config.ufOrder.split(",");
+
+						if(arrayUFOrderField.includes(campo)){
+							var order = toggleOrder(arrayUFOrder[arrayUFOrderField.indexOf(campo)]);
+
+							if(order == ""){
+								arrayUFOrderField.splice(arrayUFOrderField.indexOf(campo), 1);
+								arrayUFOrder.splice(arrayUFOrderField.indexOf(campo), 1);
+
+							}else{
+								arrayUFOrder[arrayUFOrderField.indexOf(campo)] = order;
+
+							}
+						}else{
+							arrayUFOrderField[arrayUFOrderField.length] = campo;
+							arrayUFOrder[arrayUFOrder.length] = "asc";
+
+						}
+
+						$(this).find("span.ico").html("<span class='ufOrder_" + arrayUFOrder[arrayUFOrderField.indexOf(campo)] + "'></span>");
+
+						config.ufOrderField = "";
+						config.ufOrder = "";
+
+						for(ix = 0; ix < arrayUFOrderField.length; ix ++){
+							if(config.ufOrderField == ""){
+								config.ufOrderField += arrayUFOrderField[ix];
+
+							}else{
+								config.ufOrderField += "," + arrayUFOrderField[ix];
+
+							}
+
+							if(config.ufOrder == ""){
+								config.ufOrder += arrayUFOrder[ix];
+
+							}else{
+								config.ufOrder += "," + arrayUFOrder[ix];
+
+							}
+						}
+
+						refresh();
+
+					});
+				}else{
+					$(this).html($(this).html()+"<span class='ico'></span>");
+				
+					if($(this).closest("th").attr("abbr")==config.ufOrderField){
+						$(this).find("span.ico").html("<span class='ufOrder_"+config.ufOrder+"'></span>");
+					}
+
+					$(this).click(function(){
+						$obj.find('thead th.ordena').each( function(){
+							$(this).find("span.ico").html("");
+						});
+						if(config.ufOrderField == $(this).closest("th").attr("abbr")){
+							config.ufOrder = toggleOrder(config.ufOrder);
+						}else{
+							config.ufOrder = "asc";
+						}
+						config.ufOrderField = $(this).closest("th").attr("abbr");
+						$(this).find("span.ico").html("<span class='ufOrder_"+config.ufOrder+"'></span>");
+						
+						refresh();
+
+					});
+				}
+			});
+				
+			funcoesPaginacao();
+			if(config.refreshAoInstanciar)
+			{
+				refresh();
+			}
+	    });
+	};
+})(jQuery);

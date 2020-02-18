@@ -1,0 +1,146 @@
+
+function preencheGrid(nomeGrid, matrizDados)
+{
+    // limpa o grid
+    var tbody = jQuery("#jGrid_" + nomeGrid + " tbody[name='body']");
+    var tableHeaderFirstLine = jQuery("#jGrid_" + nomeGrid + " tr[id='jTableHeaderFirstLine']");
+    var arrayWidth = new Array();
+
+    jQuery('th',tableHeaderFirstLine).each(
+        function()
+        {
+            var str = jQuery(this).attr('width');
+            str.substr(0,(str.length-1));
+            var temp  = parseInt(str,10);
+            temp = isNaN(temp)? 0 : temp;
+            arrayWidth.push(temp);
+        }
+        );
+
+    jQuery('tr', tbody).each(
+        function()
+        {
+            jQuery(this).remove();
+        }
+        );
+
+    var html = '';
+    var numberOfRegister = 0;
+    for( var i = 0; i < matrizDados.length; i++ )
+    {
+        html += '<tr>';    // adicionando linha.
+
+        for( var j = 0; j < matrizDados[i].length; j++ ){
+            if( arrayWidth[j] <= 0 )
+                html += '<td width="0%" name="'+ i + "_"+ j + '" style="display:none;">' + matrizDados[i][j] + '</td>'; // primeira coluna e invisivel
+            else
+                html += '<td name="'+ i + "_"+ j + '">' + matrizDados[i][j] + '</td>'; // as demais são visiveis.
+        }
+        html += '</tr>';
+        numberOfRegister++;
+    }
+
+    jQuery(tbody).html(html);
+    jQuery("#jGrid_" + nomeGrid + " [id='numberOfRegister']").text(numberOfRegister);
+
+    if( numberOfRegister == 0 )
+        jQuery(tbody).html('<div style="padding: 100% 100% 0%; height: 100px; width: 250px;font-weight:bold">NENHUM REGISTRO ENCONTRADO...</div>');
+
+}
+
+
+function validaRetorno(message){
+        var image = '<img src="./image/help/alerticon3.gif" />&nbsp;&nbsp;';
+        
+        switch(message[0]){
+            case 'warning':
+                jQuery(".texto_alert").html(image + message[message.length-1]);
+                jQuery("#alert").dialog('open');
+                return false;
+            case 'success':
+                return true;
+            case 'error':
+
+                jQuery(".texto_alert").html(image + message[1]);
+                jQuery("#alert").dialog('open');
+                return false;
+            default:
+                jQuery(".texto_alert").html(image + "Falha desconhecida.");
+                jQuery("#alert").dialog('open');
+                return false;
+        }
+}
+
+// Pega o valor da celula em função do nome do campo, return null, se
+// nao existir o campo e envia um alert.
+function getValorCelula(gridName, line, fieldName )
+{
+    if( line == null ) return null;
+
+    var count = 0;
+    var atributo = '';
+
+    gridName = "#jGrid_"+gridName+ " [id='jTableHeaderFirstLine']";
+
+    colunaId = -1;
+    // buscando a coluna do campo a ser atualizado
+    jQuery('th',gridName).each(
+        function()
+        {
+            atributo = jQuery(this).attr('name');
+
+            if( atributo == fieldName )
+            {
+                if( colunaId == -1)
+                    colunaId = count;
+                else
+                    alert("colunas com identificador duplicado");
+
+            }
+            count++;
+        }
+        );
+    if( colunaId != -1)
+        return jQuery("td:eq("+colunaId+")", line).text();
+    else
+        alert("coluna :"+fieldName+", não encontrada.");
+
+    return null;
+}
+// Pega o valor da celula em função do nome do campo, return null, se
+// nao existir o campo e envia um alert.
+function getValorCelulaHTML(gridName, line, fieldName )
+{
+    if( line == null ) return null;
+
+    var count = 0;
+    var atributo = '';
+
+    gridName = "#jGrid_"+gridName+ " [id='jTableHeaderFirstLine']";
+
+    colunaId = -1;
+    // buscando a coluna do campo a ser atualizado
+    jQuery('th',gridName).each(
+        function()
+        {
+            atributo = jQuery(this).attr('name');
+
+            if( atributo == fieldName )
+            {
+                if( colunaId == -1)
+                    colunaId = count;
+                else
+                    alert("colunas com identificador duplicado");
+
+            }
+            count++;
+        }
+        );
+    if( colunaId != -1)
+        return jQuery("td:eq("+colunaId+")", line).html();
+    else
+        alert("coluna :"+fieldName+", não encontrada.");
+
+    return null;
+}
+

@@ -1,0 +1,36 @@
+jQuery.noConflict();
+jQuery(document).ready(function()
+{
+   jQuery('ul li:first-child').corner("top");
+
+   jQuery('ul li:last-child').corner("bottom");
+
+   jQuery("span[class='course_link']").corner();
+   
+   jQuery('.img').click(
+        function(){
+
+
+            var name = jQuery(this).attr("name");
+
+            var pai = jQuery(this).parent().parent().parent();
+
+            var divId = jQuery('.divimg', pai);
+
+            if(jQuery(this).attr("src") == "image/arrow-down.png")
+            {
+                jQuery(divId).hide();
+		jQuery(this).attr('src', "image/arrow-right.png");
+                jQuery(this).attr('title', 'expandir');
+            }
+            else if(jQuery(this).attr("src") == "image/arrow-right.png")
+            {
+                jQuery(divId).show();
+		jQuery(this).attr('src', "image/arrow-down.png");
+                jQuery(this).attr('title', 'contrair');
+            }
+
+        }
+   );
+
+});

@@ -1,0 +1,693 @@
+.uftmGrid table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	border: 1px solid #d3d3d3;
+	width: 100%;
+}
+
+.uftmGrid table tfoot tr.borda th{
+	border: 1px solid #d3d3d3;
+	padding: 5px 5px;
+	text-align: left;
+}
+
+.uftmGrid table thead th {
+	border: 1px solid #d3d3d3;
+	padding: 5px 5px;
+	text-align: left;
+}
+
+.uftmGrid table thead tr.campos th{
+	font-weight: bold;	
+}
+
+.uftmGrid table thead tr.campos th, .uftmGrid table tfoot td{
+	background: #e6e6e6 url("../img/uftmGrid/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+}
+
+.uftmGrid table thead th.ordena {
+	cursor: pointer;
+}
+
+.uftmGrid table thead span.ico {
+	position: relative;
+}
+
+.uftmGrid table thead th span.ufOrder_asc, 
+.uftmGrid table thead th span.ufOrder_desc
+{
+	background-image: url("../img/uftmGrid/sort_asc.png");
+	background-position: right center;
+	background-repeat: no-repeat;
+	height: 15px;
+	margin-left: 2px;
+	width: 15px;
+	overflow: hidden;
+	position: absolute;
+	/*top: -12px;*/
+}
+
+.uftmGrid table thead th span.ufOrder_desc {
+	background-image: url("../img/uftmGrid/sort_desc.png");
+}
+
+.uftmGrid table thead th input.filtro, 
+.uftmGrid table thead th select.filtro
+{
+	width: 98%;
+}
+
+.uftmGrid table tbody td {
+	border: 1px solid #d3d3d3;
+	padding: 5px 5px;
+}
+
+.uftmGrid table tbody tr:HOVER {
+	background-color: #efefef !important;
+}
+
+.uftmGrid table tbody tr {
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.uftmGrid table tbody tr.down {
+	background-color: #DFE8F6;
+	cursor: pointer;
+}
+
+.uftmGrid table tfoot td, 
+.uftmGrid table thead td {
+	border: 1px solid #d3d3d3;
+	padding: 5px 10px;
+}
+
+.uftmGrid table tfoot .paginacao, 
+.uftmGrid table thead .paginacao {
+	width: 30%;
+	text-align: center;
+	float: left;
+}
+
+.uftmGrid table tfoot .paginacao input, 
+.uftmGrid table thead .paginacao input {
+	width: 60px;
+	text-align: center;
+}
+
+.uftmGrid table tfoot .paginacao span.button, 
+.uftmGrid table thead .paginacao span.button {
+	cursor: pointer;
+	display: block;
+	float: left;
+	overflow: hidden;
+	position: relative;
+	width: 18px;
+	height: 18px;
+	padding-top: 4px;
+	margin-left: 2px;
+}
+
+.uftmGrid table tfoot .paginacao span.text, 
+.uftmGrid table thead .paginacao span.text {
+	float: left;
+	margin-left: 2px;
+}
+
+.uftmGrid table tfoot .paginacao .primeiro, 
+.uftmGrid table tfoot .paginacao .anterior, 
+.uftmGrid table tfoot .paginacao .proximo, 
+.uftmGrid table tfoot .paginacao .ultimo,
+.uftmGrid table thead .paginacao .primeiro, 
+.uftmGrid table thead .paginacao .anterior, 
+.uftmGrid table thead .paginacao .proximo, 
+.uftmGrid table thead .paginacao .ultimo
+{
+	background-position: right center;
+	background-repeat: no-repeat;
+	height: 16px;
+	width: 16px;
+	display: block;
+}
+
+.uftmGrid table tfoot .paginacao .primeiro:before, 
+.uftmGrid table thead .paginacao .primeiro:before {
+	/*background-image: url("../img/uftmGrid/page-first.png");*/
+	font-family:"FontAwesome";
+	content:"\f048";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .paginacao .primeiro:hover:before, 
+.uftmGrid table thead .paginacao .primeiro:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .paginacao .anterior:before, 
+.uftmGrid table thead .paginacao .anterior:before {
+	/*background-image: url("../img/uftmGrid/page-prev.png");*/
+	font-family:"FontAwesome";
+	content:"\f04a";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .paginacao .anterior:hover:before, 
+.uftmGrid table thead .paginacao .anterior:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .paginacao .proximo:before, 
+.uftmGrid table thead .paginacao .proximo:before {
+	/*background-image: url("../img/uftmGrid/page-next.png");*/
+	font-family:"FontAwesome";
+	content:"\f04e";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .paginacao .proximo:hover:before, 
+.uftmGrid table thead .paginacao .proximo:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .paginacao .ultimo:before, 
+.uftmGrid table thead .paginacao .ultimo:before {
+	/*background-image: url("../img/uftmGrid/page-last.png");*/
+	font-family:"FontAwesome";
+	content:"\f051";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .paginacao .ultimo:hover:before, 
+.uftmGrid table thead .paginacao .ultimo:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .paginacao .separador, 
+.uftmGrid table thead .paginacao .separador {
+	background: url("../img/uftmGrid/grid-split.png") no-repeat scroll
+	center center transparent;
+	float: left;
+	height: 23px;
+	margin-left: 4px;
+	margin-right: 5px;
+	width: 3px;
+}
+
+.uftmGrid table tfoot .info, 
+.uftmGrid table thead .info {
+	width: 33%;
+	text-align: right;
+	float: right;
+	margin-top: 4px;
+}
+
+.uftmGrid table tfoot .manutencao, 
+.uftmGrid table thead .manutencao {
+	width: 37%;
+	text-align: left;
+	float: left;
+}
+
+.uftmGrid table tfoot .manutencao span.button, 
+.uftmGrid table thead .manutencao span.button {
+	display: block;
+	float: left;
+	overflow: hidden;
+	position: relative;
+	min-width: 18px;
+	min-height: 18px;
+	padding-top: 4px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.uftmGrid table tfoot .manutencao .add,
+.uftmGrid table tfoot .manutencao .edit,
+.uftmGrid table tfoot .manutencao .delete,
+.uftmGrid table tfoot .manutencao .refresh,
+.uftmGrid table tfoot .manutencao .print,
+.uftmGrid table tfoot .manutencao .cancel,
+.uftmGrid table tfoot .manutencao .back,
+.uftmGrid table tfoot .manutencao .detail,
+.uftmGrid table tfoot .manutencao .copy,
+.uftmGrid table tfoot .manutencao .excel,
+.uftmGrid table tfoot .manutencao .trophy,
+.uftmGrid table tfoot .manutencao .user,
+.uftmGrid table tfoot .manutencao .calendar,
+.uftmGrid table tfoot .manutencao .database,
+.uftmGrid table tfoot .manutencao .file,
+.uftmGrid table tfoot .manutencao .check,
+.uftmGrid table tfoot .manutencao .external,
+.uftmGrid table tfoot .manutencao .lock,
+.uftmGrid table tfoot .manutencao .unlock,
+.uftmGrid table tfoot .manutencao .numeric,
+.uftmGrid table tfoot .manutencao .link,
+.uftmGrid table tfoot .manutencao .pdf,
+.uftmGrid table tfoot .manutencao .cogs,
+.uftmGrid table tfoot .manutencao .cog,
+.uftmGrid table tfoot .manutencao .cloud-download,
+.uftmGrid table tfoot .manutencao .pencil-square-o,
+.uftmGrid table tfoot .manutencao .repeat,
+.uftmGrid table tfoot .manutencao .folder-open-o
+.uftmGrid table thead .manutencao .add,
+.uftmGrid table thead .manutencao .edit,
+.uftmGrid table thead .manutencao .delete,
+.uftmGrid table thead .manutencao .refresh,
+.uftmGrid table thead .manutencao .print,
+.uftmGrid table thead .manutencao .cancel,
+.uftmGrid table thead .manutencao .back,
+.uftmGrid table thead .manutencao .detail,
+.uftmGrid table thead .manutencao .copy,
+.uftmGrid table thead .manutencao .excel,
+.uftmGrid table thead .manutencao .trophy,
+.uftmGrid table thead .manutencao .user,
+.uftmGrid table thead .manutencao .calendar,
+.uftmGrid table thead .manutencao .database,
+.uftmGrid table thead .manutencao .file,
+.uftmGrid table thead .manutencao .check,
+.uftmGrid table thead .manutencao .external,
+.uftmGrid table thead .manutencao .lock,
+.uftmGrid table thead .manutencao .unlock,
+.uftmGrid table thead .manutencao .numeric,
+.uftmGrid table thead .manutencao .link,
+.uftmGrid table thead .manutencao .pdf,
+.uftmGrid table thead .manutencao .cogs,
+.uftmGrid table thead .manutencao .cog,
+.uftmGrid table thead .manutencao .cloud-download,
+.uftmGrid table thead .manutencao .pencil-square-o,
+.uftmGrid table thead .manutencao .repeat,
+.uftmGrid table thead .manutencao .folder-open-o,
+.uftmGrid table thead .manutencao .clone,
+{
+	cursor: pointer;
+	background-position: left;
+	background-repeat: no-repeat;
+	min-height: 16px;
+	min-width: 16px;
+	display: block;
+	/*text-indent: 20px;*/	
+}
+
+.uftmGrid table tfoot .manutencao .separador, 
+.uftmGrid table thead .manutencao .separador {
+	background: url("../img/icones/separator1.png") no-repeat scroll
+	center center transparent;
+	float: left;
+	height: 23px;
+	margin-left: 4px;
+	margin-right: 5px;
+	width: 3px;
+}
+
+.uftmGrid table tfoot .manutencao .add:before, 
+.uftmGrid table thead .manutencao .add:before {
+	/*background-image: url("../img/icones/add1.png");*/
+	font-family:"FontAwesome";
+	content:"\f067";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .add:hover:before, 
+.uftmGrid table thead .manutencao .add:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .edit:before, 
+.uftmGrid table thead .manutencao .edit:before {
+	/*background-image: url("../img/icones/edit1.png");*/
+	font-family:"FontAwesome";
+	content:"\f040";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .edit:hover:before, 
+.uftmGrid table thead .manutencao .edit:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .delete:before, 
+.uftmGrid table thead .manutencao .delete:before {
+	/*background-image: url("../img/icones/remove1.png");*/
+	font-family:"FontAwesome";
+	content:"\f1f8";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .delete:hover:before, 
+.uftmGrid table thead .manutencao .delete:hover:before {
+	/*background-image: url("../img/icones/remove1.png");*/
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .refresh:before, 
+.uftmGrid table thead .manutencao .refresh:before {
+	/*background-image: url("../img/icones/refresh1.png");*/
+	font-family:"FontAwesome";
+	content:"\f021";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .refresh:hover:before, 
+.uftmGrid table thead .manutencao .refresh:hover:before {
+	/*background-image: url("../img/icones/refresh1.png");*/
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .print:before, 
+.uftmGrid table thead .manutencao .print:before {
+	/*background-image: url("../img/icones/print1.png");*/
+	font-family:"FontAwesome";
+	content:"\f02f";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .print:hover:before, 
+.uftmGrid table thead .manutencao .print:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .cancel:before, 
+.uftmGrid table thead .manutencao .cancel:before {
+	/*background-image: url("../img/icones/print1.png");*/
+	font-family:"FontAwesome";
+	content:"\f05e";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .cancel:hover:before, 
+.uftmGrid table thead .manutencao .cancel:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .back:before, 
+.uftmGrid table thead .manutencao .back:before {
+	/*background-image: url("../img/icones/remove1.png");*/
+	font-family:"FontAwesome";
+	content:"\f0e2";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .back:hover:before, 
+.uftmGrid table thead .manutencao .back:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .detail:before, 
+.uftmGrid table thead .manutencao .detail:before {
+	/*background-image: url("../img/icones/remove1.png");*/
+	font-family:"FontAwesome";
+	content:"\f06e";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .detail:hover:before, 
+.uftmGrid table thead .manutencao .detail:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .copy:before, 
+.uftmGrid table thead .manutencao .copy:before {
+	/*background-image: url("../img/icones/remove1.png");*/
+	font-family:"FontAwesome";
+	content:"\f24d";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .copy:hover:before, 
+.uftmGrid table thead .manutencao .copy:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .excel:before, 
+.uftmGrid table thead .manutencao .excel:before {
+	/*background-image: url("../img/icones/remove1.png");*/
+	font-family:"FontAwesome";
+	content:"\f1c3";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .excel:hover:before, 
+.uftmGrid table thead .manutencao .excel:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .generico, 
+.uftmGrid table thead .manutencao .generico {
+	cursor: pointer;
+	min-height: 16px;
+	min-width: 16px;
+}
+
+.uftmGrid table tfoot .manutencao .user:before, 
+.uftmGrid table thead .manutencao .user:before {
+	font-family:"FontAwesome";
+	content:"\f007";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .user:hover:before, 
+.uftmGrid table thead .manutencao .user:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .calendar:before, 
+.uftmGrid table thead .manutencao .calendar:before {
+	font-family:"FontAwesome";
+	content:"\f073";
+	color: #d0d0d0;
+}
+.uftmGrid table tfoot .manutencao .calendar:hover:before, 
+.uftmGrid table thead .manutencao .calendar:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .trophy:before, 
+.uftmGrid table thead .manutencao .trophy:before {
+	font-family:"FontAwesome";
+	content:"\f091";
+	color: #d0d0d0;
+}
+.uftmGrid table tfoot .manutencao .trophy:hover:before, 
+.uftmGrid table thead .manutencao .trophy:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .database:before, 
+.uftmGrid table thead .manutencao .database:before {
+	font-family:"FontAwesome";
+	content:"\f1c0";
+	color: #d0d0d0;
+}
+.uftmGrid table tfoot .manutencao .database:hover:before, 
+.uftmGrid table thead .manutencao .database:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .file:before, 
+.uftmGrid table thead .manutencao .file:before {
+	font-family:"FontAwesome";
+	content:"\f15c";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .file:hover:before, 
+.uftmGrid table thead .manutencao .file:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .check:before, 
+.uftmGrid table thead .manutencao .check:before {
+	font-family:"FontAwesome";
+	content:"\f14a";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .check:hover:before, 
+.uftmGrid table thead .manutencao .check:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .external:before, 
+.uftmGrid table thead .manutencao .external:before {
+	font-family:"FontAwesome";
+	content:"\f08e";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .external:hover:before, 
+.uftmGrid table thead .manutencao .external:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .numeric:before, 
+.uftmGrid table thead .manutencao .numeric:before {
+	font-family:"FontAwesome";
+	content:"\f163";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .numeric:hover:before, 
+.uftmGrid table thead .manutencao .numeric:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .lock:before, 
+.uftmGrid table thead .manutencao .lock:before {
+	font-family:"FontAwesome";
+	content:"\f023";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .lock:hover:before, 
+.uftmGrid table thead .manutencao .lock:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .unlock:before, 
+.uftmGrid table thead .manutencao .unlock:before {
+	font-family:"FontAwesome";
+	content:"\f09c";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .unlock:hover:before, 
+.uftmGrid table thead .manutencao .unlock:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .link:before, 
+.uftmGrid table thead .manutencao .link:before {
+	font-family:"FontAwesome";
+	content:"\f0c1";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .link:hover:before, 
+.uftmGrid table thead .manutencao .link:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .pdf:before, 
+.uftmGrid table thead .manutencao .pdf:before {
+	font-family:"FontAwesome";
+	content:"\f1c1";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .pdf:hover:before, 
+.uftmGrid table thead .manutencao .pdf:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .cogs:before, 
+.uftmGrid table thead .manutencao .cogs:before {
+	font-family:"FontAwesome";
+	content:"\f085";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .cogs:hover:before, 
+.uftmGrid table thead .manutencao .cogs:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .cog:before, 
+.uftmGrid table thead .manutencao .cog:before {
+	font-family:"FontAwesome";
+	content:"\f013";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .cog:hover:before, 
+.uftmGrid table thead .manutencao .cog:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .cloud-download:before, 
+.uftmGrid table thead .manutencao .cloud-download:before {
+	font-family:"FontAwesome";
+	content:"\f0ed";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .cloud-download:hover:before, 
+.uftmGrid table thead .manutencao .cloud-download:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .pencil-square-o:before, 
+.uftmGrid table thead .manutencao .pencil-square-o:before {
+	font-family:"FontAwesome";
+	content:"\f044";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .pencil-square-o:hover:before, 
+.uftmGrid table thead .manutencao .pencil-square-o:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .repeat:before, 
+.uftmGrid table thead .manutencao .repeat:before {
+	font-family:"FontAwesome";
+	content:"\f01e";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .repeat:hover:before, 
+.uftmGrid table thead .manutencao .repeat:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .folder-open-o:before, 
+.uftmGrid table thead .manutencao .folder-open-o:before {
+	font-family:"FontAwesome";
+	content:"\f07c";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .folder-open-o:hover:before, 
+.uftmGrid table thead .manutencao .folder-open-o:hover:before {
+	color: #000000;
+}
+
+.uftmGrid table tfoot .manutencao .clone:before, 
+.uftmGrid table thead .manutencao .clone:before {
+	font-family:"FontAwesome";
+	content:"\f24d";
+	color: #d3d3d3;
+}
+.uftmGrid table tfoot .manutencao .clone:hover:before, 
+.uftmGrid table thead .manutencao .clone:hover:before {
+	color: #000000;
+}
+
+ .uftmGridFiltroFlex
+ {
+ 	display: flex;
+ 	flex-direction: row;
+ }
+ 
+ .uftmGridFiltroItem
+ {
+ 	margin-left: .2em;
+ 	margin-right: .2em;
+ }
+ 
+  
+ input.uftmGridFiltroItem 
+ {
+ 	overflow: auto; 
+ }
+ 
+  .uftmGridFiltroFlex > select
+ {
+ 	position: relative;
+	top: 1px;
+ }
+ 
+ .uftmGridFiltroIcone
+{
+	cursor: pointer;
+	background-position: left;
+    background-repeat: no-repeat;
+    display: block;
+    text-align: center;
+    width: 100%;
+    font-size: 1.5em;	
+    cursor: auto;
+}
+
+.uftmGridFiltroIcone:before 
+{
+    font-family: "FontAwesome";
+}
+ 
+.uftmGridFiltroIconeSearch:before
+{
+	content: "\f002";
+	color:	#9DBFEC;
+}
+.uftmGridFiltroIcone:hover:before 
+{
+	color: #BFD8F9;
+}
+
+
+ 
+
+ 
+
+
+

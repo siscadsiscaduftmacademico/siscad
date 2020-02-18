@@ -1,0 +1,1220 @@
+jQuery.noConflict();
+jQuery(document).ready(function()
+{
+    // constantes
+    var existeChoque = false;
+    var intervaloChoqueA = '';
+    var intervaloChoqueB = '';
+
+    var naoCarregar = true; // evitar a chamada a função change.
+
+    var RGB = {0 : '23819C',1 : '000099',2 :'009933',3 :'990033',4 :'99FFFF',5 :'FFFF99',6 :'2966B8',7 :'E0E04E',8 :'D69E87',9 :'A6DEEE',
+  10 : 'FFEAEA',11 : '9999FF',12 : '0033CC',13 : '01FCEF',14 : '006400',15 : 'FF4848',16 : '7979FF',17 : '80B584',18 : 'D73E68',
+  19 : '25A0C5' , 20 : 'B05F3C', 21 : 'C8C800', 22 : '59955C'};
+
+    /* Variaveis globais */
+    messageLoading = '<h2><img src="./image/ajaxLoader.gif" /><span style="font-size: 16px;color:#2E6E9E">Por favor aguarde.....<br />Aguarde...</sap></h2>';
+
+    jQuery("input[name='academicoCep'], input[name='academicoCepOrigem']").mask("99999-999");
+   jQuery("input[name='academicoFone']").mask("(99) 9999-9999");
+   jQuery("input[name='academicoCelular']").mask("(99) 9999-9999");
+
+
+    jQuery("#dadosPessoais").dialog({
+        autoOpen: true,
+        bgiframe: true,
+        resizable: false,
+        closeOnEscape:false,
+        height: 670,
+        width: 700,
+        modal: true,        
+        open: function(event, ui)
+        {
+             jQuery(".ui-dialog-titlebar-close").hide();
+            
+        },
+        buttons: {
+            'Confirmar': function()
+            {
+                if( ! jQuery('#aceite').is(':checked') ){
+                    validaRetorno(new Array('error','Você deve clicar na caixa de declaração, confirmando que suas informações estão corretas.'));
+                    return;
+                }
+
+                // GET NOS DADOS
+                var academicoEmail       		= jQuery("input[name='academicoEmail']").val();
+                var academicoTelefone    		= jQuery("input[name='academicoFone']").val();
+                var academicoCelular     		= jQuery("input[name='academicoCelular']").val();
+                //var academicoCorRacaId   		= jQuery("select[name='academicoCorRacaId'] option:selected").val();
+
+                var estadoId             		= jQuery("select[name='estado'] option:selected").val();
+                var cidadeId             		= jQuery("select[name='cidade'] option:selected").val();
+                var academicoEndereco    		= jQuery("input[name='academicoEndereco']").val();
+                var academicoCep         		= jQuery("input[name='academicoCep']").val();
+                var academicoBairro      		= jQuery("input[name='academicoBairro']").val();
+                var academicoComplemento 		= jQuery("input[name='academicoComplemento']").val();
+
+                var estadoIdOrigem             = jQuery("select[name='estadoOrigem'] option:selected").val();
+                var cidadeIdOrigem             = jQuery("select[name='cidadeOrigem'] option:selected").val();
+                var academicoEnderecoOrigem    = jQuery("input[name='academicoEnderecoOrigem']").val();
+                var academicoCepOrigem         = jQuery("input[name='academicoCepOrigem']").val();
+                var academicoBairroOrigem      = jQuery("input[name='academicoBairroOrigem']").val();
+                var academicoComplementoOrigem = jQuery("input[name='academicoComplementoOrigem']").val();
+
+                // VALIDA OS DADOS EM JAVASCRIPT
+                var retorno = validaDadosCadastrais(estadoId,
+                cidadeId, academicoEndereco, academicoCep, academicoBairro,
+                 academicoEmail, academicoTelefone, academicoCelular);
+               
+                if( retorno[0] != 'success' && ! validaRetorno(retorno) ) return;
+                
+                // BLOQUEIA A TELA
+                jQuery.blockUI({
+                        message: messageLoading ,
+                        baseZ: 10000
+                });
+
+                siscad_jquery_ajax(atualizarDados, 'atualizarDados', estadoId,
+                cidadeId, academicoEndereco, academicoCep, academicoBairro,
+                academicoComplemento, academicoEmail, academicoTelefone,
+                academicoCelular/*, academicoCorRacaId*/, estadoIdOrigem,
+                cidadeIdOrigem, academicoEnderecoOrigem, academicoCepOrigem, academicoBairroOrigem, academicoComplementoOrigem);    
+            }
+        }
+    });
+
+    jQuery("#dialog").dialog({
+        autoOpen: false,
+        bgiframe: true,
+        position: 'center',
+        resizable: false,
+        height: 300,
+        width: 500,
+        modal: true,
+        buttons: {
+            'Ok': function()
+            {
+                jQuery(this).dialog('close');
+            }
+        }
+    });
+
+    jQuery("#infoturma").dialog({
+        autoOpen: false,
+        bgiframe: true,
+        resizable: false,
+        height: 500,
+        width: 700,
+        modal: true
+    });
+
+    // Arrumando todos os dialogs para funcionar no ie.
+    //dialogFix(new Array("#dialog","#infoturma","#dadosPessoais"));
+
+    jQuery(
+        function(){
+            if( jQuery("#error").val() == 'true')
+            {
+                jQuery("#dialogText").html(jQuery('#errorMsg').val() );
+                jQuery("#dialog").dialog('open');
+
+            }
+        }
+    );
+
+    jQuery(".imgDisc").click(
+        function()
+        {
+            var name = jQuery(this).attr("name");
+            var divId = jQuery('.'+name);
+
+            //jQuery(this).children()
+
+            if(jQuery(this).attr("src") == "image/arrow-down.png")
+            {
+                jQuery(divId).hide();
+		jQuery(this).attr('src', "image/arrow-right.png");
+            }
+            else if(jQuery(this).attr("src") == "image/arrow-right.png")
+            {
+                jQuery(divId).show();
+		jQuery(this).attr('src', "image/arrow-down.png");
+            }
+        }
+    );
+
+    jQuery(".imgInfo").click(
+        function()
+        {
+            var disciplinaId = jQuery(this).attr('id');
+            showQuadro(disciplinaId);
+        }
+    );
+
+    function checaConflito()
+    {
+        disc1 = new Array();
+        disc2 = new Array();
+        if( existeConflito( disc1 , disc2 ) )
+        {
+
+            var disciplina1  = jQuery('#cod_' + disc1[0]).html();
+                disciplina1 += ' - ' + jQuery('#nome_' + disc1[0]).html();
+            var disciplina2 = jQuery('#cod_' + disc2[0]).html();
+                disciplina2 += ' - ' + jQuery('#nome_' + disc2[0]).html();
+
+            //alert(disciplina1 + ' ' + disciplina2);
+
+            var message = ['error', '<p><span style="font-size: small; color: red;"><strong>Aten&ccedil;&atilde;o</strong>\n' +
+                           '</span></p><p>Existe conflito de horário entre : ' +
+                           '</p><p>' + disciplina1 + ' <br /> ' + intervaloChoqueA +
+                           '</p><p>' + disciplina2 + ' <br /> ' + intervaloChoqueB +  '</p>'];
+            exibeMensagem(message);
+            return true;
+        }
+        else {
+			//alert('NÃO tem conflito');
+        	return false;
+		}
+
+    }
+
+    // AQUI DEVE FICAR O CÓDIGO DE QUANDO NÃO É PARA SALVAR
+    jQuery('#confirmarMatriculaNao').click(
+        function(event)
+        {
+
+            if( checaConflito() )
+            {
+                event.preventDefault();
+                return;
+            }
+
+            // Não esta liberado a pre-matricula
+			var periodo = jQuery("#periodo").val();
+            var message = ['warning','Aguarde', '<p><span style="font-size: small; color: red;"><strong>Aten&ccedil;&atilde;o</strong></span></p><p>O per&iacute;odo para requerimento de matr&iacute;cula &eacute; de ' + periodo + ' !</p>'];
+
+            exibeMensagem(message);
+
+            event.preventDefault();
+
+            return;
+
+        }
+    );
+
+    // AQUI DEVE FICAR O CÓDIGO DE QUANDO É PARA SALVAR
+    jQuery('#confirmarMatricula').click(
+            function(event)
+            {
+                if( checaConflito() )
+                {
+                    event.preventDefault();
+                    return;
+                }
+
+                window.setTimeout("jQuery('#confirmarMatricula').hide(); jQuery('#confirmarMatricula').parent().append('<span>Processando... Aguarde<span>');", 100);
+            }
+        );
+
+
+    // CARREGAR AS CIDADES
+    jQuery("select[name='estado'], select[name='estadoOrigem']").change(
+        function(){
+
+            if(naoCarregar)
+                return;
+
+            var estadoId = parseInt( jQuery("option:selected",this).val(), 10);
+            var selectCidade = jQuery("select[name='cidade']");
+            if(jQuery(this).attr("name")!="estado")
+            	selectCidade=jQuery("select[name='cidadeOrigem']");
+            
+            parseInt( jQuery("option:selected",this).val(), 10);
+
+            if( estadoId > 0 ){
+                // BLOQUEIA A TELA
+                jQuery.blockUI({
+                        message: messageLoading ,
+                        baseZ: 10000
+                });
+                // CHAMA A FUNÇÃO AJAX PARA CARREGAR AS CIDADES.
+                siscad_jquery_ajax(loadCity(jQuery(this), selectCidade), 'loadCity', estadoId );
+            }
+            else
+            {
+                var html = '<option value="0">Selecione...</option>';
+                selectCidade.html(html);
+            }
+        }
+
+    );
+
+    function atualizarDados(message){        
+        // destrava a tela do usuario.        
+        jQuery.unblockUI();
+
+        // quebra a mensagem de retorno para saber se e success ou falha.
+        retorno = message.split("#");
+
+        if( ! validaRetorno(retorno) ) return;
+
+        // FECHAR A JANELA.
+        jQuery("#dadosPessoais").dialog('close');
+
+    }
+
+    function loadCity(objOrigemEvento, selectCidade)
+    {
+    	return function(message)
+    	{
+	        // destrava a tela do usuario.
+	        jQuery.unblockUI();
+	        
+	        // quebra a mensagem de retorno para saber se e success ou falha.
+	        retorno = message.split("#");
+	
+	        if( retorno[0] != 'success'  && ! validaRetorno(retorno) ) return;
+	
+	        eval(retorno[1]);
+	
+	        var cidadeId = parseInt(selectCidade.find("option:selected").val(), 10);
+	        if(cidadeId==NaN)
+	        	cidadeId=0;
+	        
+	        var html = '';
+	        for( var cityId in arrayCity )
+	            html += '<option value="'+cityId+'">'+ arrayCity[cityId]+'</option>';
+	
+	        selectCidade.html(html);
+	        
+	        selectCidade.find("option[value=\""+cidadeId+"\"]").attr("selected", "selected");
+    	};
+    }
+
+
+    // AQUI DEVE FICAR O CÓDIGO DE QUANDO É PARA SALVAR
+    jQuery('#teste2').click(
+            function(event)
+            {
+
+                if( checaConflito() )
+                {
+                    event.preventDefault();
+                    return;
+                }
+
+                // Não salvar
+                var message = ['warning','Aguarde', '<p><span style="font-size: small; color: red;"><strong>Aten&ccedil;&atilde;o</strong></span></p><p>Botão de teste, nada foi salvo !</p>'];
+                exibeMensagem(message);
+
+                event.preventDefault();
+
+                return;
+
+            }
+        );
+
+
+    function showQuadro(disciplinaId)
+    {
+
+        var disciplinaCodigo = jQuery('#cod_'+disciplinaId).html();
+        var disciplinaNome = jQuery('#nome_'+disciplinaId).html();
+        var cargaHoraria   = jQuery('#ch_'+disciplinaId).html();
+
+        var html = "";
+
+        html += '<div class="panel" style="width: 99%; margin-left:0">';
+
+        html += '<div style="padding:10 0 10 0;float:left; font-weight:bold; width:90%;">'+disciplinaCodigo+' - '+ disciplinaNome+'</div>';
+        html += '<div style="padding:10 0 10 0;float:left; font-weight:bold; width:9%;">C.H.: '+cargaHoraria+'</div>';
+
+        // Turmas não filhas
+        turmaNaoFilha = buscarTurmaNaoFilha(disciplinaId);
+
+        // Laço mais externo exibe todas as turmas que não são filhas.( turmaPai = 0 ).
+        for( var i = 0; i < turmaNaoFilha.length; i++ )
+        {
+            html += '<div style="padding:5 0 5 0; float:right; font-weight:bold; width:100%; color:rgb(0, 114, 55);">';
+
+            html += '<div style="float:left; width:40%;">Turma: '+globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['turmaNome']+'</div>';
+
+            if( globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['turmaIsFather'] == 'f') // se não for turma pai
+            {
+                html += '<div style="float:left; width:16%;">Vagas: '+globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['cursoTurmaNumVagas']+'</div>';
+                html += '<div style="float:left; width:22%;">Inscritos: '+globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['NumInteressado']+'</div>';
+                html += '<div style="float:left; width:22%;">Matriculados: '+globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['NumMat']+'</div>';
+            }
+            html += '</div>';
+            var docenteTurma =  buscarDocenteTurma( turmaNaoFilha[i] );
+
+            html += '<table width="100%" style="border: 0pt none ; background-color: rgb(242, 248, 255); text-align: left; margin-bottom:10px;">';
+            html += '<tbody>';
+            html += '<tr style="background-color: #87a019; color:#fff">';
+            //html += '<th style="width: 50%;">Professor(a)</td>';
+            html += '<th style="width: 25%;">Período</td>';
+            html += '<th style="width: 6%;">Dia</td>';
+            html += '<th style="width: 14%;">Horário</td>';
+            html += '</tr>';
+
+            // Laço para exibir todos os docentes da turmas que não são filhas.
+            for( var dt = 0; dt < docenteTurma.length; dt++ )
+            {
+                var docenteTurmaId = docenteTurma[dt];
+                var docenteNome = globalDocentes[globalDocenteTurma[docenteTurmaId]['docenteId']];
+
+                var horariosDocente = buscarHorariosDocente( docenteTurmaId );
+
+                var hasHorario = false;  // indica se tem ou não horario para o prof.
+
+                // Laço para exibir todos os horarios dos docentes da turmas que não são filhas.
+                for( var hd = 0; hd < horariosDocente.length; hd++ )
+                {
+                    var horarioId = horariosDocente[hd];
+
+                    hasHorario = true; // tem horario.
+
+                    html += '<tr style="background-color: rgb(255, 255, 255);">';
+                    //html += '<td>'+docenteNome+'</td>';
+                    html += '<td>'+ globalHorarios[horarioId]['horaDtIni']+' à '+globalHorarios[horarioId]['horaDtFim']+'</td>';
+                    html += '<td>'+ globalDia[globalHorarios[horarioId]['dia']]+'</td>';
+                    html += '<td>'+globalHorarios[horarioId]['horaIni']+' às '+globalHorarios[horarioId]['horaFim']+'</td>';
+                    html += '</tr>';
+                }
+
+                if( ! hasHorario ) // se não tiver horario exibe um default.
+                {
+                    html += '<tr style="background-color: rgb(255, 255, 255);">';
+//                    html += '<td>'+docenteNome+'</td>';
+                    html += '<td>__/__/____ à __/__/____ </td>';
+                    html += '<td>&nbsp;</td>';
+                    html += '<td> __:__ às __:__</td>';
+                    html += '</tr>';
+                }
+            }
+            html += '</tbody></table>';
+
+
+            // BUSCAR AS TURMAS FILHAS. Da turma (pai) que esta sendo exibida.
+            if( globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['turmaIsFather'] == 't')
+            {
+                var turmaFilha = buscarTurmaFilha(disciplinaId, turmaNaoFilha[i]);
+
+                // Laço para exibir informações das turmas filhar.
+                for( var j = 0; j < turmaFilha.length; j++ )
+                {
+                    html += '<div style="padding:5 0 5 0; float:right; font-weight:bold; width:100%; color:rgb(0, 114, 55);">';
+
+                    html += '<div style="float:left; width:40%;">Turma: ' + globalDisciplinaTurma[disciplinaId][turmaFilha[j]]['turmaNome']+
+                              '( Turma teorica : ' + globalDisciplinaTurma[disciplinaId][turmaNaoFilha[i]]['turmaNome']+' )'+ '</div>';
+
+                    html += '<div style="float:left; width:16%;">Vagas: '+globalDisciplinaTurma[disciplinaId][turmaFilha[j]]['cursoTurmaNumVagas']+'</div>';
+                    html += '<div style="float:left; width:22%;">Inscritos: '+globalDisciplinaTurma[disciplinaId][turmaFilha[j]]['NumInteressado']+'</div>';
+                    html += '<div style="float:left; width:22%;">Matriculados : '+globalDisciplinaTurma[disciplinaId][turmaFilha[j]]['NumMat']+'</div>';
+                    html += '</div>';
+
+                    docenteTurma =  buscarDocenteTurma( turmaFilha[j] );
+
+                    html += '<table width="100%" style="border: 0pt none ; background-color: rgb(242, 248, 255); text-align: left; margin-bottom:10px;">';
+                    html += '<tbody>';
+                    html += '<tr style="background-color: #87a019; color:#fff">';
+                    //html += '<th style="width: 50%;">Professor(a)</td>';
+                    html += '<th style="width: 25%;">Período</td>';
+                    html += '<th style="width: 6%;">Dia</td>';
+                    html += '<th style="width: 14%;">Horário</td>';
+                    html += '</tr>';
+
+
+                    // Laço para exibir todos os docentes da turmas que são filhas.
+                    for( dt = 0; dt < docenteTurma.length; dt++ )
+                    {
+                        docenteTurmaId = docenteTurma[dt];
+                        docenteNome = globalDocentes[globalDocenteTurma[docenteTurmaId]['docenteId']];
+
+                        horariosDocente = buscarHorariosDocente( docenteTurmaId );
+
+                        hasHorario = false;  // indica se tem ou não horario para o prof.
+
+                        // Laço para exibir todos os horarios dos docentes da turmas que são filhas.
+                        for( hd = 0; hd < horariosDocente.length; hd++ )
+                        {
+                            horarioId = horariosDocente[hd];
+
+                            hasHorario = true; // tem horario.
+
+                            html += '<tr style="background-color: rgb(255, 255, 255);">';
+                            //html += '<td>'+docenteNome+'</td>';
+                            html += '<td>'+ globalHorarios[horarioId]['horaDtIni']+' à '+globalHorarios[horarioId]['horaDtFim']+'</td>';
+                            html += '<td>'+ globalDia[globalHorarios[horarioId]['dia']]+'</td>';
+                            html += '<td>'+globalHorarios[horarioId]['horaIni']+' às '+globalHorarios[horarioId]['horaFim']+'</td>';
+                            html += '</tr>';
+                        }
+
+                        if( ! hasHorario ) // se não tiver horario exibe um default.
+                        {
+                            html += '<tr style="background-color: rgb(255, 255, 255);">';
+//                            html += '<td>'+docenteNome+'</td>';
+                            html += '<td>__/__/____ à __/__/____ </td>';
+                            html += '<td>&nbsp;</td>';
+                            html += '<td> __:__ às __:__</td>';
+                            html += '</tr>';
+                        }
+                    }
+                    html += '</tbody></table>';
+                }
+            }
+        }
+        html += '<br class="clear"/></div>';
+
+        jQuery("#infoturmatexto").html(html);
+        jQuery("#infoturma").dialog('open');
+
+    }
+
+    jQuery('select').change(
+        function ()
+        {
+            existeChoque = false;
+            showTableHorario();
+
+        }
+    );
+		
+	
+    function exibeMensagem(message){
+        var image = '<img src="./image/help/alerticon3.gif" />';
+        var retorno = false;
+        var msg = '';
+
+
+        switch(message[0]){
+            case 'warning':
+                msg =  message[message.length-1];
+                retorno =  false;
+            break;
+            case 'success':
+                msg =  message[1];
+                retorno =  true;
+            break;
+            case 'error':
+                msg =  message[1];
+                retorno = false;
+            break;
+            default:
+                msg = "Falha desconhecida.";
+                retorno =  false;
+        }
+
+        jQuery("#icon").html(image);
+        jQuery("#dialogText").html( msg);        
+        jQuery("#dialog").dialog('open');
+
+        return retorno;
+    }
+
+    function validaRetorno(message){
+        var image = '<img src="./image/help/alerticon3.gif" />';
+        var retorno = false;
+        var msg = '';
+
+
+        switch(message[0]){
+            case 'warning':
+                msg =  message[message.length-1];
+                retorno =  false;
+            break;
+            case 'success':
+                msg =  message[1];
+                retorno =  true;
+            break;
+            case 'error':
+                msg =  message[1];
+                retorno = false;
+            break;
+            default:
+                msg = "Falha desconhecida.";
+                retorno =  false;
+        }
+
+        alert(msg);
+
+        return retorno;
+    }
+
+    // VALIDAR OS DADOS CADASTRAIS.
+    function validaDadosCadastrais( estadoId,  cidadeId,  academicoEndereco,
+    academicoCep, academicoBairro, email,  academicoTelefone,  academicoCelular )
+    {
+        estadoId = parseInt(estadoId, 10);
+        cidadeId = parseInt(cidadeId, 10);
+
+        if( isNaN(estadoId) || estadoId <= 0 )
+            return new Array("error","Deve escolher um estado !");
+
+        if( isNaN(cidadeId) || cidadeId <= 0 )
+            return new Array("error","Deve escolher uma cidade !");
+
+        if( trim(academicoEndereco) == '' )
+            return new Array("error","Deve ser cadastrado seu endereço !");
+
+        exp = /\d{5}\-\d{3}/
+        if(! exp.test(academicoCep))
+            return new Array("error","Número de Cep Inválido!");
+		
+        if( trim(academicoBairro) == '' )
+            return new Array("error","Deve ser cadastrado seu bairro !");
+
+        var exclude=/[^@\-\.\w]|^[_@\.\-]|[\._\-]{2}|[@\.]{2}|(@)[^@]*\1/;
+        var check=/@[\w\-]+\./;
+        var checkend=/\.[a-zA-Z]{2,3}$/;
+        if(((email.search(exclude) != -1)||(email.search(check)) == -1)||(email.search(checkend) == -1))
+            return new Array("error","Email inválido !");
+
+        if( trim(academicoTelefone) == '' &&  trim(academicoCelular) == '' )
+            return new Array("error","Deve ser informado pelo menos um telefone de contato !");
+        
+        return new Array("success", "");
+    }
+
+    // Reconstroi o quadro de horarios
+    function showTableHorario()
+    {
+        // Limpa o quadro de horarios.
+        clearTableHorario();
+
+        //jQuery("select").attr('disabled', 'disabled');
+
+        // busca as turmas (selecionadas)
+        var turmaIds = getTurmaSelecionadas();
+
+        var objClassTabelaHorario = new classTabelaHorario();
+
+        for( var i = 0; i < turmaIds.length; i++ )
+        {
+            var turmaId = turmaIds[i];
+
+            var disc_turmaId = buscarDisciplinaTurma(turmaId);
+
+            var turmaPai = globalDisciplinaTurma[disc_turmaId][turmaId]['turmaPai'];
+
+             if(  turmaPai != 0 )
+                 objClassTabelaHorario.addTurma( turmaPai );
+
+            objClassTabelaHorario.addTurma( turmaId );
+        }
+
+        var html = '';
+
+        for( var dia = 0; dia < objClassTabelaHorario.arrayObjClassTurma.length; dia++ )
+        {
+            if( objClassTabelaHorario.arrayObjClassTurma[dia] == undefined ) // se tiver informação naquele dia...
+                continue;                                                    // ... nao faz nada.
+
+            for( nivel = 0; nivel < objClassTabelaHorario.arrayObjClassTurma[dia].length ; nivel++ )
+            {
+                var arrayTemp = new Array();
+                var inicio = 420; // 7:00
+
+                for( turma = 0; turma < objClassTabelaHorario.arrayObjClassTurma[dia][nivel].length; turma++ )
+                    arrayTemp = arrayTemp.concat(objClassTabelaHorario.arrayObjClassTurma[dia][nivel][turma].horarios);
+
+                // ordena os horarios.
+                arrayTemp = arrayTemp.sort(sortfunction);
+
+                html =  '';
+                // mostra os horarios da turmas.
+                for( var i = 0; i < arrayTemp.length; i++)
+                {
+                    var horaIni = horatoInt(globalHorarios[arrayTemp[i]]['horaIni']);
+                    var horaFim = horatoInt(globalHorarios[arrayTemp[i]]['horaFim']);
+
+                    if( horaIni > inicio ) // div branca
+                    {
+                        html += '<div style="float:left;margin-bottom:2px; margin-top:2px; width:'+(horaIni - inicio)*pixelMinuto+'px; background-color:white; ">';
+			html += '&nbsp;</div>';
+                    }
+
+                    var horarioId =  arrayTemp[i]; // id da tabela horario.
+                    var doc_Turma_Id = globalHorarios[horarioId]['docenteTurmaId']; // id da tabela docenteTurma
+
+                    var turma_Id = globalDocenteTurma[doc_Turma_Id]['turmaId']; // id da turma.
+
+                    disc_turmaId = buscarDisciplinaTurma(turma_Id)
+
+                    //alert(disc_turmaId);
+
+                    rgb =  RGB[disc_turmaId%23]; //'#665522'; //turmasDocenteHorarios[globalHorarioTurma[arrayTemp[i]]]['cor'];
+
+
+                    var nomeDisc = jQuery('#nome_'+disc_turmaId).html();
+                    var nomeTurma = globalDisciplinaTurma[disc_turmaId][turma_Id]['turmaNome'];
+                    var diaSemana = globalDia[dia];
+
+                    var hIni = globalHorarios[horarioId]['horaIni']; //'11:10';//globalHorarios[arrayTemp[i]]['horaIni'];
+                    var hFim = globalHorarios[horarioId]['horaFim']; //'12:20';//globalHorarios[arrayTemp[i]]['horaFim'];
+
+                    html += '<div TITLE="header=[ Turma: <b>' + nomeTurma + '</b><br>' + nomeDisc + '] body=[' + diaSemana + ': ' + hIni +  ' às ' + hFim + '] "  style="float:left; width:'+(horaFim - horaIni)*pixelMinuto+'px; margin-bottom:2px; margin-top:2px;  background-color:'+rgb+';">';
+
+                    html += '&nbsp;</div>';
+                    inicio = horaFim;
+                }
+                //alert('inicio'+ inicio)
+                if( 1380 > inicio ) // div branca
+                {
+                    html += '<div style="float:left;margin-bottom:2px; margin-top:2px; width:'+(1380 - inicio)*pixelMinuto+'px; background-color:white; ">';
+                    html += '&nbsp;</div>';
+                }
+
+                html += jQuery("#td_"+dia).html();
+                jQuery("#td_"+dia).html(html);
+                //jQuery("#td_0").html(html);
+
+
+            }
+
+        }
+
+        //obj.show();
+
+        // criar um vetor com os horarios a serem exibidos.
+
+
+    }
+
+    function getTurmaSelecionadas()
+    {
+        var turmaIds = new Array();
+        jQuery("select.horario option:selected").each(function () {
+            var turmaId = jQuery(this).val();
+
+            if( turmaId != 0 )
+                turmaIds.push( turmaId );
+        });
+        
+        jQuery("input.horario").each(function () {
+            var turmaId = jQuery(this).val();
+
+            if( turmaId != 0 )
+                turmaIds.push( turmaId );
+        });
+        
+        
+
+        return turmaIds;
+
+
+    }
+
+    function existeConflito( disc1, disc2 )
+    {
+        var arrayTurmaId = getTurmaSelecionadas();
+
+        intervaloChoque1 = '';
+        intervaloChoque2 = '';
+
+        for( var i = 0; i < arrayTurmaId.length ; i++ ) // percorer turma pratica A
+        {
+            for( var j = 0; j < arrayTurmaId.length; j++ ) // percorer turma pratica B
+            {
+                var turmaIdA = arrayTurmaId[i];
+                var discId = buscarDisciplinaTurma(turmaIdA);
+                var turmaIdAPai = discId != 0 ? globalDisciplinaTurma[discId][turmaIdA]['turmaPai'] : 0;
+
+                disc1[0] = discId;
+
+                var turmaIdB = arrayTurmaId[j];
+                discId = buscarDisciplinaTurma(turmaIdB);
+                var turmaIdBPai = discId != 0 ? globalDisciplinaTurma[discId][turmaIdB]['turmaPai'] : 0;
+
+                disc2[0] = discId;
+
+                if( turmaIdA == turmaIdB ) continue;
+
+                // Se houver interseção entre os dias, das turmas pratica A e B
+                var arrayDocenteTurmaA = buscarDocenteTurma( turmaIdA );
+                var arrayDocenteTurmaB = buscarDocenteTurma( turmaIdB );
+
+                for( k = 0; k < arrayDocenteTurmaA.length; k++ ) // percorer docente turma A
+                {
+                    for( l = 0; l < arrayDocenteTurmaB.length; l++ ) // percorer docente turma B
+                    {
+                        var arrayHorarioA = buscarHorariosDocente( arrayDocenteTurmaA[k] );
+                        var arrayHorarioB = buscarHorariosDocente( arrayDocenteTurmaB[l] );
+
+                        for( m = 0; m < arrayHorarioA.length; m++) // percorer horario turma A
+                        {
+                            for( n = 0; n < arrayHorarioB.length; n++) // percorer horario turma B
+                            {
+                                hd_1 = arrayHorarioA[m];
+                                hd_2 = arrayHorarioB[n];
+
+                                //alert(hd_1+ ' '+hd_2);
+
+                                // se existir inter. entre os dias
+                                //alert(globalHorarios[hd_1]['dia'] + '=='+ globalHorarios[hd_2]['dia']);
+                                if(  globalHorarios[hd_1]['dia'] == globalHorarios[hd_2]['dia'] &&
+                                		intersectionDia(strToData(globalHorarios[hd_1]['horaDtIni']),
+                                                 strToData(globalHorarios[hd_1]['horaDtFim']),
+                                                 strToData(globalHorarios[hd_2]['horaDtIni']),
+                                                 strToData(globalHorarios[hd_2]['horaDtFim']), true) )
+                                {                                	
+                                    //// se existir inter. entre as horas.
+                                    if( intersection( horatoInt(globalHorarios[arrayHorarioA[m]]['horaIni']),
+                                                      horatoInt(globalHorarios[arrayHorarioA[m]]['horaFim']),
+                                                      horatoInt(globalHorarios[arrayHorarioB[n]]['horaIni']),
+                                                      horatoInt(globalHorarios[arrayHorarioB[n]]['horaFim']), false) )
+                                    {
+	                                    	intervaloChoqueA = globalDia[globalHorarios[hd_1]['dia']] + ' ' + globalHorarios[arrayHorarioA[m]]['horaIni'] + ' à ' + globalHorarios[arrayHorarioA[m]]['horaFim'] +
+	                                    			' no período de ' + globalHorarios[hd_1]['horaDtIni'] + ' até ' + globalHorarios[hd_1]['horaDtFim'];
+	                                    	intervaloChoqueB = globalDia[globalHorarios[hd_2]['dia']] + ' ' + globalHorarios[arrayHorarioB[n]]['horaIni'] + ' à ' + globalHorarios[arrayHorarioB[n]]['horaFim'] +
+	                                    			' no período de ' + globalHorarios[hd_2]['horaDtIni'] + ' até ' + globalHorarios[hd_2]['horaDtFim'];
+	                                    	//alert('M: ' + arrayHorarioA[m] + ' - N: ' + arrayHorarioA[n]);
+	                                    	return true;
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+                if( turmaIdAPai == turmaIdBPai) // || turmaIdAPai == 0 || turmaIdBPai == 0 )
+                    continue;
+
+                // se turmaIdBPai != 0, verificar se tem interseção entre
+                // os dias da pratica A e PaiB
+                if(turmaIdBPai != 0)
+                {
+	                var arrayDocenteTurmaBPai = buscarDocenteTurma( turmaIdBPai );
+	                for( k = 0; k < arrayDocenteTurmaA.length; k++ ) // percorer docente turma A
+	                {
+	                    for( l = 0; l < arrayDocenteTurmaBPai.length; l++ ) // percorer docente turma B
+	                    {
+	                        arrayHorarioA = buscarHorariosDocente( arrayDocenteTurmaA[k] );
+	                        arrayHorarioB = buscarHorariosDocente( arrayDocenteTurmaBPai[l] );
+
+	                        for( m = 0; m < arrayHorarioA.length; m++) // percorer horario turma A
+	                        {
+	                            for( n = 0; n < arrayHorarioB.length; n++) // percorer horario turma A
+	                            {
+	                                hd_1 = arrayHorarioA[m];
+	                                hd_2 = arrayHorarioB[n];
+
+	                                // se for dias diferentes não tem conflito.
+	                                if( globalHorarios[hd_1]['dia'] != globalHorarios[hd_2]['dia'] )
+	                                    continue;
+
+	                                // se existir inter. entre os dias
+	                                if( intersectionDia(strToData(globalHorarios[hd_1]['horaDtIni']),
+	                                                 strToData(globalHorarios[hd_1]['horaDtFim']),
+	                                                 strToData(globalHorarios[hd_2]['horaDtIni']),
+	                                                 strToData(globalHorarios[hd_2]['horaDtFim']), true) )
+	                                {
+	                                	/*alert(arrayHorarioA[n]);
+	                                	alert(globalHorarios[arrayHorarioA[n]]);*/
+	                                    //// se existir inter. entre as horas.
+	                                    if( intersection( horatoInt(globalHorarios[arrayHorarioA[m]]['horaIni']),
+	                                                      horatoInt(globalHorarios[arrayHorarioA[m]]['horaFim']),
+	                                                      horatoInt(globalHorarios[arrayHorarioB[n]]['horaIni']),
+	                                                      horatoInt(globalHorarios[arrayHorarioB[n]]['horaFim']),false) )
+		                                    {
+		                                    	intervaloChoqueA = globalDia[globalHorarios[hd_1]['dia']] + ' ' + globalHorarios[arrayHorarioA[m]]['horaIni'] + ' à ' + globalHorarios[arrayHorarioA[m]]['horaFim'] +
+			                                			' no período de ' + globalHorarios[hd_1]['horaDtIni'] + ' até ' + globalHorarios[hd_1]['horaDtFim'];
+			                                	intervaloChoqueB = globalDia[globalHorarios[hd_2]['dia']] + ' ' + globalHorarios[arrayHorarioB[n]]['horaIni'] + ' à ' + globalHorarios[arrayHorarioB[n]]['horaFim'] +
+			                                			' no período de ' + globalHorarios[hd_2]['horaDtIni'] + ' até ' + globalHorarios[hd_2]['horaDtFim'];
+		                                    	//alert('M: ' + arrayHorarioA[m] + ' - N: ' + arrayHorarioA[n]);
+	                                            return true;
+	                                    }
+	                                }
+
+	                            }
+	                        }
+
+	                    }
+	                }
+                }
+
+                // se turmaIdAPai != 0, verificar se tem interseção entre
+                // os dias da pratica B e PaiA
+                if(turmaIdAPai != 0)
+                {
+	                var arrayDocenteTurmaAPai = buscarDocenteTurma( turmaIdAPai );
+	                for( k = 0; k < arrayDocenteTurmaB.length; k++ ) // percorer docente turma A
+	                {
+	                    for( l = 0; l < arrayDocenteTurmaAPai.length; l++ ) // percorer docente turma B
+	                    {
+	                        arrayHorarioA = buscarHorariosDocente( arrayDocenteTurmaB[k] );
+	                        arrayHorarioB = buscarHorariosDocente( arrayDocenteTurmaAPai[l] );
+
+	                        for( m = 0; m < arrayHorarioA.length; m++) // percorer horario turma A
+	                        {
+	                            for( n = 0; n < arrayHorarioB.length; n++) // percorer horario turma A
+	                            {
+	                                hd_1 = arrayHorarioA[m];
+	                                hd_2 = arrayHorarioB[n];
+
+	                                // se for dias diferentes não tem conflito.
+	                                if( globalHorarios[hd_1]['dia'] != globalHorarios[hd_2]['dia'] )
+	                                    continue;
+
+	                                // se existir inter. entre os dias
+	                                if( intersectionDia(strToData(globalHorarios[hd_1]['horaDtIni']),
+	                                                 strToData(globalHorarios[hd_1]['horaDtFim']),
+	                                                 strToData(globalHorarios[hd_2]['horaDtIni']),
+	                                                 strToData(globalHorarios[hd_2]['horaDtFim']), true) )
+	                                {
+	                                    //// se existir inter. entre as horas.
+	                                    if( intersection( horatoInt(globalHorarios[arrayHorarioA[m]]['horaIni']),
+	                                                      horatoInt(globalHorarios[arrayHorarioA[m]]['horaFim']),
+	                                                      horatoInt(globalHorarios[arrayHorarioB[n]]['horaIni']),
+	                                                      horatoInt(globalHorarios[arrayHorarioB[n]]['horaFim']), false) )
+	                                    {
+	                                    		intervaloChoqueA = globalDia[globalHorarios[hd_1]['dia']] + ' ' + globalHorarios[arrayHorarioA[m]]['horaIni'] + ' à ' + globalHorarios[arrayHorarioA[m]]['horaFim'] +
+	                                    			' no período de ' + globalHorarios[hd_1]['horaDtIni'] + ' até ' + globalHorarios[hd_1]['horaDtFim'];
+	                                    		intervaloChoqueB = globalDia[globalHorarios[hd_2]['dia']] + ' ' + globalHorarios[arrayHorarioB[n]]['horaIni'] + ' à ' + globalHorarios[arrayHorarioB[n]]['horaFim'] +
+                                					' no período de ' + globalHorarios[hd_2]['horaDtIni'] + ' até ' + globalHorarios[hd_2]['horaDtFim'];
+	                                    		//alert('M: ' + arrayHorarioA[m] + ' - N: ' + arrayHorarioA[n]);
+	                                        	return true;
+	                                    }
+	                                }
+
+	                            }
+	                        }
+
+	                    }
+	                }
+                }
+
+            }
+        }
+        return false;
+
+    }
+
+
+    // Limpa o quadro de horarios.
+    function clearTableHorario()
+    {
+        var diasDaSemana = 7;
+        for( var i = 1;  i <= diasDaSemana; i++ )
+        {
+            var id = '#td_'+i;
+            jQuery( id ).html('&nbsp;');
+        }
+    }
+
+    //Busca todas as turmas da disciplina que não são filhas.
+    function buscarTurmaNaoFilha(disciplinaId)
+    {
+        var arrayTurma = new Array();
+
+        for( turmaId in globalDisciplinaTurma[disciplinaId] )
+            if( globalDisciplinaTurma[disciplinaId][turmaId]['turmaPai'] == 0 ){
+                arrayTurma.push(turmaId);
+                //alert(turmaId);
+                //alert(globalDisciplinaTurma[disciplinaId][turmaId]['turmaNome']);
+            }
+        return arrayTurma;
+    }
+
+    //Busca a disciplina a partir da turmaid
+    function buscarDisciplinaTurma(turmaId)
+    {
+
+        for( id in globalDisciplinaTurma )
+        {
+            for( turma_id in  globalDisciplinaTurma[id] ){
+                //alert('id :'+id+ 'turma_id:'+turma_id);
+               if( turma_id == turmaId)
+                return id;
+            }
+        }
+        return 0;
+    }
+
+    //Busca todas as turmas filhas da turmaId.
+    function buscarTurmaFilha(disciplinaId, turmaIdPai)
+    {
+        var arrayTurma = new Array();
+
+        for( turmaId in globalDisciplinaTurma[disciplinaId] )
+            if( globalDisciplinaTurma[disciplinaId][turmaId]['turmaPai'] == turmaIdPai ){
+                arrayTurma.push(turmaId);
+            }
+        return arrayTurma;
+    }
+
+    //Busca todas as relações docenteTurma para a turma
+    function buscarDocenteTurma( turmaId )
+    {
+        var arrayDocenteTurma = new Array();
+
+        for( docenteTurmaId in globalDocenteTurma )
+            if( globalDocenteTurma[docenteTurmaId]['turmaId'] == turmaId ){
+                arrayDocenteTurma.push(docenteTurmaId);
+            }
+        return arrayDocenteTurma;
+    }
+
+    //Busca todas as relações docenteTurma para a turma
+    function buscarHorariosDocente( docenteTurmaId )
+    {
+        var arrayHorarios = new Array();
+
+        docenteTurmaId = parseInt( docenteTurmaId ,10);
+
+        // verifica se não é um valor invalido.
+        if( isNaN(docenteTurmaId) ) return arrayHorarios;
+
+        for( var horarioId in globalHorarios  )
+        {
+            if( globalHorarios[horarioId]['docenteTurmaId'] == docenteTurmaId )
+            {
+                arrayHorarios.push(horarioId);
+            }
+        }
+        return arrayHorarios;
+    }
+
+    /*
+     * Classe classTurma armazena uma turma e os horarios do this.dia da turma.
+     */
+    function classTurma( dia, turmaId, arrayHorarios )
+    {
+        this.turmaId = turmaId;
+        this.dia = dia;
+        this.horarios = arrayHorarios;
+
+        this.show = function()
+        {
+            for( i = 0; i < this.horarios.length; i++)
+                alert(this.horarios[i]);
+        }
+    }
+    // FIM DA CLASSE classTurma
+
+    /**
+     *  A classe classTabelaHorario controla os dados que são exibidos na tabela de horario.
+     */
+    function classTabelaHorario()
+    {
+        this.arrayObjClassTurma = new Array(7); // representa os dias da semana.
+
+        // metodo que adiciona uma turma a variavel arrayObjClassTurma
+        this.addTurma = function ( turmaId )
+        {
+            var arrayTemp = new Array(7); // variavel armazena a relação dia X horarios.
+
+            // Busca os id's da tabela docenteTurma
+            var arrayDocenteTurma =  buscarDocenteTurma( turmaId );
+
+            // Para cada docenteTurma buscar os horarios que estão relacionados
+            for( var dcTrId = 0; dcTrId < arrayDocenteTurma.length; dcTrId++ )
+            {
+                var docTurmaId = arrayDocenteTurma[dcTrId];
+
+                var arrayHorarios = buscarHorariosDocente( docTurmaId );
+
+                for( var hrId = 0; hrId < arrayHorarios.length; hrId++ )
+                {
+                    var horarioId = arrayHorarios[hrId];
+
+                    var dia = globalHorarios[horarioId]['dia'];
+
+                    if( arrayTemp[dia] === undefined )
+                        arrayTemp[dia] = new Array();
+
+                    // Armazena os horariosId's.
+                    arrayTemp[dia].push( horarioId );
+                }
+            }
+
+            var objTemp;
+
+            for(dia = 0; dia < arrayTemp.length; dia++) // iteragir entre os sete dias da semana.
+            {
+                if( arrayTemp[dia] === undefined )
+                    continue;
+
+                if( this.arrayObjClassTurma[dia] === undefined )// não foi adicionado nenhuma turma.
+                {
+                    this.arrayObjClassTurma[dia] = new Array(); // 1º armazena o dia da semana.
+                    this.arrayObjClassTurma[dia][0] = new Array(); // cria um nivel para armazenar a turma.
+                    objTemp = new classTurma(dia,turmaId, arrayTemp[dia]);
+                    this.arrayObjClassTurma[dia][0].push(objTemp);
+                }
+                else
+                {
+                    // já existe turma na estrutura, falta saber o nivel, que deve ser adicionada a nova turma.
+                    var nivel = -1;
+                    // percorrer  todos os horarios de todas as turmas no vetor arrayObjClassTurma
+                    var interc = true;
+
+                    while(  interc )
+                    {
+                        nivel++;
+                        interc = false;
+
+                        if( this.arrayObjClassTurma[dia][nivel] !== undefined )
+                            for( var turma = 0; (turma <  this.arrayObjClassTurma[dia][nivel].length) &&  ! interc ; turma++)
+                            {
+
+                                if( this.arrayObjClassTurma[dia][nivel][turma].turmaId === turmaId )// ja inseriu a turma
+                                    return;
+
+                                var arrayHorarioA = this.arrayObjClassTurma[dia][nivel][turma].horarios;
+
+                                interc = intercectionHorario ( arrayHorarioA, arrayTemp[dia] );
+
+                                if( interc )
+                                {
+                                    var vetorDt_1 =  buscarDocenteTurma( turmaId );
+                                    var vetorDt_2 =  buscarDocenteTurma( this.arrayObjClassTurma[dia][nivel][turma].turmaId );
+
+                                    dt_1 = vetorDt_1.length >= 0 ? vetorDt_1[0] : 0;
+                                    dt_2 = vetorDt_2.length >= 0 ? vetorDt_2[0] : 0;
+
+                                    vetorHd_1 = buscarHorariosDocente( dt_1 );
+                                    vetorHd_2 = buscarHorariosDocente( dt_2 );
+
+                                    hd_1 = vetorHd_1.length >= 0 ? vetorHd_1[0] : 0;
+                                    hd_2 = vetorHd_2.length >= 0 ? vetorHd_2[0] : 0;
+
+                                    if( hd_1 != hd_2 )
+                                    {
+                                        interc = intersectionDia(strToData(globalHorarios[hd_1]['horaDtIni']),
+                                                              strToData(globalHorarios[hd_1]['horaDtFim']),
+                                                              strToData(globalHorarios[hd_2]['horaDtIni']),
+                                                              strToData(globalHorarios[hd_2]['horaDtFim']), true)
+                                        if( !interc ) //aula faz parte de outro periodo
+                                            return;
+                                    }
+                                }
+
+                            }
+                        //if( interc ) alert('turmaIdConflito' + turmaIdConflito + ' turmaId :' + turmaId);
+
+                    }
+
+                    existeChoque = (( existeChoque == true ) || nivel > 0) ? true : false;
+
+                    if( this.arrayObjClassTurma[dia][nivel] == undefined )
+                        this.arrayObjClassTurma[dia][nivel] = new Array(); // cria um nivel para armazenar a turma.
+
+                    objTemp = new classTurma(dia,turmaId, arrayTemp[dia]);
+                    this.arrayObjClassTurma[dia][nivel].push(objTemp);
+                }
+            }
+        }
+
+        // verifica se existe conflito de horarios.
+        function intercectionHorario ( arrayHorarioA, arrayHorarioB )
+        {
+            var result = false;
+
+            for( var i = 0; i < arrayHorarioA.length; i++)
+                for( var j = 0; j < arrayHorarioB.length; j++)
+                {
+                    var A = horatoInt(globalHorarios[arrayHorarioA[i]]['horaIni']);
+                    var B = horatoInt(globalHorarios[arrayHorarioA[i]]['horaFim']);
+                    var C = horatoInt(globalHorarios[arrayHorarioB[j]]['horaIni']);
+                    var D = horatoInt(globalHorarios[arrayHorarioB[j]]['horaFim']);
+
+                    result = result || intersection( A, B, C, D, false);
+
+                }
+            return result;
+        }
+
+        // Mostra os valores armazenado no objeto arrayObjClassTurma
+        this.show = function()
+        {
+            for(dia = 0; dia < this.arrayObjClassTurma.length; dia++ )
+                if( this.arrayObjClassTurma[dia] != undefined )
+                {
+                    for( nivel = 0; nivel < this.arrayObjClassTurma[dia].length ; nivel++ )
+                        for( turma = 0; turma < this.arrayObjClassTurma[dia][nivel].length; turma++ )
+                            alert("dia:"+dia+" nivel:"+nivel +'turma:'+turma+ ' '+this.arrayObjClassTurma[dia][nivel][turma].turmaId + " \n"+"horario "+this.arrayObjClassTurma[dia][nivel][turma].horarios);
+                }
+        }
+
+        // Função chockHorario : verifica se existe choque de horarios
+        // entre as disciplinas escolhidas pelo acd.
+        this.chockHorario = function()
+        {
+            for(dia = 0; dia < this.arrayObjClassTurma.length; dia++ )
+                if( this.arrayObjClassTurma[dia] != undefined )
+                {
+                    for( nivel = 0; nivel < this.arrayObjClassTurma[dia].length ; nivel++ )
+                            if( nivel > 0 && this.arrayObjClassTurma[dia][nivel].length > 0)
+                                return true
+
+                }
+            return false;
+        }
+
+    }
+
+    function intersection (valueIniA,valueFimA, valueIniB, valueFimB)
+    {
+        var A = valueIniA;
+        var B = valueFimA;
+        var C = valueIniB;
+        var D = valueFimB;
+        var AD = B > D ? (B - C):(D - A);
+        // se em dois segmentos de reta AB e CD a diferença
+        // AD for menor que a diferneça entre AB + CD então existe intercecção.
+        if( (AD - ( (B - A) + (D - C))) < 0)
+            return true;
+        return false;
+    }    
+    
+    function intersectionDia(valueIniA, valueFimA, valueIniB, valueFimB ){
+		if(valueIniB<=valueFimA && valueFimB >= valueIniA){
+			return true;
+		}
+		return false;    	
+    }
+
+    function strToData(data)
+    {
+        var temp = new Array(3);
+        temp = data.split('/');
+        return new Date(temp[1]+"/"+temp[0]+"/"+temp[2]);
+    }
+
+    // converte hora:minuto para minutos.
+    function horatoInt(strHora)
+    {
+        var temp = new Array(2);
+        temp = strHora.split(':');
+        var minutos = parseInt(temp[0],10)*60 + parseInt(temp[1],10);
+        return minutos;
+    }
+
+    function sortfunction(a, b){
+    //Compare "a" and "b" in some fashion, and return -1, 0, or 1
+
+        horaA = horatoInt(globalHorarios[a]['horaFim']);
+        horaB = horatoInt(globalHorarios[b]['horaFim']);
+
+        return horaA - horaB;
+    }
+    
+    jQuery('.opcao_erro').hide();
+    
+
+    jQuery('#tableBody select').trigger('change');
+    naoCarregar=false;
+    
+    if(jQuery('#dialogText').text() != '')
+        jQuery("#dialog").dialog('open');
+
+});
+
+function exibir_erros(grupo){
+	jQuery('.opcao_erro_'+grupo).show();
+	jQuery('.texto_exibir_erros_'+grupo).hide();
+}

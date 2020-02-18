@@ -1,0 +1,734 @@
+
+<!-- saved from url=(0036)titan.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"> 
+    <title> Sistema Acadêmico </title>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=5.5">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="./pagina_inicial_files/default.css" type="text/css">
+    <link rel="stylesheet" href="./pagina_inicial_files/theme.css" type="text/css">
+    <link rel="stylesheet" href="./pagina_inicial_files/theme2.css" type="text/css">
+    <script async="" src="./pagina_inicial_files/analytics.js.download"></script><script type="text/javascript">
+    function siscad_jquery_ajax(e,d){var a="/&toAction="+d;a=a.replace("action_name",d);args=siscad_jquery_ajax.arguments;var c="",b="";for(i=2;i<args.length;i++){c+=b+"args[]="+args[i];b="&"}jQuery.ajax({type:"POST",url:a,data:c,beforeSend:function(){ajaxLoader("")},success:function(a){ajaxLoader("none");e(a)},error:function(a){ajaxLoader("none");alert("Erro ! status :"+a.status+"resposta :"+a.statusText)}})};		
+    // remote scripting library
+    // (c) copyright 2005 modernmethod, inc
+    var sajax_debug_mode = false;
+    var sajax_request_type = "POST";
+    
+    function sajax_debug(text) {
+        if (sajax_debug_mode)
+            alert("RSD: " + text)
+    }
+     function sajax_init_object() {
+         sajax_debug("sajax_init_object() called..")
+         
+         var A;
+        try {
+            A=new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (e) {
+            try {
+                A=new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (oc) {
+                A=null;
+            }
+        }
+        if(!A && typeof XMLHttpRequest != "undefined")
+            A = new XMLHttpRequest();
+        if (!A)
+            sajax_debug("Could not create connection object.");
+        return A;
+    }
+    function sajax_do_call(func_name, args) {
+        var i, x, n;
+        var uri;
+        var post_data;
+
+        ajaxLoader('');
+
+        
+        uri = "";
+        if (sajax_request_type == "GET") {
+            if (uri.indexOf("?") == -1) 
+                uri = uri + "?rs=" + escape(func_name);
+            else
+                uri = uri + "&rs=" + escape(func_name);
+            for (i = 0; i < args.length-1; i++) 
+                uri = uri + "&rsargs[]=" + escape(args[i]);
+            uri = uri + "&rsrnd=" + new Date().getTime();
+            post_data = null;
+        } else {
+            post_data = "rs=" + escape(func_name);
+            for (i = 0; i < args.length-1; i++) 
+                post_data = post_data + "&rsargs[]=" + escape(args[i]);
+        }
+        
+                
+        x = sajax_init_object();
+        x.open(sajax_request_type, uri, true);
+        if (sajax_request_type == "POST") {
+            x.setRequestHeader("Method", "POST " + uri + " HTTP/1.1");
+            x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        }
+        x.onreadystatechange = function() {
+            if (x.readyState != 4) 
+                return;	
+
+            ajaxLoader('none');
+
+            sajax_debug("received " + x.responseText);
+            
+            var status;
+            var data;
+            status = x.responseText.charAt(0);
+            data = x.responseText.substring(2);
+            if (status == "-") 
+                alert("Error: " + data);
+            else  
+                args[args.length-1](data);
+        }
+        x.send(post_data);
+        sajax_debug(func_name + " uri = " + uri + "/post = " + post_data);
+        sajax_debug(func_name + " waiting..");			
+        delete x;
+    }
+    
+    function ajaxLoader (d)
+    {
+        var obj = document.getElementById ('divAjax');			
+        obj.style.left = (screen.width - parseInt (obj.style.width))/2;
+        obj.style.top  = '300px';			
+        obj.style.display = d;
+    }
+    
+            
+    // wrapper for renovarSessao		
+    function x_renovarSessao() {
+        sajax_do_call("renovarSessao",
+            x_renovarSessao.arguments);
+    }
+    
+            
+    // wrapper for UnRegisterVariable		
+    function x_UnRegisterVariable() {
+        sajax_do_call("UnRegisterVariable",
+            x_UnRegisterVariable.arguments);
+    }
+    
+            </script>
+    <script type="text/javascript" src="./pagina_inicial_files/analytics.js(1).download"></script>
+    <script type="text/javascript" src="./pagina_inicial_files/default.js.download"></script>
+    <script type="text/javascript" src="./pagina_inicial_files/JSCookMenu.js.download"></script>
+    <script type="text/javascript" src="./pagina_inicial_files/mambojavascript.js.download"></script>
+    <script type="text/javascript" src="./pagina_inicial_files/theme.js.download"></script>
+    <script type="text/javascript" src="./pagina_inicial_files/ckeditor.js.download"></script><style>.cke{visibility:hidden;}</style>
+    <script type="text/javascript" src="./pagina_inicial_files/jquery.min.js.download"></script>
+    <script type="text/javascript" src="./pagina_inicial_files/funcoes_padroes.js.download"></script>
+</head>
+
+
+<body topmargin="0" rightmargin="0" leftmargin="0" bottommargin="0" onload="javascript: start();" onunload="javascript: end();">
+    <script type="text/javascript">
+                </script>
+
+<!-- instance_file inicio -->
+<link href="./pagina_inicial_files/default_siscad.css" rel="stylesheet">
+<script type="text/javascript" src="./pagina_inicial_files/mascara.js.download"></script>
+
+<style type="text/css">
+.style1 {
+    font-size: 24px;
+    color: #666666;
+    font-weight: bold;
+}
+.style2 {
+    font-size: 16px;
+    font-weight: bold;
+}
+</style>
+<div id="divOuter" style="position:absolute; top:0px; left:0px; width:100%; height:1000px; display:none; background-color: #FFFFFF; z-index: 2;">
+</div>
+
+<div id="divOuter2" style="position:absolute; top:0px; left:0px; width:100%; height:1000px; display:none; z-index: 2;">
+</div>
+
+<script type="text/javascript">
+
+
+
+
+
+
+
+
+var complemento = 'width= 600, height=480, location=no, directories=no, status=no, menubar=no, copyhistory=no, resizable=no, scrollbars=yes';
+
+function closeAlert(divName)
+{
+    document.getElementById(divName).style.display='none';
+    document.getElementById('divOuter').style.display='none';
+    //Effect.Fade('divOuter');
+}
+
+function openAlert (divName)
+{
+    var obj = document.getElementById (divName);
+    obj.style.display = '';
+
+    var obj2 = document.getElementById ('divOuter');
+    obj2.style.width = screen.Width;
+    obj2.style.height = screen.Height;
+
+    obj2.style.display='';
+    //Effect.Appear('divOuter', {from:0.0, to:0.8});
+}
+
+function actionLogo()
+{
+    window.open("simbolo_ajuda",'',complemento);
+}
+
+function actionOffLog()
+{
+    location.replace('index.html');
+}
+
+function actionBanner()
+{
+    //window.open("simbolo_ajuda.html",'',complemento);
+    //window.open("simbolo_ajuda.html",'help',complemento);
+    window.open("simbolo_ajuda.html",'help',complemento);
+}
+
+function actionBug()
+{
+    //window.open("simbolo_reportar_erro.html",'',complemento);
+    window.open("simbolo_reportar_erro.html",'report',complemento);
+}
+
+function actionVideo()
+{
+alert("Desculpe, você não tem permissão para acessar esta seção.");                    }
+</script>
+
+<map name="m_left" id="m_left">
+<area shape="circle" coords="374,49, 23" href="titan.php#" onclick="javascript:actionOffLog();return false;" alt="sair" title="Sair">
+<area shape="circle" coords="293,48, 21" href="titan.php#" onclick="javascript:actionBanner();return false;" alt="Ajuda" title="Ajuda">
+<area shape="circle" coords="212,48, 23" href="titan.php#" onclick="javascript:actionBug();return false;" alt="Reportar Erros" title="Reportar Erros">
+<!-- <area shape="circle" coords="124,47, 24" href="#" onclick="javascript:actionVideo();return false;" alt="Vídeos de Ajuda" title="Vídeos de Ajuda" /> -->
+<area shape="circle" coords="124,47, 24" href="pagina_inicial.html" onclick="pagina_inicial.html" alt="Página Inicial" title="Página Inicial">
+</map>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- div includes inicio -->
+<style type="text/css">   
+.divAceita1
+{
+    font-family: Verdana;
+    font-size: 10px;
+    font-weight: bold;
+    background-color: #FFFFFF;                
+    color: #999999;
+    border : 0;
+}
+body {margin:0; padding:0;}
+</style>
+<style type="text/css">   
+.divAceita1
+{
+    /* border : 1px solid red;
+    height: 100%;
+    width: 100%;*/
+    
+    position: relative;
+    top: 5%;
+    left: 5%;
+    width: 60%;
+    height: 60%;
+    border:0;
+}
+body {margin:0; padding:0;}
+
+
+div.rounded {
+    border: 1px solid #BBBBBB;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -moz-box-shadow: 2px 2px 3px #666;
+    -webkit-box-shadow: 2px 2px 3px #666;
+    box-shadow: 2px 2px 3px #000000;
+    font-size: 20px;
+    padding: 4px 7px;
+    outline: 0;
+    -webkit-appearance: none;
+}
+
+
+
+.boxMessage{
+border: 0px solid;
+margin: 10px 0px;
+padding:15px 10px 15px 50px;
+background-repeat: no-repeat;
+background-position: 10px center;
+}
+
+.boxMessage {
+background-image: url('image/xp/mensagem.png');
+}
+
+</style>
+<div id="divFaq" style="position:absolute; width: 500px; height:100%; display:none; top:10px; left: 50%; margin-left:-250px; margin-top:0px;z-index:3;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><td style="text-align: center; border-width: 2; border-style: solid; border-color: #990000;">
+
+<table border="0" cellpadding="0" cellspacing="0" width="500" style="background: #FFFFFF;">
+<tbody><tr>
+<td><img src="./pagina_inicial_files/spacer.gif" width="14" height="1" border="0" alt=""></td>
+<td><img src="./pagina_inicial_files/spacer.gif" width="470" height="1" border="0" alt=""></td>
+<td><img src="./pagina_inicial_files/spacer.gif" width="16" height="1" border="0" alt=""></td>
+<td><img src="./pagina_inicial_files/spacer.gif" width="1" height="1" border="0" alt=""></td>
+</tr>
+
+<tr>
+<td colspan="3"><img name="browser_r1_c1_faq" usemap="#m_browser_r1_c1_faq" src="./pagina_inicial_files/browser_r1_c1.gif" width="500" height="81" border="0" id="browser_r1_c1_faq" alt=""></td>
+<td><img src="./pagina_inicial_files/spacer.gif" width="1" height="81" border="0" alt=""></td>
+</tr>
+<tr>
+<td rowspan="2"><img name="browser_r2_c1" src="./pagina_inicial_files/browser_r2_c1.jpg" width="14" height="219" border="0" id="browser_r2_c1" alt=""></td>
+<td bgcolor="#f8f8f8" style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px; color:#990000;">
+   <div align="left"> Boa tarde, Victor de Oliveira Jacome	</div>
+<div style="text-align: justify;">
+        
+        <strong>• Quem é a pessoa responsável pelo desenvolvimento e manutenção do 
+            SISCAD?</strong><br>
+            O SISCAD é desenvolvido e mantido por uma equipe de analistas de Tecnologia da Informação (TI) do 
+            Núcleo de Tecnologia da Informação da Universidade Federal de Mato Grosso do Sul (UFMS) em 
+            parceria com a equipe de analistas do Departamento de Tecnologia da Informação (DTI) da 
+            Universidade Federal do Triângulo Mineiro (UFTM).<br>
+    <br>
+            
+        <strong> • Existe algum tipo de suporte ao usuário do SISCAD?</strong><br>
+    <p>Dúvidas operacionais relacionadas ao SISCAD devem ser enviadas para o 
+                email&nbsp;<a href="mailto:suporte.siscad@uftm.edu.br">suporte.siscad@uftm.edu.br</a>. 
+                &nbsp;&nbsp;Dúvidas quanto aos componentes curriculares devem ser dirigidas à 
+                coordenação do curso de graduação ou por e-mail para a Pró-Reitoria de 
+                Ensino – PROENS: <a href="mailto:siscad@proens.uftm.edu.br">siscad@proens.uftm.edu.br</a>&nbsp;</p>
+    <br>
+            
+                    <strong> • E se minhas notas e o registro de frequência (faltas e presenças) não 
+                aparecem atualizados no SISCAD?</strong><br>
+    <p>Se após a divulgação da nota pelo professor e decorrido o prazo para pedido de eventual 
+                vista de prova (5 dias úteis), conforme Regulamento dos Cursos de Graduação, você 
+                perceber que a nota não está lançada no SISCAD indica que o professor ainda não 
+                registrou a nota. Para que ocorra o registro de nota e frequência, contate pessoalmente o professor. 
+                Em caso de demora no lançamento das notas, faltas e presenças pelo professor, contate a PROENS 
+                pelo email <a href="mailto:siscad@proens.uftm.edu.br">siscad@proens.uftm.edu.br</a></p>
+                
+            <br>
+    </div>
+   <div align="right">Atenciosamente<br><br>
+
+        Equipe de Desenvolvimento do Sistema Acadêmico - SISCAD<br>
+        Universidade Federal do Triângulo Mineiro - UFTM<br>
+        Universidade Federal de Mato Grosso do Sul - UFMS
+        </div>
+</td>
+<td rowspan="2"></td>
+<td></td>
+</tr>
+</tbody></table>
+</td></tr>
+</tbody></table>
+<map name="m_browser_r1_c1_faq" id="m_browser_r1_c1_faq">
+<area shape="rect" coords="442,0,500,18" href="javascript: closeAlert(&#39;divFaq&#39;);" alt="Fechar">
+</map>
+</div><div id="divTimeOut" style="position:absolute;display:none;top:0px; width:400px; height:200px;position:absolute;top:0px;left:0px;z-index:5;">
+<center>
+<table border="0" cellpadding="0" cellspacing="0" width="90%" style="text-align: center; background: #FFFFFF; border-width: 3px; border-style: solid; border-color: #990000;">
+<tbody><tr><td><font color="#dd0000" size="-1" style="font-family:Verdana, Arial, Helvetica, sans-serif;"><b>
+
+Caro(a) Victor de Oliveira Jacome,<br><br>
+A sua sessão no Sistema Acadêmico será encerrada em 60 segundos.
+
+</b></font></td></tr>
+<tr><td align="center">
+<br>
+<a style="font-weight:bold;" href="JavaScript: x_renovarSessao(1,trataRenovarSessao);"> [RENOVAR SESSAO] </a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="font-weight:bold;" href="JavaScript: closeAlert(&#39;divTimeOut&#39;);"> [FECHAR] </a>
+<br>
+</td></tr>
+</tbody>
+</table>
+</center>
+<script language="JavaScript">
+
+function trataRenovarSessao(retorno)
+{
+remainingseconds=18000;
+inicial = getHour();
+warn=0
+clearTimeout(tid2);
+closeAlert('divTimeOut');
+}
+
+</script>
+</div>
+<div id="divAjax" style="position:absolute; display:none; width: 200; height: 50; position: absolute; z-index:8;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><td style="text-align: center; background: #FFFFFF; border-width: 2; border-style: solid; border-color: #990000;">
+<font style="color:#990000; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; font-weight:bold;">
+<img src="./pagina_inicial_files/ajax-loader.gif">&nbsp;&nbsp;Processando...
+</font>
+</td></tr>
+</tbody></table>
+</div>
+<style type="text/css">
+.divAceita
+{
+    border-style: solid;
+    border-width: 1;
+    font-family: Verdana;
+    font-size: 10;
+    font-weight: bold;
+    background-color: #FFFFFF;
+    height: 165px;
+    border-color: #999999;
+    color: #999999;
+}
+.divAceita1
+{
+    border-style: solid;
+    border-width: 1;
+    font-family: Verdana;
+    font-size: 10;
+    font-weight: bold;
+    background-color: #FFFFFF;
+    height: auto;
+    border-color: #999999;
+    color: #999999;
+}
+
+body {margin:0;padding:0;}
+</style>
+
+<script type="text/JavaScript">
+</script>
+
+<!-- div includes fim -->
+<!-- instance_file fim -->	
+    <table id="container" align="center" border="0" width="100%" height="100%" cellspacing="0">
+        <tbody><tr>
+            <td width="100%" height="100%" class="window">
+            
+                <table align="center" border="0" width="100%" height="100%" cellpading="0" cellspacing="0">
+                    <tbody><tr>
+                        <td height="95" style="padding: 0px; z-index:0; background-color:#87A019;">
+                            <div class="topBackground">
+                                <img alt="banner" src="./pagina_inicial_files/logo_left.gif" align="right" border="0" usemap="#m_left">
+                            </div>
+                            <div class="logoApplication">
+                                <img alt="Logo" src="./pagina_inicial_files/logo_novo.gif" border="0">
+                            </div>
+                        </td>
+        </tr>
+        <tr>
+                        <td height="25" class="rowWelcome">
+
+                            <table align="center" border="0" width="100%" height="25" cellpadding="0" cellspacing="0">
+                                <tbody><tr>
+                                    <td style="vertical-align: middle;">
+                                                                                            &nbsp;&nbsp;<b>Usuário</b>:&nbsp;Victor de Oliveira Jacome&nbsp;-&nbsp;Aluno(a)                                                                                            </td>
+                                    <td style="vertical-align: middle; text-align: right;">
+                                    
+                                        <a href="downloads/manualAcademico.pdf" target="_blank" style="font-size: 11px; font-weight: bold;">Manual para Acadêmicos</a>
+                                                                                    &nbsp;&nbsp;&nbsp;
+                                                                                <a href="javascript: openAlert(&#39;divFaq&#39;);" style="font-size: 11px;">Perguntas Frequentes</a>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <a href="" style="font-size: 11px;">Sair</a>&nbsp;&nbsp;&nbsp;
+                                    </td>
+                                </tr>
+                                <tr height="20px">
+                                    <td colspan="2" align="center"><span id="ClockRemaining" style="color:rgb(0, 114, 55); font-weight:bold;">Você será deslogado em 298:40 minutos</span></td>
+                                </tr>
+                            </tbody></table>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="rowMenu" bgcolor="#87A019">
+                                
+          <style>
+                .menu {
+                        color: #666666;
+                    
+                }
+          </style>
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tbody><tr><td id="TitanMenuID" class="menu"><table summary="main menu" class="ThemeOfficeMenu" cellspacing="0"><tbody><tr><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID1&#39;,&#39;hbr&#39;,0)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,0)" onmouseup="cmItemMouseUp (this,0)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>SISCAD</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,2)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,2)" onmouseup="cmItemMouseUp (this,2)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID2&#39;,&#39;hbr&#39;,3)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,3)" onmouseup="cmItemMouseUp (this,3)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Lançamentos</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,5)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,5)" onmouseup="cmItemMouseUp (this,5)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID3&#39;,&#39;hbr&#39;,6)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,6)" onmouseup="cmItemMouseUp (this,6)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Plano de Ensino</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,8)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,8)" onmouseup="cmItemMouseUp (this,8)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID4&#39;,&#39;hbr&#39;,9)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,9)" onmouseup="cmItemMouseUp (this,9)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Notas/Frequências</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,11)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,11)" onmouseup="cmItemMouseUp (this,11)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID5&#39;,&#39;hbr&#39;,12)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,12)" onmouseup="cmItemMouseUp (this,12)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Documentos Acadêmicos</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,19)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,19)" onmouseup="cmItemMouseUp (this,19)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID6&#39;,&#39;hbr&#39;,20)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,20)" onmouseup="cmItemMouseUp (this,20)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Horários</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,23)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,23)" onmouseup="cmItemMouseUp (this,23)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID7&#39;,&#39;hbr&#39;,24)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,24)" onmouseup="cmItemMouseUp (this,24)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Matrícula</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,26)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,26)" onmouseup="cmItemMouseUp (this,26)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID8&#39;,&#39;hbr&#39;,27)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,27)" onmouseup="cmItemMouseUp (this,27)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Relatórios</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,29)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,29)" onmouseup="cmItemMouseUp (this,29)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID9&#39;,&#39;hbr&#39;,30)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,30)" onmouseup="cmItemMouseUp (this,30)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Curso</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,33)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,33)" onmouseup="cmItemMouseUp (this,33)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID10&#39;,&#39;hbr&#39;,34)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,34)" onmouseup="cmItemMouseUp (this,34)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Consultas</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,36)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,36)" onmouseup="cmItemMouseUp (this,36)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID11&#39;,&#39;hbr&#39;,37)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,37)" onmouseup="cmItemMouseUp (this,37)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Mensagens</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,39)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,39)" onmouseup="cmItemMouseUp (this,39)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID12&#39;,&#39;hbr&#39;,40)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,40)" onmouseup="cmItemMouseUp (this,40)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Avaliação Institucional</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,null,&#39;hbr&#39;,42)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,42)" onmouseup="cmItemMouseUp (this,42)">&nbsp;</td><td class="ThemeOfficeMainItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,1,&#39;cmSubMenuID13&#39;,&#39;hbr&#39;,43)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,43)" onmouseup="cmItemMouseUp (this,43)"><span class="ThemeOfficeMainFolderLeft">&nbsp;</span><span class="ThemeOfficeMainFolderText"><b>Usuários</b></span><span class="ThemeOfficeMainFolderRight">&nbsp;</span></td></tr></tbody></table><div class="ThemeOfficeSubMenu" id="cmSubMenuID1"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,1)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,1)" onmouseup="cmItemMouseUp (this,1)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/academics.gif"></td><td class="ThemeOfficeMenuItemText">Página Inicial</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID2"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,4)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,4)" onmouseup="cmItemMouseUp (this,4)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/edit.png"></td><td class="ThemeOfficeMenuItemText">AACC - Atividades Acadêmicas</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID3"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,7)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,7)" onmouseup="cmItemMouseUp (this,7)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/script_edit.png"></td><td class="ThemeOfficeMenuItemText">Plano de Ensino (Acadêmico)</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID4"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,10)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,10)" onmouseup="cmItemMouseUp (this,10)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/table.png"></td><td class="ThemeOfficeMenuItemText">Notas/Frequências</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID5"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,13)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,13)" onmouseup="cmItemMouseUp (this,13)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/document.png"></td><td class="ThemeOfficeMenuItemText">Atestados de Matrícula/Trancamento</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,14)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,14)" onmouseup="cmItemMouseUp (this,14)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/document.png"></td><td class="ThemeOfficeMenuItemText">Carteira de Identidade Estudantil Virtual</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,15)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,15)" onmouseup="cmItemMouseUp (this,15)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/document.png"></td><td class="ThemeOfficeMenuItemText">Certificados de Extensão</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,16)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,16)" onmouseup="cmItemMouseUp (this,16)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/document.png"></td><td class="ThemeOfficeMenuItemText">Certificados em Eventos</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,17)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,17)" onmouseup="cmItemMouseUp (this,17)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/document.png"></td><td class="ThemeOfficeMenuItemText">Documentos Pendentes</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,18)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,18)" onmouseup="cmItemMouseUp (this,18)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/time.png"></td><td class="ThemeOfficeMenuItemText">Histórico Escolar</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID6"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,21)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,21)" onmouseup="cmItemMouseUp (this,21)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/document.png"></td><td class="ThemeOfficeMenuItemText">Horário das aulas</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,22)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,22)" onmouseup="cmItemMouseUp (this,22)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/time.png"></td><td class="ThemeOfficeMenuItemText">Horários de Atendimento</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID7"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,25)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,25)" onmouseup="cmItemMouseUp (this,25)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/mat2.jpg"></td><td class="ThemeOfficeMenuItemText">Inscrição</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID8"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,28)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,28)" onmouseup="cmItemMouseUp (this,28)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/icon_pdf.gif"></td><td class="ThemeOfficeMenuItemText">Relatórios Gerais</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID9"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,31)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,31)" onmouseup="cmItemMouseUp (this,31)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/table.png"></td><td class="ThemeOfficeMenuItemText">Estrutura do Curso (Acadêmico)</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,32)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,32)" onmouseup="cmItemMouseUp (this,32)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/academics.gif"></td><td class="ThemeOfficeMenuItemText">Oferta de Disciplinas</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID10"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,35)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,35)" onmouseup="cmItemMouseUp (this,35)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/academics.gif"></td><td class="ThemeOfficeMenuItemText">Trabalhos de Conclusão</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID11"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,38)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,38)" onmouseup="cmItemMouseUp (this,38)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/message_icon.png"></td><td class="ThemeOfficeMenuItemText">Caixa de Mensagens</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID12"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,41)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,41)" onmouseup="cmItemMouseUp (this,41)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/application_form_edit.png"></td><td class="ThemeOfficeMenuItemText">Avaliação Institucional</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div><div class="ThemeOfficeSubMenu" id="cmSubMenuID13"><table summary="sub menu" cellspacing="0" class="ThemeOfficeSubMenuTable"><tbody><tr class="ThemeOfficeMenuItem" onmouseover="cmItemMouseOver (this,&#39;ThemeOffice&#39;,0,null,&#39;vbr&#39;,44)" onmouseout="cmItemMouseOut (this,500)" onmousedown="cmItemMouseDown (this,44)" onmouseup="cmItemMouseUp (this,44)"><td class="ThemeOfficeMenuItemLeft"><img src="./pagina_inicial_files/group.png"></td><td class="ThemeOfficeMenuItemText">Alterar Senha/E-mail</td><td class="ThemeOfficeMenuItemRight"><img alt="" src="./pagina_inicial_files/blank.png"></td></tr></tbody></table></div></td></tr>
+          </tbody></table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         <script> var myMenu =	
+[
+[null,'<b>SISCAD</b>',null,null,'SISCAD',
+['<img src="image/xp/academics.gif">','Página Inicial','pagina_inicial.html',null,'Página Inicial']],_cmSplit,[null,'<b>Lançamentos</b>',null,null,'Lançamentos',
+['<img src="image/xp/edit.png">','AACC - Atividades Acadêmicas','lancamentos.html',null,'AACC - Atividades Acadêmicas']],_cmSplit,[null,'<b>Plano de Ensino</b>',null,null,'Plano de Ensino',
+['<img src="image/xp/script_edit.png">','Plano de Ensino (Acadêmico)','plano_de_ensino.html',null,'Plano de Ensino (Acadêmico)']],_cmSplit,[null,'<b>Notas/Frequências</b>',null,null,'Notas/Frequências',
+['<img src="image/xp/table.png">','Notas/Frequências','notas_e_frequencias.html',null,'Notas/Frequências']],_cmSplit,[null,'<b>Documentos Acadêmicos</b>',null,null,'Documentos Acadêmicos',
+['<img src="image/xp/document.png">','Atestados de Matrícula/Trancamento','documentos_atestados_de_matricula.html',null,'Atestados de Matrícula/Trancamento'],
+['<img src="image/xp/document.png">','Carteira de Identidade Estudantil Virtual','documentos_carteirinha_virtual.html',null,'Carteira de Identidade Estudantil Virtual'],
+['<img src="image/xp/document.png">','Certificados de Extensão','documentos_certificados_extensao.html',null,'Certificados de Extensão'],
+['<img src="image/xp/document.png">','Certificados em Eventos','documentos_certificados_eventos.html',null,'Certificados em Eventos'],
+['<img src="image/xp/document.png">','Documentos Pendentes','documentos_pendentes.html',null,'Documentos Pendentes'],
+['<img src="image/xp/time.png">','Histórico Escolar','documentos_historico_escolar.html',null,'Histórico Escolar']],_cmSplit,[null,'<b>Horários</b>',null,null,'Horários',
+['<img src="image/xp/document.png">','Horário das aulas','horarios.html',null,'Horário das aulas'],
+['<img src="image/xp/time.png">','Horários de Atendimento','horario_de_atendimento.html',null,'Horários de Atendimento']],_cmSplit,[null,'<b>Matrícula</b>',null,null,'Matrícula',
+['<img src="image/xp/mat2.jpg">','Inscrição','matricula.html']],_cmSplit,[null,'<b>Relatórios</b>',null,null,'Relatórios',
+['<img src="image/xp/icon_pdf.gif">','Relatórios Gerais','relatorios.html',null,'Relatórios Gerais']],_cmSplit,[null,'<b>Curso</b>',null,null,'Curso',
+['<img src="image/xp/table.png">','Estrutura do Curso (Acadêmico)','curso_estrutura_do_curso.html',null,'Estrutura do Curso (Acadêmico)'],
+['<img src="image/xp/academics.gif">','Oferta de Disciplinas','curso_ofertas_de_disciplinas.html',null,'Oferta de Disciplinas']],_cmSplit,[null,'<b>Consultas</b>',null,null,'Consultas',
+['<img src="image/xp/academics.gif">','Trabalhos de Conclusão','consultas.html',null,'Trabalhos de Conclusão']],_cmSplit,[null,'<b>Mensagens</b>',null,null,'Mensagens',
+['<img src="image/xp/message_icon.png">','Caixa de Mensagens','caixa_de_mensagens.html',null,'Caixa de Mensagens']],_cmSplit,[null,'<b>Avaliação Institucional</b>',null,null,'Avaliação Institucional',
+['<img src="image/xp/application_form_edit.png">','Avaliação Institucional','avaliacao_institucional.html',null,'Avaliação Institucional']],_cmSplit,[null,'<b>Usuários</b>',null,null,'Usuários',
+['<img src="image/xp/group.png">','Alterar Senha/E-mail','usuarios.html',null,'Alterar Senha/E-mail']]
+];
+cmDraw ('TitanMenuID', myMenu, 'hbr', cmThemeOffice, 'ThemeOffice'); </script> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       </td>
+                    </tr>
+                    <tr height="100%">
+                        <td class="body">
+                            <table height="100%" align="left" border="0" width="1265px" cellpadding="0" cellspacing="0" id="tableBody">
+                                <tbody><tr>
+                                    <td class="bodyMenu">
+
+                                        <table align="center" border="0" width="100%" height="20" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td style="color: rgb(0, 114, 55); font-weight: bold;">
+                                                    <a href="">&nbsp;&nbsp;<b>Página Inicial</b></a>
+                                                        » Bem-Vindo                                                    </td>
+                                                <td style="text-align: right;">
+                                                                                                        </td>
+                                            </tr>
+                                        </tbody></table>
+
+                                    </td>
+                                </tr>
+                                
+                                <tr height="100%">
+                                    <td class="bodySection">
+                                                                          <div id="body"><script type="text/javascript">
+        jQuery.noConflict();
+        jQuery(document).ready(function(){
+            aplicarFuncoesPadroes();
+        });
+  </script><link type="text/css" href="./pagina_inicial_files/default_siscad.css" rel="stylesheet">
+<link type="text/css" href="./pagina_inicial_files/jquery-ui.css" rel="stylesheet">
+<link type="text/css" href="./pagina_inicial_files/ui.all.css" rel="stylesheet">
+<link type="text/css" href="./pagina_inicial_files/demos.css" rel="stylesheet">
+
+<script type="text/javascript" src="./pagina_inicial_files/ui.core.js.download"></script>
+<script type="text/javascript" src="./pagina_inicial_files/ui.dialog.js.download"></script>
+<script type="text/javascript" src="./pagina_inicial_files/siscad.js.download"></script>
+<script type="text/javascript" src="./pagina_inicial_files/jquery.blockUI.js.download"></script>
+
+<br>
+<table align="center" border="0" width="97%" cellpadding="0" cellspacing="0">
+<tbody><tr>
+    <td width="100%" style="text-align: center; vertical-align: top;">
+        <table align="left" width="75%" cellspacing="0">
+            <tbody><tr>
+                <td>
+                    <table align="center" border="0" width="100%" cellspacing="0" style="border-color: #FFFFFF; border-style: solid;">
+                        <tbody><tr style="background-color: #FFFFFF;">
+                        </tr>
+                    </tbody></table>
+                </td>
+            </tr>
+            <tr>  
+                <td>
+                    <table align="center" border="0" width="100%" cellpadding="0" cellspacing="1">
+                        <tbody><tr>
+                            <td style="font-size:12px; text-align: left;">
+                                <p>Prezado(a) aluno(a).</p>  <p>O período de renovação da matrícula para os&nbsp;<strong><span style="text-decoration: underline;">alunos veteranos de graduação</span></strong><strong>&nbsp;</strong>é&nbsp;<strong>composta por 5 (cinco) etapas consecutivas, relacionadas, a seguir:</strong><br> <br> I –&nbsp;<strong>inscrição</strong>, que corresponde à manifestação de intenção do discente para a matrícula em componentes curriculares, na forma de pré-matrícula no Sistema Acadêmico;<br> II –&nbsp;<strong>consulta</strong>&nbsp;ao resultado da inscrição no SISCAD;<br> III –&nbsp;<strong>repescagem</strong>, que corresponde à distribuição de vagas remanescentes da inscrição;<br> IV –&nbsp;<strong>consulta</strong>&nbsp;ao resultado da repescagem no SISCAD<strong>;</strong><br> V –&nbsp;<strong>validação</strong>&nbsp;de matrícula pelos coordenadores, que corresponde à conclusão do processo de matrícula.</p>  <p>O discente com&nbsp;<strong>matrícula trancada</strong>&nbsp;e que deseja&nbsp;<strong>retornar aos estudos</strong>&nbsp;no segundo semestre de 2019 também deve realizar a matrícula&nbsp;<em>on-line</em>.</p>  <p>Confira as datas de cada uma das etapas:</p>  <p>I –&nbsp;<strong>inscrição:&nbsp;</strong>de&nbsp;10/02/2020 (a partir das 8h) a 12/02/2020 (até às 23h59)<br> <br> II –&nbsp;<strong>consulta ao resultado da inscrição no SISCAD:&nbsp;</strong>13/02/2020<br> <br> III –&nbsp;<strong>repescagem:&nbsp;</strong>de 14/02/2020 (a partir das 8h) a 16/02/2020 (até às 23h59)<br> <br> IV –&nbsp;<strong>consulta ao resultado da repescagem no SISCAD:&nbsp;</strong>17/02/2020<br> <br> V –&nbsp;<strong>validação&nbsp;de matrícula pelos coordenadores:&nbsp;</strong>de 18/02/2020 a 28/02/2020</p>  <p>Além das datas das etapas da matrícula, confira também no calendário as datas para:</p>  <ul>  <li>pedido de&nbsp;<strong>renovação de trancamento</strong>&nbsp;de matrícula      geral no curso.&nbsp;</li>  <li>solicitação do<strong>&nbsp;trancamento</strong>&nbsp;de matrícula geral no      curso, após ter se<strong>&nbsp;matriculado&nbsp;</strong>no primeiro semestre de 2020.&nbsp;</li>  <li>pedido de&nbsp;<strong>cancelamento&nbsp;</strong>de matrícula em&nbsp;<strong>componente      curricular</strong>.</li>  </ul>  <p><em>Confira o Edital de renovação de matrícula na íntegra em:&nbsp;<a href="https://sistemas.uftm.edu.br/integrado/sistemas/pub/publicacao.html?secao=566&amp;publicacao=6598" target="_blank">https://sistemas.uftm.edu.br/integrado/sistemas/pub/publicacao.html?secao=566&amp;publicacao=6598</a></em></p><br><br>                                </td>
+                        </tr>
+                    </tbody></table>
+                </td>
+            </tr>
+        </tbody></table>
+    </td>
+</tr>
+</tbody></table>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div><div id="imagemCarregando"></div></td>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: bottom">
+
+    <div id="copyright">
+        <span class="fundoVerde" style="float:left">&nbsp;&nbsp;&nbsp;Mantido pelo Departamento de Tecnologia da Informação - DTI/UFTM.</span>
+        
+        <span style="float:right">
+            <img border="0" alt="" title="Núcleo de Tecnologia da Informação - UFMS" src="./pagina_inicial_files/nti.power.gif">&nbsp;&nbsp;
+        </span>
+        <span style="float:right" class="fundoVerde">
+        © CopyRight 2006 - 2020, NTI/UFMS&nbsp;&nbsp; 
+        </span>
+        <br style="clear:both;">
+    </div>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                            
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+</tbody></table>
+  
+
+<script type="text/javascript" language="javascript">
+    var remainingseconds=18000;
+    var sessionRefreshRate=180;
+    var tempototal=remainingseconds;
+    var tid;
+    var tid2;
+    var intervalId;
+    var warn=0;
+    var inicial = getHour();
+
+    function formatHour()
+    {
+        var minutos=parseInt(parseInt(remainingseconds-5)/60);
+        var segundos=parseInt(remainingseconds-5)%60;
+        if (minutos<=9)
+            minutos='0'+minutos;
+        if (segundos<=9)
+            segundos='0'+segundos;
+        
+        return minutos+":"+segundos+" minutos";
+    }
+
+    function timeoutcheck ()
+    {
+        atual = getHour();
+        atual = atual - inicial;
+        remainingseconds = tempototal - atual;
+
+        if (remainingseconds>5)
+        {
+            tid=setTimeout("timeoutcheck()", 1*1000);
+            if (remainingseconds<45)
+            {
+                if (!warn)
+                {
+                    warn=1;
+                    openAlert('divTimeOut');
+                    tid2 = setTimeout("alert('Sua sessão irá expirar em 30 segundos.');", 50*1000);
+                }
+            }
+            document.getElementById('ClockRemaining').innerHTML="Você será deslogado em "+formatHour();
+        }
+        else
+        {
+            document.getElementById('ClockRemaining').innerHTML="Tempo de sessão encerrado.";
+            clearTimeout(tid);
+            clearTimeout(intervalId);
+        }
+    }
+
+    function sessioncheck ()
+    {
+        if (remainingseconds>0)
+        {
+            return true;
+        }
+        else
+        {
+             alert("Sua sessão expirou!! Você deve logar novamente.");
+             return false;
+        }
+    }
+
+    //retorna a hora atual como a quantidade de segundos decorridos desde
+    //0:00:00
+    function getHour()
+    {
+            var dt = new Date();
+            var h = dt.getHours();
+            var m = dt.getMinutes();
+            var s = dt.getSeconds();
+            return(h*3600+m*60+s);
+    }
+
+    function refreshSessionAjax()
+    {
+        jQuery.ajax(
+        {
+            url: "keepsession.php",
+            complete: function()
+            {
+                setTimeout("refreshSessionAjax()", sessionRefreshRate*1000);
+            }
+        });
+    }
+
+    timeoutcheck();
+
+    setTimeout("refreshSessionAjax()", sessionRefreshRate*1000);
+
+    getPageSize();
+    document.getElementById('tableBody').width = (arrayPageSize[2] - 15)+"px"; //menos barra de rolagem
+
+</script>
+
+
+</body></html>

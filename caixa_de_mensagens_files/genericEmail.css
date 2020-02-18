@@ -1,0 +1,386 @@
+/* 
+    Document   : sendEmail
+    Created on : 16/04/2012, 08:01:40
+    Author     : Marcio R. Silva, mrsluan@gmail.com
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.label
+{
+    /*height: 10px;    */
+    /*margin-left: 20px;*/
+    /*text-align: left;*/
+    color: #666666;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight:bold;
+	border-color: #AAAAAA;
+}
+/*
+.td
+{
+    border-style: solid;
+    border-width: 2px;
+    border-color: #F2F8FF;
+    text-align: center;
+    height: 10px;
+    overflow: scroll;
+    margin-left: 20px;
+    text-align: left;
+}
+td
+{
+    color: #666666;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+}
+*/
+
+.ui-field2
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #FFFFFF;
+    height: 20px;
+	vertical-align: middle;
+    /*width:inherit;*/
+}  
+
+.ui-field
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #FFFFFF;
+    height: 20px;    
+    /*width:inherit;*/
+    width:95%;
+}
+
+.ui-field-readonly
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #E7F0D8;
+    height: 20px;
+    width:95%;
+}
+
+.group
+{
+    padding: 1px 4px 1px 4px;
+    margin: 4px auto 4px auto;
+    background-color: #ffffff ;
+    /*border: solid 1px #87A019;*/
+    font-weight: bolder;
+}
+
+.ui-jgrid-default
+{
+    border:1px solid #AAAAAA;
+    background-color:#FFFFFF;
+
+}
+.ui-jgridHead
+{
+    background-color:#E7F0D8; /* cor de fundo do cabeçalho (azul) */
+    table-layout:fixed;
+    float:left;
+
+}
+.ui-gridHead table
+{
+    padding: 0 2px 0 2px;
+    font-size: 11px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+.ui-jgridHead td
+{
+    border-bottom:1px solid;
+    border-right:1px solid;
+    border-color:#AAAAAA;
+    overflow:hidden;
+    height:22px;
+    padding: 3px 2px 3px 2px;
+}
+.ui-jgridHead th
+{
+    border:1px solid;
+    border-color:#E7F0D8;
+    overflow:hidden;
+    font-size: 10px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:bolder;
+    color:#666666;
+    height:22px;
+    padding: 3px 2px 3px 2px;
+}
+
+.ui-jgridFooter
+{
+    background-color:#E7F0D8; /* cor de fundo do rodape (azul)*/
+    height:40px;
+    margin-top:3px;    
+}
+.ui-jgridFooter table  
+{
+    margin-top:10px;    
+}
+.ui-jgridFooter table td
+{
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:bold;
+    font-size:12px;
+    color:#666666;    
+}
+.ui-jgridbody
+{
+    table-layout:fixed;       
+}
+.ui-jgridbody table
+{
+    float:left;   
+}
+
+.ui-jgridbody td
+{
+    border-bottom:1px solid;
+    border-right:1px solid;
+    border-color:#AAAAAA;
+    overflow:hidden;
+    white-space: pre;
+    font-size:10px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:normal;
+    height:22px;
+    padding: 4px 2px 4px 2px;
+}
+div
+{
+    border:0px solid;
+}
+/* destacar a linha celecionada.*/
+.ui-jgrid-rowhighlight td
+{
+    border: 1px solid FFFFFF;
+    background: rgb(0, 114, 55) ; 
+    color: #FFFFFF;
+}
+/* destacar a linha celecionada.*/
+.ui-jgrid-rowhighlight-red td
+{
+    border: 1px solid #FFFFFF;
+    background: rgb(0, 114, 55)  ; /* #F62817;*/
+    color: #FFFFFF;
+}
+.ui-field-div
+{
+    padding: 2px 5px 0px 2px;
+}
+
+
+.linkbotao {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    padding: 4px;
+    background-color:#DFEFFC;
+    color: #666666;
+    text-decoration: none;
+}
+.linkbotao:link,
+.linkbotao:visited {
+    border-top: 1px solid #cccccc;
+    border-bottom: 2px solid #666666;
+    border-left: 1px solid #cccccc;
+    border-right: 2px solid #666666;
+}
+.linkbotao:hover {
+    border-bottom: 1px solid #cccccc;
+    border-top: 2px solid #666666;
+    border-right: 1px solid #cccccc;
+    border-left: 2px solid #666666;
+}
+.ui-jgridbody
+{
+    table-layout:fixed;
+}
+.ui-jgridbody table
+{
+    float:left;
+}
+
+.ui-jgridbody td
+{
+    border-bottom:1px solid;
+    border-right:1px solid;
+    border-color:#c5dbec;
+    overflow:hidden;
+    white-space: pre;
+    font-size:10px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:normal;
+    height:22px;
+    padding: 4px 2px 4px 2px;
+}
+div
+{
+    border:0px solid;
+}
+/* destacar a linha celecionada.*/
+.ui-jgrid-rowhighlight
+{
+    border: 1px solid #fad42e;
+    background: #fbec88;
+    color: #363636;
+}
+
+.ui-field-div
+{
+    padding: 2px 5px 0px 2px;
+}
+
+/* css da caixa de e-mail */
+
+.textEmailNaoLido a{
+    color: #2A2A2A;
+    font-weight: bold;
+    font-size: 11px;
+}
+.textEmailLido a{
+    color: #2A2A2A;
+    font-size: 11px;
+}
+.FilterSelector{font-size:125%;padding:3px 0;text-decoration:none}
+
+.selected{color:black;
+          font-weight: bold }
+
+.InboxTable{width:100%;}
+.InboxTable TD{padding:1px;
+               overflow:hidden;
+               border-bottom:1px solid #f0f0f0;
+               /* cursor:pointer;*/
+               white-space:nowrap}
+
+.CheckBoxCol{width:28px;}
+.IconCol{width:25px}
+.FromCol{width:200px}
+.DateCol{width:88px; }
+.CountCol{width:30px}
+.BorderBox{border: 1px solid #CCC;}
+.FloatRight{float:right}
+.MessageListTitle a{
+    font-size: 20px;
+    position:inline;
+    font-family:"Times New Roman";
+    vertical-align:1px;
+    zoom:1;
+    color:#656565;
+    margin:0 9px}
+
+.MessageListTitulo {
+    font-size: 20px;
+    position:inline;
+    font-family:"Times New Roman";
+    vertical-align:1px;
+    zoom:1;
+    color:#656565;
+    margin:0 9px}
+
+
+.TableHeaderGradient{
+    	background-color: #E7F0D8;	
+   /*  background-image: url(../../../../image/grad.png) */
+}
+
+.SearchBox {
+    width:245px;
+    margin-top:4px;
+   	background-color: #E7F0D8;
+    border:1px solid #c7c7c7;
+    background-repeat:no-repeat;
+    background-position:right;
+    /* background-image:url(../../../../image/xp/view.gif); */
+}
+
+.c_search_go{border:0 none;
+             width:20px;
+             height:15px;
+             background:#E7F0D8 no-repeat left top;
+             overflow:hidden;
+             cursor:pointer;
+             right:1px;
+             top:50%;
+             margin-top:-10px;
+             padding:0
+}
+
+.MsgPartGradient
+{
+    border-left:3px solid #AAAAAA;
+	background-color: #E7F0D8;
+    /* background-image: url(../../../../image/draft_header_gradient.gif)*/
+}
+.ReadMsgContainer{ background-color: #E7F0D8; height: 100px; overflow: auto;}
+.ReadMsgSubject{line-height:131%;color:#2a2a2a!important;margin:0}
+.ReadMsgBody{padding:8px 0;margin:0 12px}
+
+
+/** Class ReadMsgBody**/
+.ReadMsgBody div, .ReadMsgBody span, .ReadMsgBody applet, .ReadMsgBody object, .ReadMsgBody iframe,
+.ReadMsgBody h1, .ReadMsgBody h2, .ReadMsgBody h3, .ReadMsgBody h4, .ReadMsgBody h5, .ReadMsgBody h6, .ReadMsgBody p, .ReadMsgBody blockquote, .ReadMsgBody pre,
+.ReadMsgBody a, .ReadMsgBody abbr, .ReadMsgBody acronym, .ReadMsgBody address, .ReadMsgBody big, .ReadMsgBody cite, .ReadMsgBody code,
+.ReadMsgBody del, .ReadMsgBody dfn, .ReadMsgBody em, .ReadMsgBody img, .ReadMsgBody ins, .ReadMsgBody kbd, .ReadMsgBody q, .ReadMsgBody s, .ReadMsgBody samp,
+.ReadMsgBody small, .ReadMsgBody strike, .ReadMsgBody strong, .ReadMsgBody sub, .ReadMsgBody sup, .ReadMsgBody tt, .ReadMsgBody var,
+.ReadMsgBody b, .ReadMsgBody u, .ReadMsgBody i, .ReadMsgBody center,
+.ReadMsgBody dl, .ReadMsgBody dt, .ReadMsgBody dd, .ReadMsgBody ol, .ReadMsgBody ul, .ReadMsgBody li,
+.ReadMsgBody fieldset, .ReadMsgBody form, .ReadMsgBody label, .ReadMsgBody legend,
+.ReadMsgBody table, .ReadMsgBody caption, .ReadMsgBody tbody, .ReadMsgBody tfoot, .ReadMsgBody thead, .ReadMsgBody tr, .ReadMsgBody th, .ReadMsgBody td,
+.ReadMsgBody article, .ReadMsgBody aside, .ReadMsgBody canvas, .ReadMsgBody details, .ReadMsgBody embed, 
+.ReadMsgBody figure, .ReadMsgBody figcaption, .ReadMsgBody footer, .ReadMsgBody header, .ReadMsgBody hgroup, 
+.ReadMsgBody menu, .ReadMsgBody nav, .ReadMsgBody output, .ReadMsgBody ruby, .ReadMsgBody section, .ReadMsgBody summary,
+.ReadMsgBody time, .ReadMsgBody mark, .ReadMsgBody audio, .ReadMsgBody video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role ReadMsgBody for older browsers */
+.ReadMsgBody article, .ReadMsgBody aside, .ReadMsgBody details, .ReadMsgBody figcaption, .ReadMsgBody figure, 
+.ReadMsgBody footer, .ReadMsgBody header, .ReadMsgBody hgroup, .ReadMsgBody menu, .ReadMsgBody nav, .ReadMsgBody section {
+	display: block;
+}
+
+.ReadMsgBody ol, .ReadMsgBody ul {
+	list-style: none;
+}
+.ReadMsgBody blockquote, .ReadMsgBody q {
+	quotes: none;
+}
+.ReadMsgBody blockquote:before, .ReadMsgBody blockquote:after,
+.ReadMsgBody q:before, .ReadMsgBody q:after {
+	content: '';
+	content: none;
+}
+.ReadMsgBody table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.ReadMsgBody span{
+	color: black;
+}
+
+.ReadMsgBody a{
+	color: blue;
+}
+	

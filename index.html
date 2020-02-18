@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    
+	<link rel="shortcut icon" href="favicon.ico">
+    <title> Sistema Acadêmico - UFTM </title>
+	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=EDGE">
+    <link rel="stylesheet" href="./index_files/jquery.fancybox-1.3.4.css" type="text/css" media="screen">
+    <!-- <link rel="stylesheet" href="style.css" type="text/css" /> -->
+    <link rel="stylesheet" href="./index_files/default_siscad.css" type="text/css">
+	<link type="text/css" href="./index_files/jquery-ui.css" rel="stylesheet">
+	<link type="text/css" href="./index_files/ui.all.css" rel="stylesheet">
+	<link type="text/css" href="./index_files/demos.css" rel="stylesheet">
+
+    <style type="text/css">
+		 
+		.mail {
+			color: #666666;
+			padding-left: 18px;
+			background-image: url('image/icon.mail.png');
+			background-repeat: no-repeat;
+			background-position: 0 -2px;
+			height: 14px;
+			font-weight: bold;
+		}
+		
+		#logo a {
+		    color:#666666;
+		    font-family:Verdana,Arial,Helvetica,sans-serif;
+		    font-size:10px;
+		    text-decoration: none;
+		}
+		#contorno {
+			border-width: 3px;
+			border-color: #87A019;
+			border-style: solid;
+			margin: 0 auto;
+		}
+		
+		#rodape {
+			background-color: #87A019;
+			color: white;
+			padding-top: 3px;
+		}
+		
+		.logouftm {
+			width: 120px;
+			heigt: 120px;
+			margin-right: 20px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		
+		}
+		
+		.corpo {
+			font-family: Arial, sans-serif;
+			font-size: 11px;
+			color: #666666;
+		}
+		
+    </style>
+
+
+<script type="text/javascript">
+
+
+   function Entre() {
+
+
+	var receba_login = document.getElementById("login").value;
+	var receba_password = document.getElementById("password").value;
+	
+
+	var receba_login2 = receba_login.trim();
+	var receba_password2 = receba_password.trim();
+
+	
+	if (receba_login2 == "08731766692"){
+		 if (receba_password2 == "08731766692"){
+			window.location.href='pagina_inicial.html';
+		 }    
+      }
+	else
+		window.location.href='erro_login_final.html';
+
+
+   }
+
+            
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+	<script type="text/javascript">
+
+		jQuery().ready(function()
+		{
+			/* Apply fancybox to multiple items */
+			$("a.iframe").fancybox({
+				'transitionIn'	:	'elastic',
+				'transitionOut'	:	'elastic',
+				'speedIn'		:	600,
+				'speedOut'		:	200,
+				'height'		:	500
+			});
+
+			if(window.location.hash=="#lostPassword")
+				$("a.iframe").trigger("click");
+
+
+		});
+
+		function About ()
+		{
+			var About = document.getElementById ('DivAbout');
+
+			if (About.style.display == 'none')
+			{
+				window.scrollTo (0,0);
+				About.style.top  = 100;
+				About.style.left = (screen.availWidth  / 2) - 150;
+				About.style.display = '';
+			}
+			else
+				About.style.display = 'none';
+		}
+
+		function submitForm ()
+		{
+            var msg = 'Por favor, preencha os campos login e senha!';
+            if( jQuery("#login").val() == '' ) {
+                jQuery("#login").focus();
+                alert(msg);
+                return;
+            }
+            if( jQuery("#password").val() == '' ) {
+                jQuery("#password").focus();
+                alert(msg);
+                return;
+            }
+
+			 //loginMaius=document.formLogin.login.value;
+		 	 //loginMaius=loginMaius.toUpperCase();
+			 //document.formLogin.login.value=loginMaius;
+
+			 document.formLogin.submit ();
+		}
+	</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="corpo">
+    <!--[if IE]>
+    <center>
+    <![endif]-->
+
+    <table id="contorno" cellpadding="0" cellspacing="0" border="0" width="779px">
+	    <tbody><tr>
+		    <td colspan="2" style="border-bottom-width: 1px; background:#87A019; border-bottom-color: #87A019; border-bottom-style: solid;">
+			    <div style="float:left; position:relative; top:0px; left:20px;">
+				   <img src="./index_files/logo_p2.png" border="0" class="logouftm">
+			    </div>
+			    <div style="float:left; position:relative; top:25px; left:45px;">
+				    					    <img src="./index_files/SISCAD.png" title="SISCAD - Sistema acadêmico Online" border="0">
+					    
+			    </div>
+		    </td>
+	    </tr>
+	    
+	    <tr>
+		<td colspan="2" valign="center" align="center" style=" vertical-align: middle; height: auto;">
+
+
+
+
+
+		    <!-- Inicio -->
+		    <table border="0" cellpadding="0" cellspacing="0" width="300px">
+		    	<tbody><tr height="25"><td>&nbsp;</td></tr>
+			    <tr>
+				    <td style="color: #990000; font-weight: bold; text-align: center;">
+						<span id="errorMsg"></span>
+					</td>
+			    </tr>
+			    <tr height="25"><td>&nbsp;</td></tr>
+			    <tr>
+					<td valign="top" style="vertical-align: top;">
+						<form action="titan.php" id="formLogin" name="formLogin" method="post">
+					    <div class="divLogin">
+							<center><img src="./index_files/fundo_login.jpg" border="0"></center>  
+						<div class="divLoginForm">
+
+						    <table width="98%" cellpadding="0" cellspacing="0" border="0">
+							<tbody><tr height="10"><td></td></tr>
+							<tr>
+							    <td colspan="2" style="font-size:12px; padding: 2px; color:#87A019;" align="center">
+								    Digite Login e Senha
+							    </td>
+							</tr>
+						    <tr height="3"><td></td></tr>
+						    <tr>
+							    <td>Login:&nbsp;</td>
+							    <td>
+								    <input type="text" name="login" value="" class="campo" style="width: 178px;" id="login" onkeypress="javascript: changeField(1,event)">
+							    </td>
+						    </tr>
+						    <tr height="3"><td></td></tr>
+						    <tr>
+							    <td>Senha:&nbsp;</td>
+							    <td>
+								    <input type="password" id="password" name="password" value="" class="campo" style="width: 178px;" onkeypress="javascript: changeField(2,event)">
+								    <br>
+							    </td>
+						    </tr>
+						    <tr>
+							    <td align="right" colspan="2">
+								    <br>
+							    	<input type="button" name="botao" class="botao" value="Entrar" onclick="javascript: Entre();">
+								    <a href="https://siscad.uftm.edu.br/titan.php?target=lostPassword" class="iframe" style="white-space:nowrap;"><font style="color:#666666;"><b>Esqueci minha senha</b></font></a>
+							    </td>
+						    </tr>
+							</tbody></table>
+						</div>
+					    </div>
+													<div style="clear:both;"></div>
+						</form>
+				    </td>
+			    </tr>
+		    </tbody></table>
+		    <!-- Fim-->
+
+		</td>
+	    </tr>
+		<tr>
+		<td colspan="2" align="center" style="color:black;font-size:medium;">
+				&nbsp;
+		</td>
+	    </tr>
+	    <tr style="font-size:1.4em">
+		<td colspan="2" align="center">
+		    <span><br>Informações para autenticação.</span><br><br>
+		    <div align="center"> <strong>Professor e Técnico</strong> </div>
+		    <div align="center" style="margin: 4px;">
+				<font style="color:red">O seu login e senha é o mesmo do sistema <a href="https://sistemas.uftm.edu.br/integrado/">UFTMNet</a>.</font><br>
+			    Para obter informações sobre acesso ao sistema, por favor, entre em contato pelo e-mail:<br>
+			</div>
+			</td>
+	    </tr>
+		<tr>
+			<td colspan="2" align="center">
+				Suporte <a href="mailto:supt.dti@uftm.edu.br" class="mail">supt.dti@uftm.edu.br</a>
+				<br><br>
+			</td>
+			</tr>
+		<tr style="font-size:1.4em">
+			<td colspan="2" align="center">
+				<div align="center"><strong> Aluno</strong></div>
+				<div align="center">
+					<font style="color:red">O seu login e senha é o mesmo do sistema <a href="https://sistemas.uftm.edu.br/integrado/">UFTMNet</a>.</font><br>
+					<font>Caso não possua conta de usuário no <a href="https://sistemas.uftm.edu.br/integrado/">UFTMNet</a>, o seu login é o seu número de CPF sem os pontos ou o traço.</font>
+					<p><span>Atenção: </span>Utilize a opção Esqueci minha senha para recuperar os dados de autenticação, caso não se recorde.</p>
+				</div>
+			</td>
+	    </tr>
+	    <tr>
+		<td colspan="2" align="center">
+			Suporte <a href="mailto:suporte.siscad@uftm.edu.br" class="mail">suporte.siscad@uftm.edu.br</a>
+		</td>
+	    </tr>
+		<tr><td colspan="2" align="center">
+		</td>
+		</tr>
+	    <tr>
+		<td>
+		<br><br>
+        
+		<table width="100%" height="70" border="0" id="logo">
+		    <tbody><tr>
+			<td class="logoufms">
+			</td>
+		    </tr>
+		</tbody></table>
+
+		</td>
+	    </tr>
+		<tr>
+			<td>
+				<!-- NAO REMOVER -->
+				<div id="rodape">
+					<span class="fundoVerde" style="float:left; margin-top: 2px;">&nbsp;&nbsp;&nbsp;Mantido pelo Departamento de Tecnologia da Informação - DTI/UFTM. </span>
+					<span class="fundoVerde" style="float:right; margin-top: 3px;">
+						<img border="0" alt="" title="Núcleo de Tecnologia da Informação - UFMS" src="./index_files/nti.power.gif">&nbsp;&nbsp;
+					</span>
+					<span class="fundoVerde" style="float:right; margin-top: 2px;">
+						© Copyright 2006 - 2020, NTI/UFMS&nbsp;&nbsp;
+					</span>					
+					<br style="clear:both;">
+				</div>
+				<!-- NAO REMOVER FIM -->
+			</td>
+		</tr>
+    </tbody></table>
+
+    <!--[if IE]>
+    </center>
+    <![endif]-->
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function changeField(f,e)
+    {
+        if(e)
+        {
+            car = (window.Event) ? e.which : e.keyCode;
+            if(car == 0 || car == 8) { return true; }
+        }
+        else
+            car = 0;
+
+        switch(f)
+        {
+            case 1:
+                if(car == 13)
+                    document.getElementById("password").focus();
+            break;
+
+            case 2:
+                if(car == 13)
+                {
+                    //document.formLogin.botao.focus();
+                    submitForm();
+                }
+            break;
+        }
+    }
+</script>
+
+
+
+
+	
+
+
+
+<div id="fancybox-tmp"></div><div id="fancybox-loading"><div></div></div><div id="fancybox-overlay"></div><div id="fancybox-wrap"><div id="fancybox-outer"><div class="fancybox-bg" id="fancybox-bg-n"></div><div class="fancybox-bg" id="fancybox-bg-ne"></div><div class="fancybox-bg" id="fancybox-bg-e"></div><div class="fancybox-bg" id="fancybox-bg-se"></div><div class="fancybox-bg" id="fancybox-bg-s"></div><div class="fancybox-bg" id="fancybox-bg-sw"></div><div class="fancybox-bg" id="fancybox-bg-w"></div><div class="fancybox-bg" id="fancybox-bg-nw"></div><div id="fancybox-content"></div><a id="fancybox-close"></a><div id="fancybox-title"></div><a href="javascript:;" id="fancybox-left"><span class="fancy-ico" id="fancybox-left-ico"></span></a><a href="javascript:;" id="fancybox-right"><span class="fancy-ico" id="fancybox-right-ico"></span></a></div></div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-modalScreenSizeError" style="display: none; position: absolute; overflow: hidden; z-index: 1002; outline: 0px; height: auto; width: 300px; top: 220px; left: 478px;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on"><span class="ui-dialog-title" id="ui-dialog-title-modalScreenSizeError" unselectable="on">Atenção! Resolução de tela não suportada!</span><a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on"><span class="ui-icon ui-icon-closethick" unselectable="on">close</span></a></div><div id="modalScreenSizeError" hidden="" style="font-size: 0.9em; display: block; height: auto; min-height: 122.84px; width: auto;" class="ui-dialog-content ui-widget-content">
+		O sistema SISCAD foi desenvolvido para a resolução <b>1366 x 768 ou superior</b>.<br>
+		<br>
+		Ao acessar o sistema através de dispositivos móveis, tais como, smartphones ou tablets, podem ocorrer problemas inesperados durante a sua utilização.<br>
+		É aconselhável acessar o sistema através de computadores de mesa ou notebooks.
+	</div></div></body></html>

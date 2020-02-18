@@ -1,0 +1,173 @@
+textarea
+{
+	display: block;
+	resize: vertical;
+}
+
+
+select, input:not([type=file]):not([type=checkbox]):not([type=radio])
+{
+	height: 2em;
+	padding-left: .5em;
+}
+
+
+select:disabled, input:disabled, textarea:disabled
+{
+    background-color: rgb(235, 235, 228) !important;
+    color: #AAA !important;
+	border-color: #CCC !important;
+}
+
+::-webkit-input-placeholder
+{ /* WebKit, Blink, Edge */
+    color:    #AAA;
+}
+:-moz-placeholder
+{ /* Mozilla Firefox 4 to 18 */
+   color:    #AAA;
+   opacity:  1;
+}
+::-moz-placeholder
+{ /* Mozilla Firefox 19+ */
+   color:    #AAA;
+   opacity:  1;
+}
+:-ms-input-placeholder
+{ /* Internet Explorer 10-11 */
+   color:    #AAA;
+}
+
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=date], input[type=month], input[type=time], input[type=datetime], input[type=datetime-local], input[type=week], input[type=number], input[type=search], input[type=tel], input[type=color], select, textarea
+{
+	padding: .2em;
+	margin-top: .1em;
+	margin-bottom: .1em;
+	border: 1px solid #ccc;
+	box-shadow: inset 0 1px 3px #ddd;
+	border-radius: 4px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+	font-size: 100%;
+	color: #666;
+}
+
+input[type=file]
+{
+	border-radius: 4px;
+	padding: .1em;
+	border: 1px solid #ccc;
+	margin-top: .1em;
+	margin-bottom: .1em;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	box-shadow: inset 0 1px 3px #ddd;
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, input[type=date]:focus, input[type=month]:focus, input[type=time]:focus, input[type=datetime]:focus, input[type=datetime-local]:focus, input[type=week]:focus, input[type=number]:focus, input[type=search]:focus, input[type=tel]:focus, input[type=color]:focus, select:focus, textarea:focus
+{
+	border-color: #129FEA;
+}
+
+input[type=radio], input[type=checkbox]
+{
+	/*margin: 3px;
+    vertical-align: text-top;*/ /*retirado, pois atrapalha os CSSs das paginas específicas*/
+}
+
+input[type=file]::-webkit-file-upload-button
+{
+	margin-right: 0px;
+	*text-shadow:1px 1px 1px #666;
+	border-radius: 2px;
+	border: 1px solid #CCC;
+}
+input[type=file]:enabled::-webkit-file-upload-button
+{
+	color: white;
+	background-color: #79a900;
+	border: 1px solid #84b800;
+}
+
+input[type=file]::-moz-file-upload-button
+{
+	margin-right: 0px;
+	*text-shadow:1px 1px 1px #666;
+	border-radius: 2px;
+	border: 1px solid #CCC;
+}
+input[type=file]:enabled::-moz-file-upload-button
+{
+	color: white;
+	background-color: #79a900;
+	border: 1px solid #84b800;
+}
+
+input[type=file]:enabled::-webkit-file-upload-button:hover
+{
+	background-color:#a2d635;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0, #a2d635), color-stop(1, #84b800) );
+	background: -moz-linear-gradient( center top, #a2d635 0%, #84b800 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a2d635', endColorstr='#84b800');
+}
+
+input[type=file]:enabled::-moz-file-upload-button:hover
+{
+	background-color:#a2d635;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0, #a2d635), color-stop(1, #84b800) );
+	background: -moz-linear-gradient( center top, #a2d635 0%, #84b800 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a2d635', endColorstr='#84b800');
+}
+
+input[type=file]:enabled::-webkit-file-upload-button:active
+{
+	background-color: #84b800;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0, #84b800), color-stop(1, #a2d635) );
+	background: -moz-linear-gradient( center top, #84b800 0%, #a2d635 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#84b800', endColorstr='#a2d635');
+}
+
+input[type=file]:enabled::-moz-file-upload-button:active
+{
+	background-color: #84b800;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0, #84b800), color-stop(1, #a2d635) );
+	background: -moz-linear-gradient( center top, #84b800 0%, #a2d635 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#84b800', endColorstr='#a2d635');
+}
+
+input[type=button], input[type=submit]
+{
+	float: right;
+	margin-right: 0px;
+	background-color: #79a900;
+	border: 1px solid #6a9f00;
+	color: white;
+	*text-shadow:1px 1px 1px #666;
+	border-radius: 2px;
+}
+
+input[type="file"]::-webkit-file-upload-button
+{
+	padding: 2px 6px 3px;
+}
+
+input[type=button]:hover:enabled, input[type=submit]:hover:enabled
+{
+	background-color:#a2d635;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0, #a2d635), color-stop(1, #84b800) );
+	background: -moz-linear-gradient( center top, #a2d635 0%, #84b800 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a2d635', endColorstr='#84b800');
+}
+
+input[type=button]:hover:active:enabled, input[type=submit]:hover:active:enabled
+{
+	background-color: #84b800;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0, #84b800), color-stop(1, #a2d635) );
+	background: -moz-linear-gradient( center top, #84b800 0%, #a2d635 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#84b800', endColorstr='#a2d635');
+}

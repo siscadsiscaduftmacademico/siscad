@@ -1,0 +1,295 @@
+/**
+ * verificação de codificação ISO-8859-1
+ */
+
+/** Problema com serialize com a codificação ISO-8859-1 **/
+jQuery.fn.extend({
+    param: function( a ) {
+        var s = [];
+ 
+        // If an array was passed in, assume that it is an array
+        // of form elements
+        if ( a.constructor == Array || a.jquery ){
+            // Serialize the form elements
+            jQuery.each( a, function(){
+                s.push(unescape(encodeURIComponent(escape(this.name))) + "=" + unescape(encodeURIComponent(escape(this.value))));
+            });
+        }
+        // Otherwise, assume that it's an object of key/value pairs
+        else{
+            // Serialize the key/values
+            for ( var j in a )
+                // If the value is an array then the key names need to be repeated
+                if ( a[j] && a[j].constructor == Array )
+                    jQuery.each( a[j], function(){
+                        s.push(unescape(encodeURIComponent(escape(j)) + "=" + encodeURIComponent(escape(this))));
+                    });
+                else
+                    s.push(unescape(encodeURIComponent(escape(j)) + "=" + encodeURIComponent(escape(a[j]))));
+        }
+        // Return the resulting serialization
+        return s.join("&").replace(/ /g, "+");
+    },
+
+    serialize: function() {
+        return this.param(this.serializeArray());
+    }
+});  
+
+function aplicarFuncoesPadroes(){
+	jQuery("a.ajax_get_body").each( function(){
+		jQuery(this).attr('href', "javascript:urlRequest('#body', '"+jQuery(this).attr('href')+"'); ");
+		jQuery(this).removeClass("ajax_get_body");
+	});
+
+	
+	jQuery("form.ajax_post_body").each( function(){
+		if(jQuery(this).attr("id")==""){
+			jQuery(this).attr("id", "form"+Math.floor((Math.random() * 10) + 100));
+		}
+
+		jQuery(this).attr('action', "javascript:submitPostAjax('#body', '"+jQuery(this).attr('action')+"', '#"+jQuery(this).attr('id')+"'); ");
+		jQuery(this).removeClass("ajax_post_body");
+	});
+}
+
+function urlRequest(divRetorno, url){
+	jQuery.ajax
+	({
+		type: 'GET',
+		url: url,
+		dataType: 'html',
+		async: true,
+		cache: false,
+		beforeSend: function(html) {
+			loadingAjax();
+		},
+		success: function(html){
+			onloadImagemCarregando();
+			jQuery(divRetorno).html(html);
+		},
+		error: function(){
+			onloadImagemCarregando();
+			alert("Não foi possível fazer a requisição!");
+		}
+	});
+}
+
+function submitPostAjax(divRetorno, url, formId){
+	jQuery.ajax
+	({
+		type: 'POST',
+		url: url,
+		dataType: 'html',
+		async: true,
+		cache: false,
+		data: jQuery(formId).serialize(),
+		beforeSend: function(html) {
+			loadingAjax();
+		},
+		success: function(html){
+			onloadImagemCarregando();
+			jQuery(divRetorno).html(html);
+		},
+		error: function(){
+			onloadImagemCarregando();
+			alert("Não foi possível fazer a requisição!");
+		}
+	});	
+}
+
+
+var arrayPageSize;
+function getPageSize(){
+	  var xScroll, yScroll;
+	  
+	  if (window.innerHeight && window.scrollMaxY) {  
+	    xScroll = document.body.scrollWidth;
+	    yScroll = window.innerHeight + window.scrollMaxY;
+	  } else if (document.body.scrollHeight > document.body.offsetHeight){ 
+	    xScroll = document.body.scrollWidth;
+	    yScroll = document.body.scrollHeight;
+	  } else { 
+	    xScroll = document.body.offsetWidth;
+	    yScroll = document.body.offsetHeight;
+	  }
+	  
+	  var windowWidth, windowHeight;
+	  if (self.innerHeight) {
+	    windowWidth = self.innerWidth;
+	    windowHeight = self.innerHeight;
+	  } else if (document.documentElement && document.documentElement.clientHeight) { 
+	    windowWidth = document.documentElement.clientWidth;
+	    windowHeight = document.documentElement.clientHeight;
+	  } else if (document.body) { 
+	    windowWidth = document.body.clientWidth;
+	    windowHeight = document.body.clientHeight;
+	  } 
+	  
+	  
+	  if(yScroll < windowHeight){
+	    pageHeight = windowHeight;
+	  } else { 
+	    pageHeight = yScroll;
+	  }
+
+	  // for small pages with total width less then width of the viewport
+	  if(xScroll < windowWidth){  
+	    pageWidth = windowWidth;
+	  } else {
+	    pageWidth = xScroll;
+	  }
+	  arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight);
+}
+
+function loadingAjax(){
+	var pageX;
+	var pageY;
+	if(document.all){
+		var iebody=(document.compatMode && document.compatMode != "BackCompat")? document.documentElement : document.body;
+		pageX = iebody.scrollLeft;
+		pageY = iebody.scrollTop;
+	}
+	else{
+		pageX = window.pageXOffset;
+		pageY = window.pageYOffset;
+	}
+    getPageSize();
+
+    var larguraTela = arrayPageSize[2];
+    var alturaTela = arrayPageSize[3];
+	
+	var left = ((larguraTela)/2)-75;
+	var top = pageY+((alturaTela)/2)-75;
+	
+	if(document.getElementById('imagemCarregando')){
+		document.getElementById('imagemCarregando').innerHTML = '<div style="z-index: 1000; opacity:0.6; filter: alpha(opacity=60); width:'+arrayPageSize[0]+'px; height:'+arrayPageSize[1]+'px; background-color: white; position:absolute; top:0;left:0;"><img style="position: absolute; z-index: 100; left:'+left+'px; top:'+top+'px" src="/image/carregando.gif" class="imagemCarregando" /></div>';
+	}
+}
+
+function onloadImagemCarregando(){
+	if(document.getElementById('imagemCarregando')){
+		document.getElementById('imagemCarregando').innerHTML="";
+	}	
+	else{
+		var imagemCarregando = document.createElement('div');
+		imagemCarregando.setAttribute('id',"imagemCarregando");
+		document.body.appendChild(imagemCarregando);
+	}
+	
+}
+
+jQuery(document).ready(function()
+{
+	jQuery("#trocarUsuarioLogado").bind("change", function()
+	{
+		jQuery.ajax(
+		{
+			type: "POST",
+			url: "titan.php?toSection=9&toAction=trocarUsuarioLogado",
+			data: "args="+jQuery(this).val(),
+			cache: false,
+			dataType: "html",
+			success: RetornoTrocarUsuarioLogado
+		});		
+	});
+
+	jQuery("#anoSemestreDemonstrativoLancamento").bind("change", function()
+	{
+		jQuery.ajax(
+		{
+			type: "POST",
+			url: "titan.php?toSection=9&toAction=trocarAnoSemestreDemonstrativoLancamento",
+			data: "args="+jQuery(this).val(),
+			cache: false,
+			dataType: "html",
+			success: RetornoAnoSemestreDemonstrativoLancamento
+		});		
+	});
+});
+
+function RetornoTrocarUsuarioLogado(dataRetorno)
+{
+	if(ValidaRetornoTrocarUsuarioLogado(dataRetorno.split("#")))
+	{
+		if(jQuery("#divAlert").length>0)
+			setTimeout(function(){ window.location="titan.php"; }, 3000);
+		else
+			window.location="titan.php";
+	}
+	jQuery.unblockUI();
+}
+
+function RetornoAnoSemestreDemonstrativoLancamento(dataRetorno)
+{
+	if(ValidaRetornoTrocarUsuarioLogado(dataRetorno.split("#")))
+	{
+		if(jQuery("#divAlert").length>0)
+			setTimeout(function(){ window.location=window.location.href; }, 3000);
+		else
+			window.location=window.location.href;
+	}
+	jQuery.unblockUI();
+}
+
+function ValidaRetornoTrocarUsuarioLogado(message)
+{
+	if(jQuery("#divAlert").length>0)
+	{
+		switch(message[0])
+		{
+				case 'warning':
+						jQuery(".texto_alert").text(message[message.length-1]);
+						jQuery("#divAlert").closest("ui-dialog").find(".ui-dialog-title").html("Aviso");
+						jQuery("#divAlert").dialog('open');
+						return true;
+				case 'success':
+						jQuery(".texto_alert").text(message[message.length-1]);
+						jQuery("#divAlert").closest("ui-dialog").find(".ui-dialog-title").html("Sucesso");
+						jQuery("#divAlert").dialog('open');
+						return true;
+				case 'error':
+						jQuery(".texto_alert").text(message[message.length-1]);
+						jQuery("#divAlert").closest("ui-dialog").find(".ui-dialog-title").html("Erro");
+						jQuery("#divAlert").dialog('open');
+						return false;
+				default:
+						jQuery(".texto_alert").text("Falha desconhecida.");
+						jQuery("#divAlert").closest("ui-dialog").find(".ui-dialog-title").html("Falha desconhecida");
+						jQuery("#divAlert").dialog('open');
+						return false;
+		}
+	}
+	else
+	{
+		alert(message[message.length-1]);
+		return true;
+	}
+}
+
+function receiveMessageIframe(event)
+{
+	var splitHost = window.location.host.split(".");
+	splitHost = splitHost.slice(splitHost.length- 3);
+	splitHost = splitHost.join(".");
+
+	var splitOrigin = event.origin.split(".");
+	splitOrigin = splitOrigin.slice(splitOrigin.length- 3);
+	splitOrigin = splitOrigin.join(".");
+
+
+	if (splitHost !== splitOrigin)
+	{
+    return;
+	}
+
+	if(event.data && event.data.urlLocationDestino)
+		window.location = event.data.urlLocationDestino;
+
+	if(event.data && event.data.heightChange)
+	{
+		jQuery("#tableIntegradoIframe").css("height", event.data.heightChange);
+	}
+}
+
+window.addEventListener("message", receiveMessageIframe, false);

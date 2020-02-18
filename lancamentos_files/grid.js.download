@@ -1,0 +1,56 @@
+//verificação de codificação ISO-8859-1
+jQuery.noConflict();
+jQuery(document).ready(function(){
+	jQuery("#pagina").change(function(){
+		jQuery(this).parents("form").submit();
+	});	
+	
+	jQuery("#autenticar_atividade").click(function(){
+		jQuery('#acaoAtividade').val("autenticar");
+		jQuery(this).parents("form").submit();
+	});	
+	
+	jQuery("#deferir_atividade").click(function(){
+		jQuery('#acaoAtividade').val("deferir");
+		jQuery(this).parents("form").submit();
+	});	
+	
+	jQuery("#checkAtividades").change(function(){
+		if(jQuery(this).is(':checked')){
+			jQuery(".checkAtividade").attr("checked",true);
+		}else{
+			jQuery(".checkAtividade").attr("checked",false);
+		}
+	});
+});
+
+var atividadeAcademicoIdAtivo=0;
+function exibirFormAtividade(atividadeAcademicoId){
+	jQuery.ajax
+	({
+		type: 'POST',
+		url: "titan.php?toSection=aaccAtividadeAcademico&toAction=form&AtividadeAcademico[id]="+atividadeAcademicoId,
+		dataType: 'html',
+		async: false,
+		cache: false,
+		data: {
+
+			  },
+		beforeSend: function(html) {
+			if(atividadeAcademicoIdAtivo!=atividadeAcademicoId){
+				jQuery("#form_atividade_"+atividadeAcademicoIdAtivo).html("");
+			}
+			
+			jQuery("#form_atividade_"+atividadeAcademicoId).show();
+			jQuery("#form_atividade_"+atividadeAcademicoId).html("<img src='image/ajaxLoader.gif' style='width:13px'/>");
+			atividadeAcademicoIdAtivo = atividadeAcademicoId;
+		},
+		success: function(html){
+			jQuery("#form_atividade_"+atividadeAcademicoId).html(html);
+		},
+		error: function(){
+			alert("Não foi possível fazer a requisição!");
+		}
+	});
+	
+}

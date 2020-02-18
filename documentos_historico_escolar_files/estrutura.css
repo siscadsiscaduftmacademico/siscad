@@ -1,0 +1,209 @@
+.label
+{
+    color: #666666;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+	border-color: #87A019;
+	
+}
+
+.ui-field2
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #FFFFFF;
+    height: 20px;
+	vertical-align: middle;
+}  
+
+.ui-field
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #FFFFFF;
+    height: 20px;    
+    /*width:inherit;*/
+    width:95%;
+    margin-bottom: 5px;
+}
+
+div.inputs
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #FFFFFF;
+    height: 100px;    
+    /*width:inherit;*/
+    width:100%;
+}
+
+
+.ui-field-readonly
+{
+    border:1px solid #AAAAAA;
+    font-family: Verdana;
+    font-size: 11px;
+    color: #666666;
+    background-color: #E7F0D8;
+    height: 20px;
+    width:95%;
+}
+
+.group
+{
+    padding: 1px 4px 1px 4px;
+    margin: 4px auto 4px auto;
+    background-color: #FFFFFF ;
+    /*border: solid 1px #87A019;*/
+    font-weight: bolder;
+    padding: 5px 5px 5px 5px;
+    /* Essa margin estava zuando algumas telas, ex.: edições da lista de ofertas */-
+    margin: 0; /*20px 20px;*/
+	/*-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;*/
+}
+
+.ui-jgrid-default
+{
+    border:1px solid #AAAAAA;
+    background-color:#FFFFFF;
+
+}
+.ui-jgridHead
+{
+    background-color:#E7F0D8; 
+    table-layout:fixed;
+    float:left;
+
+}
+.ui-gridHead table
+{
+    padding: 0 2px 0 2px;
+    font-size: 11px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+.ui-jgridHead td
+{
+    border-bottom:1px solid;
+    border-right:1px solid;
+    border-color:#EFEFEF;
+    overflow:hidden;
+    height:22px;
+    padding: 3px 2px 3px 2px;
+}
+.ui-jgridHead th
+{
+    border:1px solid;
+    border-color:#E7F0D8;
+    overflow:hidden;
+    font-size: 10px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:bolder;
+    color:#666666;
+    height:22px;
+    padding: 3px 2px 3px 2px;
+}
+
+.ui-jgridFooter
+{
+    background-color:#E7F0D8; /* cor de fundo do rodape (azul)*/
+    height:40px;
+    margin-top:3px;    
+}
+.ui-jgridFooter table  
+{
+    margin-top:10px;    
+}
+.ui-jgridFooter table td
+{
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:bold;
+    font-size:11px;
+    color:#666666;    
+}
+.ui-jgridbody
+{
+    table-layout:fixed;       
+}
+.ui-jgridbody table
+{
+    float:left;   
+}
+
+.ui-jgridbody td
+{
+    border-bottom:1px solid;
+    border-right:1px solid;
+    border-color:#EFEFEF;
+    overflow:hidden;
+    white-space: pre;
+    font-size:10px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-weight:normal;
+    height:22px;
+    padding: 4px 2px 4px 2px;
+}
+div
+{
+    border:0px solid;
+}
+
+div.relatorios {
+		border:1px solid #AAAAAA;
+		overflow: auto;
+		height: 100px;
+		width: 100%;
+		float: left;
+		text-align: left;
+}
+
+
+/* destacar a linha celecionada.*/
+.ui-jgrid-rowhighlight td
+{
+    border: 1px solid FFFFFF;
+    background: rgb(0, 114, 55) ; 
+    color: #FFFFFF;
+}
+/* destacar a linha celecionada.*/
+.ui-jgrid-rowhighlight-red td
+{
+    border: 1px solid #FFFFFF;
+    background: rgb(0, 114, 55)  ; /* #F62817;*/
+    color: #FFFFFF;
+}
+.ui-field-div
+{
+    padding: 2px 5px 0px 2px;
+}
+
+
+.linkbotao {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    padding: 4px;
+    background-color:#e7f0d8;
+    color: #666666;
+    text-decoration: none;
+}
+.linkbotao:link,
+.linkbotao:visited {
+    border-top: 1px solid #cccccc;
+    border-bottom: 2px solid #666666;
+    border-left: 1px solid #cccccc;
+    border-right: 2px solid #666666;
+}
+.linkbotao:hover {
+    border-bottom: 1px solid #cccccc;
+    border-top: 2px solid #666666;
+    border-right: 1px solid #cccccc;
+    border-left: 2px solid #666666;
+}

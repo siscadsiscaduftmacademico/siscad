@@ -1,0 +1,132 @@
+
+
+$(document).ready(function()
+{
+	var  gridCertificados =  $("#gridCertificados").uftmGrid({
+		ufKey: "pessoa_nome",
+		ufOrderField: "pessoa_nome",
+		
+		ufMultiOrder: true,
+		ufOrderField: "usuario_gestor, ja_gerado, tipo_certificado, pessoa_nome",
+		ufOrder: "asc, asc, asc, asc",			
+		
+		ufUrl: "sistemas/evt/ajax.php",
+		ufTotalRows: 25,
+		functionName: "CertificadosBLL::getGridCertificados",
+		ignorarAcentos: true
+	});	
+	
+	gridCertificados.on("click", ".refresh", function()
+	{
+		gridCertificados.refresh();
+	});		
+	
+	$(".novoCertificado").bind("click", novoCertificado);
+	
+    jQuery('.ui-widget-overlay').bind('click',function()
+    {
+    	$(".ui-dialog-content").dialog("close");
+    })	
+});
+
+
+function gerarCertificado()
+{
+	var botao = $(this);
+	
+	var dados = {};
+	
+	dados.crc = $(botao).closest("tr").find(".crc").val();
+	dados.signedReport = $(botao).closest("tr").find(".signed_report").val();
+	dados.tipoCodigo = $(botao).closest("tr").find(".tipo_codigo").val();
+	dados.id = $(botao).closest("tr").find(".id").val();
+
+	openReport
+	(
+		{
+			reportId: 49,
+			dados:  JSON.stringify(dados),
+			origem: "certificado"
+		}
+	);	
+	
+	$("#gridCertificados").data("uftmGrid").refresh();
+}
+
+function abrirMenuGestor()
+{
+	var botao = $(this);
+	var tr = $(botao).closest("tr");
+	var certificadoCorrente = $(tr).find("input").filter(".tipo_codigo").val() + "/" + $(tr).find("input").filter(".id").val();
+	var pessoaCorrente = $(tr).find(".tdNome").text();
+	
+	
+	$("#certificadoCorrente").val(certificadoCorrente);
+	$("#pessoaCorrente").val(pessoaCorrente);
+	
+	$( "#divMenuGestor" ).dialog
+	({
+		modal: true,
+		width: "auto",
+		height: 110,
+        title: "Menu do Gestor",
+        resizable: true,
+        open: function()
+        {
+            jQuery('.ui-widget-overlay').bind('click',function()
+            {
+                jQuery('#divMenuGestor').dialog('close');
+            })
+        },
+        close: function()
+        {
+        	$(".certificadoCorrente, .pessoaCorrente").val("");
+        }
+	});	
+	
+}
+
+function novoCertificado()
+{
+	var funcao = function()
+	{
+		$("#divMenuGestor").closest(".ui-dialog-content").dialog("close");
+		$("#dialogMsg").closest(".ui-dialog-content").dialog("close")
+		
+		ajax({
+			type: "post",
+			url: "./sistemas/evt/ajax.php",
+			dataType: "html",
+			data: 
+			{
+				functionName: "CertificadosBLL::atualizarCertificados",
+				certificados: $("#certificadoCorrente").val()
+			},
+			disableElement: $(".ui-button"),
+			success: function(data)
+			{
+
+				var result = $.parseJSON(data);
+				if(result.success)
+				{
+				     msgSuccess("Operação concluída!", "Certificado(s) gerado(s) com sucesso!");
+				     $("#gridCertificados").data("uftmGrid").refresh();
+				}
+				else
+				{
+					msgError("Falha ao executar a operação", result.msg);
+				}
+			}
+		});
+	}
+	var msg = "Deseja realmente gerar um novo certificado para " +  $("#pessoaCorrente").val()  + "?";
+	msg += "<br>";
+	msg += "Caso já exista um certificado corrente o mesmo será desativado";
+	
+	msgConfirmation("Gerar Novo Certificado?", msg, funcao);	
+    jQuery('.ui-widget-overlay').bind('click',function()
+    {
+    	$(".ui-dialog-content").dialog("close");
+    })		
+	
+}

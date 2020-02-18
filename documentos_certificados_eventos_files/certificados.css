@@ -1,0 +1,38 @@
+.iconeFontAwesome
+{
+	cursor: pointer;
+	background-position: left;
+    background-repeat: no-repeat;
+    display: block;
+    text-align: center;
+    width: 100%;
+    font-size: 1.5em;
+}
+
+.iconeFontAwesome::before {
+    font-family: "FontAwesome";
+}
+
+.certificado::before
+{
+	content: "\f1c1";
+	color: #EE3E36;
+}
+
+
+.cogs::before
+{
+	content: "\f085";
+	color: #696060;
+}
+
+.certificado:hover:before {
+	color: #F57D77;
+}
+
+.cogs:hover:before {
+	color: #9f9090;
+}
+
+
+

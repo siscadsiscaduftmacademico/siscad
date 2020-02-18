@@ -1,0 +1,1107 @@
+$(window).scroll(function()
+{
+	$('#idxDivLoading').toggleClass('scrolling', $(window).scrollTop() > $('#idxDivContent').offset().top);
+});
+
+$(document).ajaxStart(function()
+{
+	$("#idxDivLoading").stop(true, false).fadeIn("fast");
+});
+
+$(document).ajaxStop(function()
+{
+	$("#idxDivLoading").stop(true, false).fadeOut("fast");
+});
+
+$(document).ready(function()
+{
+	var load = getUrlValue('id');
+
+	jQuery("#txtPesquisaMenu").bind("keyup", function (event)
+	{
+		var txtPesquisaMenu = jQuery("#txtPesquisaMenu").val().latinise().toLowerCase();
+
+		if(txtPesquisaMenu=="")
+		{
+			jQuery("#idxDivInnerMenu #idxUlMenu").find("ul, li").show();
+			
+			jQuery("#idxDivInnerMenu ul > ul").not(jQuery(".idxDivMenuSelected").parentsUntil("#idxDivInnerMenu > ul").filter("ul")).slideUp(0);
+			jQuery(".idxDivMenuSelected").parentsUntil("#idxDivInnerMenu > ul").filter("ul").slideDown(0);
+		}
+		else
+		{
+			jQuery("#idxDivInnerMenu #idxUlMenu").find("ul, li").hide();
+
+			jQuery("#idxDivInnerMenu #idxUlMenu").find("ul, li").find("a").each(function ()
+			{
+				var valorLinha = jQuery(this).text().latinise().toLowerCase();
+				if (valorLinha.indexOf(txtPesquisaMenu) >= 0)
+				{
+					var itemMenu = jQuery(this).closest("ul, li");
+					itemMenu.show();
+					itemMenu.find("ul, li").show(); //exibe todos os elementos filhos
+					itemMenu.next().find("li").show();
+					
+					itemMenu.parentsUntil("#idxUlMenu").each(function()
+					{
+						jQuery(this).show();
+						jQuery(this).prev().show();
+					});
+				}
+			});
+		}
+	});
+
+	$("#idxBtnLogin").click(function()
+	{
+		ajax(
+		{
+			type: "post",
+			url: "./ajax.php",
+			dataType: "html",
+			cache: false,
+			data:
+			{
+				username: $("#idxTxtUsuario").val(),
+				password: $("#idxTxtSenha").val(),
+				functionName: "logIn"
+			},
+			success: function(data)
+			{
+				var result = $.parseJSON(data);
+
+				if (result.success)
+				{
+					$("#idxLnkUserName").text(result.username);
+					loadMenu();
+					setIndexState("loggedIn");
+					clearAlert("idxDivLoginError");
+					
+					if($("#idxHdnReturnTo").val() != "")
+					{
+						window.history.pushState('returnTo', 'Title', $("#idxHdnReturnTo").val());
+					}
+					
+					var pageId = getUrlValue('id');
+					if (pageId != null)
+						autoLoadPageId(pageId);
+					
+					$("#idxHdnReturnTo").val("");
+				}
+				else
+				{
+					setAlert("idxDivLoginError", result.msg);
+					modalAlteracaoLogin();
+				}
+			}
+		});
+	});
+	
+	$("#idxLnkLogout").click(function()
+	{
+		ajax(
+		{
+			type: "post",
+			url: "./ajax.php",
+			dataType: "html",
+			cache: false,
+			data:
+			{
+				functionName: "logOut"
+			},
+			success: function(data)
+			{
+				setIndexState("loggedOut");
+				openPageById(getPageCode("home"), null);
+			}
+		});
+	});
+	
+	$("#idxLnkResetPassword").click(function()
+	{
+		openPageById(getPageCode("passwordRecovery"), null);
+	});
+	
+	$("#idxLnkNewUser").click(function()
+	{
+		openPageById(getPageCode("newUser"), null);
+	});
+
+	$("#idxDivMenu").css("height", $(window).height());
+	
+	$(window).resize(function()
+	{
+		$("#idxDivMenu").css("height", $(window).height());
+		$('#idxDivLoading').toggleClass('scrolling', $(window).scrollTop() > $('#idxDivContent').offset().top);
+	});
+	
+	$("#idxSpanPin").click(function()
+	{
+		if ($("#idxSpanPin").is(".idxSpanPinPinned"))
+		{
+			$("#idxSpanPin").removeClass("idxSpanPinPinned").addClass("idxSpanPinUnpinned");
+			
+			$("#idxTdContentLeft").stop(true, false).animate(
+			{
+				width: 12
+			}, 150);
+			
+			$("#idxDivMenu").animate(
+			{ 
+				backgroundColor: "rgba(74, 80, 60, 1)"
+			}, 150);
+		}
+		else
+		{
+			$("#idxSpanPin").removeClass("idxSpanPinUnpinned").addClass("idxSpanPinPinned");
+			
+			$("#idxTdContentLeft").stop(true, false).animate(
+			{
+				width: 260
+			}, 150);
+			
+			$("#idxDivMenu").animate(
+			{ 
+				backgroundColor: "rgba(74, 80, 60, 1)"
+			}, 150);
+		}
+	});
+
+	$("#idxDivMenu").mouseenter(function()
+	{
+		var $idxDivMenu = $("#idxDivMenu");
+		
+		$("#idxSpanPin").removeAttr("style");
+		$idxDivMenu.css("overflow", "auto");
+		
+		$idxDivMenu.stop().clearQueue().animate(
+		{
+			left: 0,
+			opacity: 1
+		}, 150);
+	});
+	
+	$("#idxDivMenu").mouseleave(function()
+	{
+		if ($("#idxSpanPin").is(".idxSpanPinUnpinned"))
+		{
+			var $idxDivMenu = $("#idxDivMenu");
+			
+			$idxDivMenu.css("overflow", "hidden");
+			
+			$idxDivMenu.stop().clearQueue().animate(
+			{
+				left: -$idxDivMenu.outerWidth() + 7,
+				opacity: 1
+			}, 150, function()
+				{
+					$("#idxSpanPin").css("style", "display:none");
+				});
+		}
+	});
+
+	setSubmitBehavior();
+	loadMenu();
+	
+
+	
+	if (load != null)
+	{
+		autoLoadPageId(load);
+	}
+	else
+		openPageById(getPageCode("home"), null);
+	
+	$("#idxLnkUserName").click(function()
+	{
+		openPageById(getPageCode("painelControle"), null);
+	});
+	
+	$("#idxLnkModificarConta").click(function()
+	{
+		openPageById(getPageCode("accSettings"), null);
+	});
+	
+	$("#idxLnkAssinarRelatorios").click(function()
+	{
+		openPageById(315, null);
+	});
+	
+	
+	$("#idxLnkMensagens").click(function()
+	{
+		openPageById(526, null);
+	});
+	
+	$("#idxMsgLido").bind("click", marcarMensagemLida);
+	$("#idxMsgResolvido").bind("click", marcarMensagemResolvida);
+	
+
+	if(getParameterByName("somenteMiolo", window.location.search)=="1")
+	{
+		jQuery("#idxDivMenu, #idxTableContent > tbody > tr:not(:eq(2)), #idxTdContentLeft").hide();
+
+		$('#idxTableContent').watch('clientHeight', function(propName, oldVal, newVal)
+		{
+			window.parent.postMessage({"heightChange":newVal}, "*");
+		});
+	}
+
+	if(document.documentElement.clientWidth < 1366 || document.documentElement.clientHeight < 768)
+	{
+		if(getParameterByName("somenteMiolo", window.location.search) != 1)
+		{
+		$( "#modalScreenSizeError" ).dialog
+		({
+			modal: true,
+	        minWidth: 500,
+	        minHeight: 200,
+	        title: "Atenção! Resolução de tela não suportada!",
+	        open: function()
+	        {
+	            jQuery('.ui-widget-overlay').bind('click',function()
+	            {
+	                jQuery('#modalScreenSizeError').dialog('close');
+	            })
+	            
+	        }	                
+		});			
+	}
+	}
+});
+
+function autoLoadPageId(pageId)
+{
+	var contentParams=null; 
+	if(history.state != undefined && pageId==history.state.content)
+		contentParams = history.state.contentParams;
+	
+	var $_GET = {};
+	document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
+		function decode(s) {
+			return decodeURIComponent(s.split("+").join(" "));
+		}
+
+		if(decode(arguments[1]) != "id") {
+			//alert(arguments[2]);
+			$_GET[decode(arguments[1])] = decode(arguments[2]);
+		}
+	});
+	//alert($_GET["k"]);
+
+	if(contentParams != null && !jQuery.isEmptyObject($_GET)){
+		$.extend( contentParams, $_GET );
+	}else if(contentParams == null && !jQuery.isEmptyObject($_GET)){
+		contentParams = $_GET;
+	}
+	//contentParams = $_GET;
+
+
+	var dados = {};
+	$("form#post :input").each(function(){
+		var input = $(this); // This is the jquery object of the input, do what you will
+		dados[input.attr('name')] = input.val();
+	});
+
+	if(contentParams != null && !jQuery.isEmptyObject(dados)){
+		$.extend( contentParams, dados );
+	}else if(contentParams == null && !jQuery.isEmptyObject(dados)){
+		contentParams = dados;
+	}
+
+	openPageById(pageId, contentParams);
+
+	$("form#post").html("");	
+}
+
+function getUrlValue(param)
+{
+    var array = window.location.search.substring(1).split('&');
+	var aux;
+	
+    for (var i = 0; i < array.length; i++)
+	{
+        var aux = array[i].split('=');
+		
+        if (aux[0] == param)
+		{
+            return aux[1];
+        }
+    }
+}
+
+function loadMenu(loadAll = true)
+{
+	ajax(
+	{
+		data: { functionName: "buildMenu", loadAll: loadAll },
+		success: function(data)
+		{
+			var result = $.parseJSON(data);
+			var elements = null;
+			var i = 0;
+			var j = 0;
+			var parentName = "";
+
+			if (result.success == true)
+			{
+				$("#idxDivPesquisaMenuContainer").fadeIn();
+			}
+			if(loadAll)
+			{
+				$("#idxDivInnerMenu").html(result.msg).promise().done(function()
+				{
+					$("#idxUlMenu ul").css("display", "none");
+					
+					$("#idxUlMenu li a").not(".aLinkMenuItem").click(function()
+					{
+						$(this).parent().next().slideToggle();
+					});
+					
+					elements = $("#idxUlMenu > li").children("a");
+					
+					while (elements.length != 0)
+					{
+						elements.css("padding-left", i + "em");
+						
+						parentName = "#idxUlMenu";
+						
+						for(j = 0; j < i; j++)
+						{
+							parentName += " > ul"
+						}
+						
+						parentName += " > li";
+						
+						elements = $(parentName).children("a");
+						i++;
+					}
+				});
+				
+				if(result.possuiEmailSetorial)
+				{
+					$("#divIdxLnkMeusEmails").show();
+					
+					$("#idxLnkMeusEmails").bind("click",function()
+					{
+						openPageById(512, null);
+					});
+					
+				}
+				else
+				{
+					$("#idxLnkMeusEmails").unbind("click");
+				}	
+				
+				$(".liLnkMenuItem").unbind("click");
+				$(".liLnkMenuItem").each(function()
+				{
+					var $this = $(this);
+					var a=$this.find("a");
+					
+					var menu = $this.attr("data-menu");
+					var url = "?id="+menu;
+					var params = $this.attr("data-params");
+					if(params!=null & params!="" & params!="null")
+						url += "&data-params="+b64EncodeUnicode(params);
+					a.attr("href", url);					
+				}).bind("click", abrirMenuIntegrado);
+			
+			}
+			
+			contarRelatoriosNaoAssinados(result.relatoriosNaoAssinados);
+			contarMensagensNaoLidas(result.mensagensNaoLidas);
+			
+			
+		}
+	});
+}
+
+function contarRelatoriosNaoAssinados(relatoriosNaoAssinados)
+{
+	if(relatoriosNaoAssinados)
+	{
+		if(relatoriosNaoAssinados == 0)
+		{
+			$("#idxStrContarRelatoriosNaoAssinados").text("(0)");
+		}
+		else
+		{
+			$("#idxStrContarRelatoriosNaoAssinados").text("(+"+relatoriosNaoAssinados+")");
+		}
+	}
+	else
+	{
+		$("#idxStrContarRelatoriosNaoAssinados").text("(0)");
+	}
+}
+
+function contarMensagensNaoLidas(mensagensNaoLidas)
+{
+	if(mensagensNaoLidas)
+	{
+		if(mensagensNaoLidas == 0)
+		{
+			$("#idxStrContarMensagensNaoLidas").text("(0)");
+		}
+		else
+		{
+			$("#idxStrContarMensagensNaoLidas").text("(+"+mensagensNaoLidas+")");
+		}
+	}
+	else
+	{
+		$("#idxStrContarMensagensNaoLidas").text("(0)");
+	}
+}
+
+function openPageNewWindow(id, dados) {
+    var input = null;
+    var form = document.createElement("form");
+
+    form.setAttribute("method", "post");
+    form.setAttribute("action", "?id="+id);
+    form.setAttribute("target", "_blank");
+
+    for (var p in dados)
+    {
+        if (dados.hasOwnProperty(p))
+        {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = p;
+            input.value = dados[p];
+
+            form.appendChild(input);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
+
+function openPageById(id, params)
+{
+	if(params && typeof params == "object" && params["data-params"])
+	{
+		var dataParams = params["data-params"];
+		if(dataParams!=null && dataParams!="")
+		{
+			dataParams = b64DecodeUnicode(dataParams);
+			eval("dataParams="+dataParams);
+			params=dataParams;
+		}
+	}
+	
+	updateHistory(id, params, true);
+	
+	var p = {__pageId: id};
+
+	if (params != null)
+	{
+		$.extend(p, params)
+	}
+	
+	$(".idxDivMenuSelected").removeClass("idxDivMenuSelected");
+	$("#idxLnkMenuItem" + id).addClass("idxDivMenuSelected");
+	
+	ajax(
+	{
+		data: p,
+		success: function(data)
+		{
+			var result = $.parseJSON(data);
+			
+			if(result.success)
+			{
+				$(".idxDivMenuSelected").removeClass("idxDivMenuSelected");
+				$("#idxLnkMenuItem" + id).addClass("idxDivMenuSelected");
+				$("#idxDivInnerMenu ul > ul").not($("#idxLnkMenuItem" + id).parentsUntil("#idxDivInnerMenu > ul").filter("ul")).slideUp();
+				$("#idxLnkMenuItem" + id).addClass("idxDivMenuSelected").parentsUntil("#idxDivInnerMenu > ul").filter("ul").slideDown();
+				
+				$(window).unbind("scroll");
+				$(window).unbind("resize");
+				$(window).scroll(function()
+				{
+					$('#idxDivLoading').toggleClass('scrolling', $(window).scrollTop() > $('#idxDivContent').offset().top);
+				});
+				
+				$(window).resize(function()
+				{
+					$("#idxDivMenu").css("height", $(window).height());
+					$('#idxDivLoading').toggleClass('scrolling', $(window).scrollTop() > $('#idxDivContent').offset().top);
+				});
+				
+				$("#idxTdContentPathRight").fadeOut("fast", function()
+				{
+					$("#idxTdContentPathRight").html(result.bread).promise().done(function()
+					{
+						$("#idxTdContentPathRight").fadeIn("slow");
+					});
+				});
+				
+		    	$("#idxDivContent").fadeOut("fast", function()
+				{
+		    		$("#idxH3ContentTitle").html(result.title);
+					$("#idxDivInnerContent").html(result.msg).promise().done(function()
+					{
+						$("#idxDivInnerContent :first").data("__idxIdTela", id);
+						$("#idxDivContent").fadeIn("slow", function(){ updateHistory(id, params)} );
+					});
+				});
+
+
+			}
+			
+			$("#idxH4HelpLinkContent").empty();
+			if(result.helpLink)
+			{
+				
+				var helpLink = JSON.parse(result.helpLink);
+				
+				$(helpLink).each(function(index, elem)
+				{
+					if(elem.tipo == "linkExterno")
+					{
+						$("#idxH4HelpLinkContent").append
+						(
+							$("<a>", 
+							{
+								href: elem.link, 
+								text: elem.descricao,
+								target: '_blank'
+							}).append("<br>")	
+						);
+					}
+					
+					if(elem.tipo == "linkIntegrado")
+					{
+						$("#idxH4HelpLinkContent").append
+						(
+							$("<a>", 
+							{
+								text: elem.descricao,
+							})
+							.click(function()
+							{
+								openPageById(elem.menu,elem.menuParams);	
+							})
+							.append("<br>")	
+						);						
+					}
+					
+				});
+				
+				if($("#idxH4HelpLinkContent").children().length > 0)
+				{
+					$("#idxH4HelpLinkContent").show();		
+				}
+				else
+				{
+					$("#idxH4HelpLinkContent").hide();		
+				}
+				
+				
+			}
+			else
+			{
+				$("#idxH4HelpLinkContent").hide();
+			}
+		}
+	});
+}
+
+function getIdTela()
+{
+	return parseInt($("#idxDivInnerContent :first").data("__idxIdTela"));
+}
+
+function updateHistory(id, params, replace)
+{
+	$("#idxDivInnerContent").find("input, select, textarea").each(function()
+	{
+	    var $this = $(this);
+
+	    if ($this.is(".hasDatepicker")) $this.removeClass("hasDatepicker");
+	    
+	    if ($this.is("[type='radio']") || $this.is("[type='checkbox']"))
+	    {
+	        if ($this.prop("checked"))
+	        {
+	            $this.attr("checked", "checked");
+	        }
+	    }
+	    else
+	    {
+	        if ($this.is("select"))
+	        {
+	            $this.find(":selected").attr("selected", "selected");
+	        }
+	        else
+	        {
+	        	if ($this.is("textarea"))
+        		{
+	        		$this.html($this.val());
+        		}
+	        	else
+	        	{
+	            	$this.attr("value", $this.val());
+	        	}
+	        }
+	    }
+	});
+	
+	
+	
+	var dialog = [];
+	var tamanho;
+	
+	$(".ui-dialog").each(function(index, elem)
+	{
+		tamanho = dialog.length;
+		
+		dialog[tamanho] = $($(elem)[0]).outerHTML;
+		
+	});
+	
+	dialog[dialog.length] = $($(".ui-widget-overlay")[0]).outerHTML;
+
+	var data = 
+	{
+		content: id,
+		contentParams: params,
+		title: $("#idxH3ContentTitle").html(),
+		html: $("#idxDivInnerContent").html(),
+		bread: $("#idxTdContentPathRight").html(),
+		selectedItem: $(".idxDivMenuSelected").attr("id"),
+		helpLink : $("#idxH4HelpLinkContent").html(),
+		dialog: dialog
+	};
+	
+	
+	if ($("#idxDivInnerContent").html() !== "")
+	{
+		if(replace)
+		{
+			try
+			{
+				if(window.CKEDITOR)
+				{
+					data.html = null;
+					data.reload = true;					
+				}
+				history.replaceState(data, "",	location.search);
+			}
+			catch(Exception)
+			{
+				data.html = null;
+				data.reload = true;
+				history.replaceState(data, "",	location.search);
+			}
+		}
+		else
+		{
+			
+			var queryString = window.location.search;
+			
+			if(getParameterByName("id", queryString) == id)
+			{
+				queryString = window.location.search;
+			}
+			else
+			{
+				queryString = "?id="+id;
+			}
+			
+			for (var key in params) 
+			{
+				queryString = updateQueryString(key, params[key], queryString);
+			}
+			
+			queryString += window.location.hash;
+				
+			history.pushState(data,"",queryString);			
+		}
+	}
+}
+
+$(window).bind("popstate", function(e)
+{
+	if (e.originalEvent.state)
+	{
+		if(e.originalEvent.state.reload)
+		{
+			window.location.reload();
+		}
+		else
+		{
+			$("#idxTdContentPathRight").html(e.originalEvent.state.bread);
+			$(".idxDivMenuSelected").removeClass("idxDivMenuSelected");
+			$("#idxH3ContentTitle").html(e.originalEvent.state.title);
+			
+			if (e.originalEvent.state.selectedItem)
+			{
+				$("#idxDivInnerMenu ul > ul").not($("#" + e.originalEvent.state.selectedItem).parentsUntil("#idxDivInnerMenu > ul").filter("ul")).slideUp();
+				$("#" + e.originalEvent.state.selectedItem).addClass("idxDivMenuSelected").parentsUntil("#idxDivInnerMenu > ul").filter("ul").slideDown();
+			}
+			
+			$("#idxDivInnerContent").html(e.originalEvent.state.html);
+			
+			$("#idxDivInnerContent script").each(function()
+			{
+				var src = $(this).attr("src");
+				$(this).removeAttr("src");
+				$(this).attr("src", src);
+			});
+			
+			
+			$("#idxH4HelpLinkContent").empty();
+			if(e.originalEvent.state.helpLink.length)
+			{
+				$("#idxH4HelpLinkContent").html(e.originalEvent.state.helpLink);
+				$("#idxH4HelpLinkContent").show();
+			}
+			else
+			{
+				$("#idxH4HelpLinkContent").hide();
+			}
+			
+			
+			if(e.originalEvent.state.dialog.length)
+			{
+				
+				$(e.originalEvent.state.dialog).each(function(index, elem)
+				{
+					$("body").append(	$(elem)		);	
+				});
+				
+			}
+			
+		}
+	}
+});
+
+function addBreakPoint()
+{
+	return;
+}
+
+function updateQueryString(key, value, url) {
+    if (!url) url = window.location.href;
+    var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+        hash;
+
+    if (re.test(url)) {
+        if (typeof value !== 'undefined' && value !== null)
+            return url.replace(re, '$1' + key + "=" + value + '$2$3');
+        else {
+            hash = url.split('#');
+            url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null) 
+                url += '#' + hash[1];
+            return url;
+        }
+    }
+    else {
+        if (typeof value !== 'undefined' && value !== null) {
+            var separator = url.indexOf('?') !== -1 ? '&' : '?';
+            hash = url.split('#');
+            url = hash[0] + separator + key + '=' + value;
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null) 
+                url += '#' + hash[1];
+            return url;
+        }
+        else
+            return url;
+    }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+function modalAlteracaoLogin()
+{
+	
+	data = new Date();
+	
+	anoAtual = data.getUTCFullYear();
+	mesAtual =  data.getUTCMonth();
+	diaAtual = data.getUTCDate();
+	
+	anoModal = "2019";
+	mesModal = "8"; // mês começa do '0', 8 == 'setembro'
+	diaModal = "8";
+	
+	if
+	(
+		anoAtual > anoModal
+		||
+		(anoAtual == anoModal && mesAtual > mesModal)
+		||
+		(anoAtual == anoModal && mesAtual == mesModal && diaAtual >= diaModal)
+	)
+	{
+		$( "#modalAlteracaoLogin" ).dialog
+		({
+			modal: true,
+	        minWidth: 800,
+	        minHeight: 200,
+	        title: "Atenção aos usuários já cadastrados!",
+	        open: function()
+	        {
+	        	
+	            jQuery('.ui-widget-overlay').bind('click',function()
+	            {
+	                jQuery('#modalAlteracaoLogin').dialog('close');
+	            })
+	            
+	        }	                
+		});			
+	}
+	
+
+	
+}
+ 
+window.addEventListener("error", function (e) 
+{
+	if($("#idxDivLoading").is(":visible"))
+	{
+		$("#idxDivLoading").stop(true, false).fadeOut("fast");
+		msgError("Aviso sobre ocorrência de erros", "Ocorreu um erro inesperado nesta tela. Entre em contato com o DTI para solicitar correção.", true);
+	}
+	return false;
+});
+
+
+$( document ).ajaxError(function( event, jqxhr, settings, thrownError ) 
+{
+	$("#idxDivLoading").stop(true, false).fadeOut("fast");
+	return false;
+});
+
+function buscarMensagem(mensagem, marcarComoLida = false)
+{
+	
+	ajax
+	({
+		type: "post",
+		url: "ajax.php",
+		dataType: "html",
+		data: 
+		{
+			functionName: "Mensagem::getMensagemRole",
+			mensagem: mensagem,
+			marcarComoLida: marcarComoLida
+		},
+		success: function(data)
+		{
+			var result = $.parseJSON(data);
+			var redirecionamento;
+			var menu;
+			
+			if($('#dialogMsg').closest(".ui-dialog-content").length)
+			{
+				$('#dialogMsg').closest(".ui-dialog-content").dialog("close");
+			}
+			
+			if(result.success)
+			{
+				
+				var dados = result.dados[0];
+				
+				$("#modalMensagem").find("input, textarea").val("");
+				$("#idxAAcessarPaginaMensagem").unbind("click");
+				
+				$("#idxHdnMensagem").val(dados.mensagem);
+				
+				$("#idxMsgMensagemTipo").val(dados.mensagem_tipo_descricao);
+				$("#idxMsgMensagemModulo").val(dados.mensagem_modulo_descricao);
+				
+				$("#idxMsgAssunto").val(dados.assunto);
+				$("#idxMsgRemetente").val(dados.remetente);
+				$("#idxMsgTexto").val(dados.texto);
+				
+				$("#idxMsgLido").prop("checked", (dados.data_leitura ? true : false)   );
+				
+				if(dados.resolvido == true)
+				{
+					$("#idxMsgResolvido").closest("div").show();
+					$("#idxMsgResolvido").prop("checked", "checked");
+				}
+				else if(dados.resolvido == false)
+				{
+					$("#idxMsgResolvido").closest("div").show();					
+					$("#idxMsgResolvido").prop("checked", false);
+				}
+				else // null 
+				{
+					$("#idxMsgResolvido").closest("div").hide();					
+				}
+				
+				
+				if(dados.menu)
+				{
+					$("#idxDivAcessarPaginaMensagem").show();
+					
+					$("#idxAAcessarPaginaMensagem").bind("click", function()
+					{
+						redirecionamento = window.location.protocol + "//";
+						redirecionamento += window.location.host;
+						redirecionamento += window.location.pathname;
+						
+						menu =  "?id=" + dados.menu + (dados.menu_parametros ?  ("&"+ dados.menu_parametros) : "");
+						
+						window.open(redirecionamento + menu, "_blank");
+					});
+					
+				}
+				else
+				{
+					$("#idxDivAcessarPaginaMensagem").hide();					
+				}
+				
+				if(dados.data_limite_exibicao)
+				{
+					$("#idxH5DataExpiracao").show();
+					
+					$("#idxSpanDataExpiracao").html(dados.data_limite_exibicao);
+				}
+				else
+				{
+					$("#idxH5DataExpiracao").hide();					
+				}
+				
+				
+				
+				$( "#modalMensagem" ).dialog
+				({
+					modal: true,
+					width: "900px",
+					height: "auto",
+			        title: "Visualização de Mensagens",
+			        resizable: true,
+			        dialogClass: "teste",
+			        class: "teste",
+			        open: function()
+			        {
+			            jQuery('.ui-widget-overlay').bind('click',function()
+			            {
+			                jQuery('#modalMensagem').dialog('close');
+			            })
+			            
+			            
+			            return false;        	
+			        	
+			        },
+			        close: function()
+			        {
+			        	$(".fecharModalMensagem").trigger("click");
+			        	loadMenu(false);
+			        }
+				});	
+				
+				
+				
+				
+				
+			}
+			else
+			{
+				msgAlert("Falha ao realizar a operação", result.msg, true);
+			}
+				
+		}
+	});
+	
+}
+
+function abrirMenuIntegrado(event)
+{
+	if(!event.ctrlKey && !event.shiftKey)
+	{
+		event.preventDefault();
+		var menu = $(this).attr("data-menu");
+		var params = $(this).attr("data-params");
+		eval("params="+params);
+	
+		
+		openPageById(menu, params);
+		return false;
+	}
+}
+
+function marcarMensagemLida()
+{
+	msgAguardeProcessamento(true);
+	ajax
+	({
+		type: "post",
+		url: "ajax.php",
+		dataType: "html",
+		data: 
+		{
+			functionName: "Mensagem::marcarMensagem",
+			mensagem: $("#idxHdnMensagem").val(),
+			marcacao: "leitura"
+		},
+		success: function(data)
+		{
+			$("#dialogMsg").closest(".ui-dialog-content").dialog("close");
+			var result = $.parseJSON(data);
+			
+			if(result.success)
+			{
+				//
+			}
+			else
+			{
+				msgAlert("Falha ao realizar a operação", result.msg, true);
+			}
+				
+		}
+	});
+}
+
+function marcarMensagemResolvida()
+{
+	msgAguardeProcessamento(true);
+	ajax
+	({
+		type: "post",
+		url: "ajax.php",
+		dataType: "html",
+		data: 
+		{
+			functionName: "Mensagem::marcarMensagem",
+			mensagem: $("#idxHdnMensagem").val(),
+			marcacao: "resolvida"
+		},
+		success: function(data)
+		{
+			$("#dialogMsg").closest(".ui-dialog-content").dialog("close");
+			var result = $.parseJSON(data);
+			
+			if(result.success)
+			{
+				//
+			}
+			else
+			{
+				msgAlert("Falha ao realizar a operação", result.msg, true);
+			}
+				
+		}
+	});
+}
+
+//@ sourceURL=index.js
+

@@ -1,0 +1,990 @@
+//seta uma variável específica da tela, que será destruída quando outra tela for aberta.
+function setData(name, value)
+{
+	$("#idxDivInnerContent :first").data(name, value);
+}
+
+//retorna o valor de uma variável específica da tela, que será destruída quando outra tela for aberta.
+function getData(name)
+{
+	return $("#idxDivInnerContent :first").data(name);
+}
+
+//retorna um objeto js setado a partir dos filhos do container (e), tendo como chaves os valores de data-elementKey, semelhante ao serialize
+function getElements(e)
+{
+	var r = {};
+
+	e.find("[data-elementKey]").each(function()
+	{
+		r[$(this).attr("data-elementKey")] = $(this).val();
+	});
+
+	return r;
+}
+
+//atribui os valores de um objeto js (o) ao value dos elementos filhos do container (e) que possuam valor do atributo data-elementKey igual à chave desse objeto.
+function setElements(e, o)
+{
+	e.find("input, select, textarea").not("[type=button], .keepValue").val("");
+
+	for (var key in o)
+	{
+		if (typeof o[key] !== 'function')
+		{
+			e.find("input[data-elementKey=" + key + "], textarea[data-elementKey=" + key + "], select[data-elementKey=" + key + "]").val(o[key]);
+			e.find("[data-elementKey=" + key + "]").not("textarea, input, select").html(o[key]);
+		}
+	}
+}
+
+//Parâmetros do sistema para as telas "fixas".
+//Coloquei nesses métodos estáticos pra facilitar na producao quando for recadastrar as telas e/ou se mudar a codificação
+function getPageCode($page)
+{
+	switch ($page)
+	{
+		case "home":
+		{
+			return "1";
+		}
+		case "404":
+		{
+			return "2";
+		}
+		case "passwordRecovery":
+		{
+			return "3";
+		}
+		case "newUser":
+		{
+			return "4";
+		}
+		case "menuPage":
+		{
+			return "5";
+		}
+		case "accSettings": //página de modificar dados da conta
+		{
+			return "6";
+		}
+	}
+}
+
+//cria URL de parâmetro para abrir url encodada.
+function goTo(key, secret =  "uftm") 
+{ 
+	window.open(location.protocol + '//' + location.hostname + (location.port != "" ? ":" + location.port : "") +'/integrado/?to=' + key + '&secret=' + secret); 
+}
+
+//chama o ajax do jquery, mas já trata no caso de o usuário não estar logado.
+//utilizar esta função a menos que se deseje controlar manualmente a perda de sessão.
+function ajax(content)
+{
+	var defaults =
+	{
+		type: "post",
+		url: "./ajax.php",
+		dataType: "html",
+		cache: false,
+		data: null,
+		success: null,
+		error: null,
+		complete: null,
+		done: null,
+		always: null,
+		fail: null,
+		contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+		processData: true,
+		async: true,
+		xhr: window.ActiveXObject ?	function()
+		{
+			return !this.isLocal && (function() { return new window.XMLHttpRequest(); }) || (function() { return new window.ActiveXObject(); });
+		} :
+		function() { return new window.XMLHttpRequest(); }
+	}
+	
+	content = $.extend(defaults, content);
+
+	$.ajax(
+	{
+		type: content.type,
+		url: content.url,
+		dataType: content.dataType,
+		cache: content.cache,
+		data: content.data,
+		async: content.async,
+		xhr: content.xhr,
+		contentType: content.contentType,
+		processData: content.processData,
+		beforeSend: function()
+		{
+			if (content.disableElement != null)
+				content.disableElement.attr('disabled', true);
+			
+			if (content.beforeSend != null)
+				content.beforeSend();
+		},
+		success: function(data)
+		{
+			if (data != null && data != "")
+			{
+				var result = $.parseJSON(data);
+				
+				if (!result.success && result.errCode == 1)
+				{
+					setIndexState("loggedOut");
+					$("#idxHdnReturnTo").val(window.location.search);
+					alert("Você foi desconectado do sistema. Por favor, efetue o login no sistema novamente para continuar.");
+				}
+				else
+				{
+					content.success(data);
+				}
+			}
+			else
+			{
+				content.success(data);
+			}
+		},
+		error: content.error,
+		complete: function()
+		{
+			if (content.disableElement != null)
+				content.disableElement.attr('disabled', false);
+			
+			if (content.complete != null) content.complete;
+		},
+		always: function()
+		{	
+			if (content.always != null) content.always;
+		},
+		fail: function()
+		{	
+			if (content.fail != null) content.fail;
+		},
+		done: function()
+		{
+			if (content.done != null) content.done;
+		}
+	});	
+}
+
+function setSubmitBehavior()
+{
+	$("form").each(function()
+	{
+		$(this).find(":input").each(function()
+		{
+			$(this).keypress(function(e)
+			{
+				if((e.keyCode ? e.keyCode : e.which) == 13)
+				{
+					$(this).closest("form").find(".submit").trigger('click');
+				}
+			});
+		});
+	});
+}
+
+function setAlertTimeout(element = null, time = 10)
+{
+	if (element != null)
+	{
+		oldTime = $("#idxDivInnerContent").children().first().data("_TIMER_" + element.attr("id"));
+		$("#idxDivInnerContent").children().first().data("_TIMER_" + element.attr("id"), time);
+
+		if (oldTime == 0 || oldTime == null || oldTime == undefined)
+		{
+			var interval = setInterval(function()
+			{
+				t = parseInt($("#idxDivInnerContent").children().first().data("_TIMER_" + element.attr("id")));
+
+				if (t > 0) $("#idxDivInnerContent").children().first().data("_TIMER_" + element.attr("id"), t - 1);
+				else
+				{
+					if (t == 0)
+					{
+						clearAlert(element.attr("id"));
+						clearInterval(interval);
+					}
+					else t = $("#idxDivInnerContent").children().first().data("_TIMER_" + element.attr("id"), 0);
+				}
+			}, 1000);
+		}
+	}
+}
+
+//timeout = 0: Não dá clear automaticamente
+function setAlert(alertContainer, alertMsg, timeOut = 10)
+{
+	var container = $("#" + alertContainer);
+	
+	container.slideUp("fast", function()
+	{
+		container.html(alertMsg);
+		if (timeOut > 0 ) setAlertTimeout(container, timeOut);
+		container.slideDown("fast");
+	});
+}
+
+function clearAlert(alertContainer)
+{
+	var container = $("#" + alertContainer);
+	
+	container.slideUp("fast", function()
+	{
+		container.html("");
+	});
+}
+
+function setIndexState(state)
+{
+	switch (state)
+	{
+		case ("loggedIn"):
+		{
+			$("#idxDivLoggedOut").slideUp("slow", function()
+			{
+				$("#idxDivLoggedIn").slideDown("slow", function()
+				{
+					$("#idxDivInnerMenu").fadeIn("slow", function(){$("#idxDivPesquisaMenuContainer").fadeIn();});
+					$("#idxTxtUsuario").val("");
+					$("#idxTxtSenha").val("");
+				});
+			});
+			
+			break;
+		}
+		case ("loggedOut"):
+		{
+			$("#idxDivInnerMenu").fadeOut("slow", function()
+			{
+				$("#idxDivInnerMenu").html("");
+				
+				$("#idxDivLoggedIn").slideUp("slow", function()
+				{
+					$("#idxDivLoggedOut").slideDown("slow", function(){$("#idxDivPesquisaMenuContainer").fadeOut();});
+				});
+			});
+			
+			break;
+		}
+	}
+}
+	
+function msgError(titulo, texto, closeOnOverlayClick = null, dialogObj = null){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html("<div id='mensagem'><span><img src='/integrado/img/icones/error2.png' /></span><span>" + texto + "</sapn></div>");
+	
+	var dialog =	{
+			title: titulo,
+			position: {
+				my: "center",
+				at: "center",
+			    of: window
+			},
+			resizable: false,
+			width: "auto",
+			height: "auto",
+			modal: true,
+			open: function(event, ui) {  
+				if(closeOnOverlayClick)
+				{
+				    jQuery('.ui-widget-overlay').on('click', function() 
+				    {
+				      jQuery('#dialogMsg').dialog('close');
+				    });
+				}
+			},		
+			buttons: {
+				"Ok": function(){
+					$(this).dialog("close");
+				}
+			},
+			close: function(){
+				//parametros.gridManipulator.refresh();
+				$(this).dialog("destroy");
+
+			}
+	};
+	
+	if(dialogObj && typeof dialogObj === 'object')
+	{
+		//dialog = { ...dialog, ...dialogObj };
+		Object.assign(dialog, dialogObj);
+	}
+	
+	$("#dialogMsg").dialog(dialog);
+};
+
+function msgAlert(titulo, texto, closeOnOverlayClick = null, dialogObj = null){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html("<div id='mensagem'><span><img src='/integrado/img/icones/warning2.png' /></span><span>" + texto + "</sapn></div>");
+	
+	var dialog = {
+			title: titulo,
+			position: {
+				my: "center",
+				at: "center",
+			    of: window
+			},
+			resizable: false,
+			width: "auto",
+			height: "auto",
+			modal: true,
+			open: function(event, ui) {  
+				if(closeOnOverlayClick)
+				{
+				    jQuery('.ui-widget-overlay').on('click', function() 
+				    {
+				      jQuery('#dialogMsg').dialog('close');
+				    });
+				}
+			},		
+			buttons: {
+				"Ok": function(){
+					$(this).dialog("close");
+				}
+			},
+			close: function(){
+				//parametros.gridManipulator.refresh();
+				$(this).dialog("destroy");
+
+			}
+	};
+	
+	if(dialogObj && typeof dialogObj === 'object')
+	{
+		//dialog = { ...dialog, ...dialogObj };
+		Object.assign(dialog, dialogObj);
+	}	
+	
+	$("#dialogMsg").dialog(dialog);
+};
+
+function msgInformation(titulo, texto, closeOnOverlayClick = null, dialogObj = null){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html("<div id='mensagem'><span><img src='/integrado/img/icones/information2.png' /></span><span>" + texto + "</sapn></div>");
+	
+	
+	var dialog = {
+			title: titulo,
+			position: {
+				my: "center",
+				at: "center",
+			    of: window
+			},
+			resizable: false,
+			width: "auto",
+			height: "auto",
+			modal: true,
+			open: function(event, ui) {  
+				if(closeOnOverlayClick)
+				{
+				    jQuery('.ui-widget-overlay').on('click', function() 
+				    {
+				      jQuery('#dialogMsg').dialog('close');
+				    });
+				}
+			},		
+			buttons: {
+				"Ok": function(){
+					$(this).dialog("close");
+				}
+			},
+			close: function(){
+				//parametros.gridManipulator.refresh();
+				$(this).dialog("destroy");
+
+			}
+	};
+	
+	if(dialogObj && typeof dialogObj === 'object')
+	{
+		//dialog = { ...dialog, ...dialogObj };
+		Object.assign(dialog, dialogObj);
+	}		
+	
+	$("#dialogMsg").dialog(dialog);
+};
+
+function msgSuccess(titulo, texto, closeOnOverlayClick = null, dialogObj = null){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html("<div id='mensagem'><span><img src='/integrado/img/icones/tick2.png' /></span><span>" + texto + "</sapn></div>");
+	
+	var dialog = {
+			title: titulo,
+			position: {
+				my: "center",
+				at: "center",
+			    of: window
+			},
+			resizable: false,
+			width: "auto",
+			height: "auto",
+			modal: true,
+			open: function(event, ui) {  
+				if(closeOnOverlayClick)
+				{
+				    jQuery('.ui-widget-overlay').on('click', function() 
+				    {
+				      jQuery('#dialogMsg').dialog('close');
+				    });
+				}
+			},		
+			buttons: {
+				"Ok": function(){
+					$(this).dialog("close");
+				}
+			},
+			close: function(){
+				//parametros.gridManipulator.refresh();
+				$(this).dialog("destroy");
+
+			}
+	};
+	
+	if(dialogObj && typeof dialogObj === 'object')
+	{
+		//dialog = { ...dialog, ...dialogObj };
+		Object.assign(dialog, dialogObj);
+	}		
+	
+	$("#dialogMsg").dialog(dialog);
+};
+
+function msgConfirmation(titulo, texto, funcao,closeOnOverlayClick = null, dialogObj = null){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html("<div id='mensagem'><span><img src='/integrado/img/icones/confirmation1.png' /></span><span>" + texto + "</sapn></div>");
+	
+	var dialog = {
+			title: titulo,
+			position: {
+				my: "center",
+				at: "center",
+			    of: window
+			},
+			resizable: false,
+			width: "auto",
+			height: "auto",
+			modal: true,
+			open: function(event, ui) {  
+				if(closeOnOverlayClick)
+				{
+				    jQuery('.ui-widget-overlay').on('click', function() 
+				    {
+				      jQuery('#dialogMsg').dialog('close');
+				    });
+				}
+			},		
+			buttons: {
+				"Sim": funcao,
+				"Não": function(){
+					$(this).dialog("close");
+				}
+			},
+			close: function(){
+				//parametros.gridManipulator.refresh();
+				$(this).dialog("destroy");
+				
+			}
+	};
+	
+	if(dialogObj && typeof dialogObj === 'object')
+	{
+		//dialog = { ...dialog, ...dialogObj };
+		Object.assign(dialog, dialogObj);
+	}		
+	
+	$("#dialogMsg").dialog(dialog);
+};
+
+function msgConfirmationParam(titulo, texto, funcao, parametros, dialogObj = null){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html("<div id='mensagem'><span><img src='/integrado/img/icones/confirmation1.png' /></span><span>" + texto + "</sapn></div>");
+	
+	var dialog = {
+			title: titulo,
+			position: {
+				my: "center",
+				at: "center",
+			    of: window
+			},
+			resizable: false,
+			width: "auto",
+			height: "auto",
+			modal: true,
+			buttons: {
+				"Sim": function(){
+					funcao(parametros)
+				},
+				"Não": function(){
+					$(this).dialog("close");
+				}
+			},
+			close: function(){
+				//parametros.gridManipulator.refresh();
+				$(this).dialog("destroy");
+				
+			}
+	};
+	
+	if(dialogObj && typeof dialogObj === 'object')
+	{
+		//dialog = { ...dialog, ...dialogObj };
+		Object.assign(dialog, dialogObj);
+	}		
+	
+	$("#dialogMsg").dialog(dialog);
+};
+
+function msgPersonalized(titulo, conteudo, altura, largura, botoes){
+	$('#dialogMsg').remove();
+	$("body").prepend("<div id='dialogMsg'></div>");
+	$("#dialogMsg").prop("hidden", true);
+	$("#dialogMsg").html(conteudo);
+	
+	$("#dialogMsg").dialog({
+		title: titulo,
+		position: {
+			my: "center",
+			at: "center",
+		    of: window
+		},
+		resizable: false,
+		width: largura,
+		height: altura,
+		modal: true,
+		buttons: botoes,
+		close: function(){
+			//parametros.gridManipulator.refresh();
+			$(this).dialog("close");
+		}
+	});
+};
+
+//Função utilizada para abrir um relatório comum com base nos parâmetros da tela e a especificação do ID do relatório.
+//params:		Parâmetros do relatório provindos da tela.
+//reportId: 	Acrescenta o parâmetro "reportId" à array de parâmetros que irão para o post. Caso o reportId já esteja sendo passado dentro da variável "params", e seja informado como segundo parâmetro
+//				na chamada de função também, o que está presente na array "params" será substituído.
+function openReport(params = null, reportId = null, filePath = null)
+{
+	if (!params.hasOwnProperty("signed"))
+	{
+		if (!params.hasOwnProperty("reportId"))
+		{
+			if (reportId != null)
+			{
+				params["reportId"] = reportId;
+				params["signed"] = false;
+				getReport(params, filePath);
+			}
+			else
+			{
+				alert("Relatório não especificado.");
+			}
+		}
+		else
+		{
+			params["signed"] = false;
+			getReport(params, filePath);	
+		}
+	}
+	else
+	{
+		alert("Parâmetro de assinatura incorreto.");
+	}
+}
+
+//Função utilizada para abrir um relatório do tipo "assinável no sistema.
+//signedReportId:	Id do relatório assinável que será aberto.
+function getSignedReport(signedReportId = null, crc = null)
+{
+	if (signedReportId != null && crc != null)
+	{
+		getReport({signedReportId: signedReportId, crc : crc});
+	}
+	else
+	{
+		alert("Relatório não especificado.");
+	}
+	
+}
+
+//Função utilizada para se criar um relatório do tipo assinável com base nos parâmetros da tela e a especificação do ID do relatório.
+//params:		Parâmetros do relatório provindos da tela.
+//reportId: 	Id do relatório do qual será criada uma instância em versão assinável, associada ao usuário logado.
+function createSignedReport(params = null, reportId = null)
+{
+		if (reportId != null)
+		{
+			params["reportId"] = reportId;
+			params["signed"] = true;
+			getReport(params);
+		}
+		else
+		{
+			alert("Relatório não especificado.");
+		}
+}
+
+//simplesmente pega os parâmetros do openReport/openSignedReport e os passa como post para a funcao correta. Não usar essa função direto, em vez disso usar uma das duas mencionadas.
+function getReport(params, filePath = "./relatorio.php")
+{
+	var error = false;
+	
+	if(filePath == null || filePath == "")
+	{
+		filePath = "./relatorio.php";
+	}
+
+	if (params["signed"] == false)
+	{
+		if (params.hasOwnProperty("signedReportId"))
+		{
+			error = true;
+			alert("Parâmetro incorreto para relatórios não assináveis.")
+		}
+		
+		if (!params.hasOwnProperty("reportId") || params["reportId"] == null || params["reportId"] == "")
+		{
+			error = true;
+			alert("Relatório não especificado.");
+		}
+	}
+	else
+	{
+		if
+		(
+			(!params.hasOwnProperty("reportId") || params["reportId"] == null || params["reportId"] == "") &&
+			(!params.hasOwnProperty("signedReportId") || params["signedReportId"] == null || params["signedReportId"] == "" || params["signedReportId"] == null)
+		)
+		{
+			error = true;
+			alert("Parâmetros incorretos.");
+		}
+	}
+	
+	if (!error)
+	{
+		var input = null;
+		var form = document.createElement("form");
+	    
+	    form.setAttribute("method", "post");
+	    form.setAttribute("action", filePath);
+	    form.setAttribute("target", "_blank");  
+	    
+	    for (var p in params)
+	    {
+	        if (params.hasOwnProperty(p))
+	        {
+
+				if(typeof  params[p] == 'object' ){
+
+                    $.each(params[p], function(key,val){
+                        input = document.createElement('input');
+                        input.type = 'hidden';
+                        //console.log("key : "+key+" ; value : "+val);
+                        input.name =  'filtros['+key+']';
+                        input.value = val;
+                        form.appendChild(input);
+                    });
+
+
+				}else{
+                    input = document.createElement('input');
+                    input.type = 'hidden';
+                	input.name =  p;
+                    input.value = params[p];
+                    form.appendChild(input);
+				}
+
+
+
+	        }
+	    }
+	   document.body.appendChild(form);
+	   form.submit();
+	   document.body.removeChild(form);	
+	}
+}
+
+
+function toolTip(){
+	$(".tip_trigger").hover(function(){         
+		tip = $(this).find('.tip');         
+		tip.show(); //Show tooltip 
+		//alert("ytyyyy");
+	},function() {         
+		tip.hide(); //Hide tooltip     
+	}
+	
+	
+	).mousemove(function(e) { 
+		
+		var divContainer = $(this).data("mouseTolltipHoverDiv");
+		var offset = $(this).data("mouseTolltipHoverOffset");
+		
+		if(divContainer==null)//will execute once per element
+		{
+			offset = {left:0, top:0};
+
+			divContainer = $(this).parents()
+		    .filter(function() { 
+		        return $(this).css('position') == 'relative'; // get the first 'relative' parent div. 
+		    });
+			if(divContainer.length>0)
+			{
+				divContainer=divContainer.first();
+				offset=divContainer.offset();
+			}
+			else
+				divContainer=$(window);
+			
+			$(this).data("mouseTolltipHoverDiv", divContainer);
+			$(this).data("mouseTolltipHoverOffset", offset);
+		}
+		
+		var mousex = e.pageX + 20 - offset.left ; //Get X coodrinates        
+		var mousey = e.pageY + 20 - offset.top; //Get Y coordinates         
+		var tipWidth = tip.width(); //Find width of tooltip         
+		var tipHeight = tip.height(); //Find height of tooltip         
+		//Distance of element from the right edge of viewport         
+		var tipVisX = divContainer.width() - (mousex + tipWidth);         
+		//Distance of element from the bottom of viewport         
+		var tipVisY = divContainer.height() - (mousey + tipHeight);         
+		if ( tipVisX < 20 ) { //If tooltip exceeds the X coordinate of viewport             
+			mousex = e.pageX - tipWidth - 20  - offset.left;         
+		} if ( tipVisY < 20 ) { //If tooltip exceeds the Y coordinate of viewport             
+			mousey = e.pageY - tipHeight - 20 - offset.top;         
+		}         //Absolute position the tooltip according to mouse position         
+		
+		tip.css({  top: mousey, left: mousex });     
+		//tip.css({  top: 0, left: 0 });
+		
+	});
+}
+
+/**
+ * Rotina para compressão de imagens no lado do cliente
+ * 
+ * param: file = indice do input file, que armazena a imagem a ser comprimida
+ * param: MAX_WIDTH = largura máxima da imagem
+ * param: MAX_HEIGHT = altura máxima da imagem 
+ * param: format = formato do arquivo
+ * param: input = input invisível (hidden) que irá armazenar a dataURL da imagem comprimida
+ * 
+ */
+function compressImage(file, MAX_WIDTH, MAX_HEIGHT, format, input) {
+    var img = new Image();
+    var canvas = document.createElement("canvas");
+
+    img.src = window.URL.createObjectURL(file); //armazena as informações da imagem original
+    
+    img.onload = function() {
+        var width  = img.width; //largura original
+        var height = img.height; //altura original
+
+        //processamento de dados, para que o width e o height sejam reduzidos de modo igual
+        if (width > height) {
+            if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+            }
+        } else if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+		var ctx = canvas.getContext("2d").drawImage(img, 0, 0, width, height); //desenha a imagem nova no context
+		input.val(canvas.toDataURL(format)); //registra o dataURL no input a ser enviado para o servidor
+    };
+    
+}
+
+var Latinise = {};
+Latinise.latin_map = { "Á": "A", "Ă": "A", "Ắ": "A", "Ặ": "A", "Ằ": "A", "Ẳ": "A", "Ẵ": "A", "Ǎ": "A", "Â": "A", "Ấ": "A", "Ậ": "A", "Ầ": "A", "Ẩ": "A", "Ẫ": "A", "Ä": "A", "Ǟ": "A", "Ȧ": "A", "Ǡ": "A", "Ạ": "A", "Ȁ": "A", "À": "A", "Ả": "A", "Ȃ": "A", "Ā": "A", "Ą": "A", "Å": "A", "Ǻ": "A", "Ḁ": "A", "Ⱥ": "A", "Ã": "A", "Ꜳ": "AA", "Æ": "AE", "Ǽ": "AE", "Ǣ": "AE", "Ꜵ": "AO", "Ꜷ": "AU", "Ꜹ": "AV", "Ꜻ": "AV", "Ꜽ": "AY", "Ḃ": "B", "Ḅ": "B", "Ɓ": "B", "Ḇ": "B", "Ƀ": "B", "Ƃ": "B", "Ć": "C", "Č": "C", "Ç": "C", "Ḉ": "C", "Ĉ": "C", "Ċ": "C", "Ƈ": "C", "Ȼ": "C", "Ď": "D", "Ḑ": "D", "Ḓ": "D", "Ḋ": "D", "Ḍ": "D", "Ɗ": "D", "Ḏ": "D", "ǲ": "D", "ǅ": "D", "Đ": "D", "Ƌ": "D", "Ǳ": "DZ", "Ǆ": "DZ", "É": "E", "Ĕ": "E", "Ě": "E", "Ȩ": "E", "Ḝ": "E", "Ê": "E", "Ế": "E", "Ệ": "E", "Ề": "E", "Ể": "E", "Ễ": "E", "Ḙ": "E", "Ë": "E", "Ė": "E", "Ẹ": "E", "Ȅ": "E", "È": "E", "Ẻ": "E", "Ȇ": "E", "Ē": "E", "Ḗ": "E", "Ḕ": "E", "Ę": "E", "Ɇ": "E", "Ẽ": "E", "Ḛ": "E", "Ꝫ": "ET", "Ḟ": "F", "Ƒ": "F", "Ǵ": "G", "Ğ": "G", "Ǧ": "G", "Ģ": "G", "Ĝ": "G", "Ġ": "G", "Ɠ": "G", "Ḡ": "G", "Ǥ": "G", "Ḫ": "H", "Ȟ": "H", "Ḩ": "H", "Ĥ": "H", "Ⱨ": "H", "Ḧ": "H", "Ḣ": "H", "Ḥ": "H", "Ħ": "H", "Í": "I", "Ĭ": "I", "Ǐ": "I", "Î": "I", "Ï": "I", "Ḯ": "I", "İ": "I", "Ị": "I", "Ȉ": "I", "Ì": "I", "Ỉ": "I", "Ȋ": "I", "Ī": "I", "Į": "I", "Ɨ": "I", "Ĩ": "I", "Ḭ": "I", "Ꝺ": "D", "Ꝼ": "F", "Ᵹ": "G", "Ꞃ": "R", "Ꞅ": "S", "Ꞇ": "T", "Ꝭ": "IS", "Ĵ": "J", "Ɉ": "J", "Ḱ": "K", "Ǩ": "K", "Ķ": "K", "Ⱪ": "K", "Ꝃ": "K", "Ḳ": "K", "Ƙ": "K", "Ḵ": "K", "Ꝁ": "K", "Ꝅ": "K", "Ĺ": "L", "Ƚ": "L", "Ľ": "L", "Ļ": "L", "Ḽ": "L", "Ḷ": "L", "Ḹ": "L", "Ⱡ": "L", "Ꝉ": "L", "Ḻ": "L", "Ŀ": "L", "Ɫ": "L", "ǈ": "L", "Ł": "L", "Ǉ": "LJ", "Ḿ": "M", "Ṁ": "M", "Ṃ": "M", "Ɱ": "M", "Ń": "N", "Ň": "N", "Ņ": "N", "Ṋ": "N", "Ṅ": "N", "Ṇ": "N", "Ǹ": "N", "Ɲ": "N", "Ṉ": "N", "Ƞ": "N", "ǋ": "N", "Ñ": "N", "Ǌ": "NJ", "Ó": "O", "Ŏ": "O", "Ǒ": "O", "Ô": "O", "Ố": "O", "Ộ": "O", "Ồ": "O", "Ổ": "O", "Ỗ": "O", "Ö": "O", "Ȫ": "O", "Ȯ": "O", "Ȱ": "O", "Ọ": "O", "Ő": "O", "Ȍ": "O", "Ò": "O", "Ỏ": "O", "Ơ": "O", "Ớ": "O", "Ợ": "O", "Ờ": "O", "Ở": "O", "Ỡ": "O", "Ȏ": "O", "Ꝋ": "O", "Ꝍ": "O", "Ō": "O", "Ṓ": "O", "Ṑ": "O", "Ɵ": "O", "Ǫ": "O", "Ǭ": "O", "Ø": "O", "Ǿ": "O", "Õ": "O", "Ṍ": "O", "Ṏ": "O", "Ȭ": "O", "Ƣ": "OI", "Ꝏ": "OO", "Ɛ": "E", "Ɔ": "O", "Ȣ": "OU", "Ṕ": "P", "Ṗ": "P", "Ꝓ": "P", "Ƥ": "P", "Ꝕ": "P", "Ᵽ": "P", "Ꝑ": "P", "Ꝙ": "Q", "Ꝗ": "Q", "Ŕ": "R", "Ř": "R", "Ŗ": "R", "Ṙ": "R", "Ṛ": "R", "Ṝ": "R", "Ȑ": "R", "Ȓ": "R", "Ṟ": "R", "Ɍ": "R", "Ɽ": "R", "Ꜿ": "C", "Ǝ": "E", "Ś": "S", "Ṥ": "S", "Š": "S", "Ṧ": "S", "Ş": "S", "Ŝ": "S", "Ș": "S", "Ṡ": "S", "Ṣ": "S", "Ṩ": "S", "Ť": "T", "Ţ": "T", "Ṱ": "T", "Ț": "T", "Ⱦ": "T", "Ṫ": "T", "Ṭ": "T", "Ƭ": "T", "Ṯ": "T", "Ʈ": "T", "Ŧ": "T", "Ɐ": "A", "Ꞁ": "L", "Ɯ": "M", "Ʌ": "V", "Ꜩ": "TZ", "Ú": "U", "Ŭ": "U", "Ǔ": "U", "Û": "U", "Ṷ": "U", "Ü": "U", "Ǘ": "U", "Ǚ": "U", "Ǜ": "U", "Ǖ": "U", "Ṳ": "U", "Ụ": "U", "Ű": "U", "Ȕ": "U", "Ù": "U", "Ủ": "U", "Ư": "U", "Ứ": "U", "Ự": "U", "Ừ": "U", "Ử": "U", "Ữ": "U", "Ȗ": "U", "Ū": "U", "Ṻ": "U", "Ų": "U", "Ů": "U", "Ũ": "U", "Ṹ": "U", "Ṵ": "U", "Ꝟ": "V", "Ṿ": "V", "Ʋ": "V", "Ṽ": "V", "Ꝡ": "VY", "Ẃ": "W", "Ŵ": "W", "Ẅ": "W", "Ẇ": "W", "Ẉ": "W", "Ẁ": "W", "Ⱳ": "W", "Ẍ": "X", "Ẋ": "X", "Ý": "Y", "Ŷ": "Y", "Ÿ": "Y", "Ẏ": "Y", "Ỵ": "Y", "Ỳ": "Y", "Ƴ": "Y", "Ỷ": "Y", "Ỿ": "Y", "Ȳ": "Y", "Ɏ": "Y", "Ỹ": "Y", "Ź": "Z", "Ž": "Z", "Ẑ": "Z", "Ⱬ": "Z", "Ż": "Z", "Ẓ": "Z", "Ȥ": "Z", "Ẕ": "Z", "Ƶ": "Z", "Ĳ": "IJ", "Œ": "OE", "ᴀ": "A", "ᴁ": "AE", "ʙ": "B", "ᴃ": "B", "ᴄ": "C", "ᴅ": "D", "ᴇ": "E", "ꜰ": "F", "ɢ": "G", "ʛ": "G", "ʜ": "H", "ɪ": "I", "ʁ": "R", "ᴊ": "J", "ᴋ": "K", "ʟ": "L", "ᴌ": "L", "ᴍ": "M", "ɴ": "N", "ᴏ": "O", "ɶ": "OE", "ᴐ": "O", "ᴕ": "OU", "ᴘ": "P", "ʀ": "R", "ᴎ": "N", "ᴙ": "R", "ꜱ": "S", "ᴛ": "T", "ⱻ": "E", "ᴚ": "R", "ᴜ": "U", "ᴠ": "V", "ᴡ": "W", "ʏ": "Y", "ᴢ": "Z", "á": "a", "ă": "a", "ắ": "a", "ặ": "a", "ằ": "a", "ẳ": "a", "ẵ": "a", "ǎ": "a", "â": "a", "ấ": "a", "ậ": "a", "ầ": "a", "ẩ": "a", "ẫ": "a", "ä": "a", "ǟ": "a", "ȧ": "a", "ǡ": "a", "ạ": "a", "ȁ": "a", "à": "a", "ả": "a", "ȃ": "a", "ā": "a", "ą": "a", "ᶏ": "a", "ẚ": "a", "å": "a", "ǻ": "a", "ḁ": "a", "ⱥ": "a", "ã": "a", "ꜳ": "aa", "æ": "ae", "ǽ": "ae", "ǣ": "ae", "ꜵ": "ao", "ꜷ": "au", "ꜹ": "av", "ꜻ": "av", "ꜽ": "ay", "ḃ": "b", "ḅ": "b", "ɓ": "b", "ḇ": "b", "ᵬ": "b", "ᶀ": "b", "ƀ": "b", "ƃ": "b", "ɵ": "o", "ć": "c", "č": "c", "ç": "c", "ḉ": "c", "ĉ": "c", "ɕ": "c", "ċ": "c", "ƈ": "c", "ȼ": "c", "ď": "d", "ḑ": "d", "ḓ": "d", "ȡ": "d", "ḋ": "d", "ḍ": "d", "ɗ": "d", "ᶑ": "d", "ḏ": "d", "ᵭ": "d", "ᶁ": "d", "đ": "d", "ɖ": "d", "ƌ": "d", "ı": "i", "ȷ": "j", "ɟ": "j", "ʄ": "j", "ǳ": "dz", "ǆ": "dz", "é": "e", "ĕ": "e", "ě": "e", "ȩ": "e", "ḝ": "e", "ê": "e", "ế": "e", "ệ": "e", "ề": "e", "ể": "e", "ễ": "e", "ḙ": "e", "ë": "e", "ė": "e", "ẹ": "e", "ȅ": "e", "è": "e", "ẻ": "e", "ȇ": "e", "ē": "e", "ḗ": "e", "ḕ": "e", "ⱸ": "e", "ę": "e", "ᶒ": "e", "ɇ": "e", "ẽ": "e", "ḛ": "e", "ꝫ": "et", "ḟ": "f", "ƒ": "f", "ᵮ": "f", "ᶂ": "f", "ǵ": "g", "ğ": "g", "ǧ": "g", "ģ": "g", "ĝ": "g", "ġ": "g", "ɠ": "g", "ḡ": "g", "ᶃ": "g", "ǥ": "g", "ḫ": "h", "ȟ": "h", "ḩ": "h", "ĥ": "h", "ⱨ": "h", "ḧ": "h", "ḣ": "h", "ḥ": "h", "ɦ": "h", "ẖ": "h", "ħ": "h", "ƕ": "hv", "í": "i", "ĭ": "i", "ǐ": "i", "î": "i", "ï": "i", "ḯ": "i", "ị": "i", "ȉ": "i", "ì": "i", "ỉ": "i", "ȋ": "i", "ī": "i", "į": "i", "ᶖ": "i", "ɨ": "i", "ĩ": "i", "ḭ": "i", "ꝺ": "d", "ꝼ": "f", "ᵹ": "g", "ꞃ": "r", "ꞅ": "s", "ꞇ": "t", "ꝭ": "is", "ǰ": "j", "ĵ": "j", "ʝ": "j", "ɉ": "j", "ḱ": "k", "ǩ": "k", "ķ": "k", "ⱪ": "k", "ꝃ": "k", "ḳ": "k", "ƙ": "k", "ḵ": "k", "ᶄ": "k", "ꝁ": "k", "ꝅ": "k", "ĺ": "l", "ƚ": "l", "ɬ": "l", "ľ": "l", "ļ": "l", "ḽ": "l", "ȴ": "l", "ḷ": "l", "ḹ": "l", "ⱡ": "l", "ꝉ": "l", "ḻ": "l", "ŀ": "l", "ɫ": "l", "ᶅ": "l", "ɭ": "l", "ł": "l", "ǉ": "lj", "ſ": "s", "ẜ": "s", "ẛ": "s", "ẝ": "s", "ḿ": "m", "ṁ": "m", "ṃ": "m", "ɱ": "m", "ᵯ": "m", "ᶆ": "m", "ń": "n", "ň": "n", "ņ": "n", "ṋ": "n", "ȵ": "n", "ṅ": "n", "ṇ": "n", "ǹ": "n", "ɲ": "n", "ṉ": "n", "ƞ": "n", "ᵰ": "n", "ᶇ": "n", "ɳ": "n", "ñ": "n", "ǌ": "nj", "ó": "o", "ŏ": "o", "ǒ": "o", "ô": "o", "ố": "o", "ộ": "o", "ồ": "o", "ổ": "o", "ỗ": "o", "ö": "o", "ȫ": "o", "ȯ": "o", "ȱ": "o", "ọ": "o", "ő": "o", "ȍ": "o", "ò": "o", "ỏ": "o", "ơ": "o", "ớ": "o", "ợ": "o", "ờ": "o", "ở": "o", "ỡ": "o", "ȏ": "o", "ꝋ": "o", "ꝍ": "o", "ⱺ": "o", "ō": "o", "ṓ": "o", "ṑ": "o", "ǫ": "o", "ǭ": "o", "ø": "o", "ǿ": "o", "õ": "o", "ṍ": "o", "ṏ": "o", "ȭ": "o", "ƣ": "oi", "ꝏ": "oo", "ɛ": "e", "ᶓ": "e", "ɔ": "o", "ᶗ": "o", "ȣ": "ou", "ṕ": "p", "ṗ": "p", "ꝓ": "p", "ƥ": "p", "ᵱ": "p", "ᶈ": "p", "ꝕ": "p", "ᵽ": "p", "ꝑ": "p", "ꝙ": "q", "ʠ": "q", "ɋ": "q", "ꝗ": "q", "ŕ": "r", "ř": "r", "ŗ": "r", "ṙ": "r", "ṛ": "r", "ṝ": "r", "ȑ": "r", "ɾ": "r", "ᵳ": "r", "ȓ": "r", "ṟ": "r", "ɼ": "r", "ᵲ": "r", "ᶉ": "r", "ɍ": "r", "ɽ": "r", "ↄ": "c", "ꜿ": "c", "ɘ": "e", "ɿ": "r", "ś": "s", "ṥ": "s", "š": "s", "ṧ": "s", "ş": "s", "ŝ": "s", "ș": "s", "ṡ": "s", "ṣ": "s", "ṩ": "s", "ʂ": "s", "ᵴ": "s", "ᶊ": "s", "ȿ": "s", "ɡ": "g", "ᴑ": "o", "ᴓ": "o", "ᴝ": "u", "ť": "t", "ţ": "t", "ṱ": "t", "ț": "t", "ȶ": "t", "ẗ": "t", "ⱦ": "t", "ṫ": "t", "ṭ": "t", "ƭ": "t", "ṯ": "t", "ᵵ": "t", "ƫ": "t", "ʈ": "t", "ŧ": "t", "ᵺ": "th", "ɐ": "a", "ᴂ": "ae", "ǝ": "e", "ᵷ": "g", "ɥ": "h", "ʮ": "h", "ʯ": "h", "ᴉ": "i", "ʞ": "k", "ꞁ": "l", "ɯ": "m", "ɰ": "m", "ᴔ": "oe", "ɹ": "r", "ɻ": "r", "ɺ": "r", "ⱹ": "r", "ʇ": "t", "ʌ": "v", "ʍ": "w", "ʎ": "y", "ꜩ": "tz", "ú": "u", "ŭ": "u", "ǔ": "u", "û": "u", "ṷ": "u", "ü": "u", "ǘ": "u", "ǚ": "u", "ǜ": "u", "ǖ": "u", "ṳ": "u", "ụ": "u", "ű": "u", "ȕ": "u", "ù": "u", "ủ": "u", "ư": "u", "ứ": "u", "ự": "u", "ừ": "u", "ử": "u", "ữ": "u", "ȗ": "u", "ū": "u", "ṻ": "u", "ų": "u", "ᶙ": "u", "ů": "u", "ũ": "u", "ṹ": "u", "ṵ": "u", "ᵫ": "ue", "ꝸ": "um", "ⱴ": "v", "ꝟ": "v", "ṿ": "v", "ʋ": "v", "ᶌ": "v", "ⱱ": "v", "ṽ": "v", "ꝡ": "vy", "ẃ": "w", "ŵ": "w", "ẅ": "w", "ẇ": "w", "ẉ": "w", "ẁ": "w", "ⱳ": "w", "ẘ": "w", "ẍ": "x", "ẋ": "x", "ᶍ": "x", "ý": "y", "ŷ": "y", "ÿ": "y", "ẏ": "y", "ỵ": "y", "ỳ": "y", "ƴ": "y", "ỷ": "y", "ỿ": "y", "ȳ": "y", "ẙ": "y", "ɏ": "y", "ỹ": "y", "ź": "z", "ž": "z", "ẑ": "z", "ʑ": "z", "ⱬ": "z", "ż": "z", "ẓ": "z", "ȥ": "z", "ẕ": "z", "ᵶ": "z", "ᶎ": "z", "ʐ": "z", "ƶ": "z", "ɀ": "z", "ﬀ": "ff", "ﬃ": "ffi", "ﬄ": "ffl", "ﬁ": "fi", "ﬂ": "fl", "ĳ": "ij", "œ": "oe", "ﬆ": "st", "ₐ": "a", "ₑ": "e", "ᵢ": "i", "ⱼ": "j", "ₒ": "o", "ᵣ": "r", "ᵤ": "u", "ᵥ": "v", "ₓ": "x" };
+String.prototype.latinise = function () { return this.replace(/[^A-Za-z0-9\[\] ]/g, function (a) { return Latinise.latin_map[a] || a; }); };
+String.prototype.latinize = String.prototype.latinise;
+String.prototype.isLatin = function () { return this == this.latinise(); };
+
+
+function getFileExtension(filename)
+{
+	var ext1 = (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename) : undefined;
+	var ext2 = (/[?]/.exec(ext1[0])) ? /^[^?^&]+/.exec(ext1[0]) : undefined;
+	return ((ext2 && ext2[0])?ext2[0]:((ext1 && ext1[0])?ext1[0]:ext1));
+}
+
+function getQueryStringObj()
+{
+	var queryDict = {};
+	location.search.substr(1).split("&").forEach(function(item) {queryDict[decodeURIComponent(item.split("=")[0])] = decodeURIComponent(item.split("=")[1])});
+	return queryDict;
+}
+
+function SerializeObjToQueryString(obj)
+{
+	var str = [];
+	for (var p in obj)
+	{
+	  if (obj.hasOwnProperty(p))
+	  {
+		str.push(p + "=" + obj[p]);
+	  }
+	}
+	return str.join("&");
+  }
+
+  jQuery.fn.watch = function( id, fn ) {
+ 
+    return this.each(function(){
+ 
+        var self = this;
+ 
+        var oldVal = self[id];
+        $(self).data(
+            'watch_timer',
+            setInterval(function(){
+                if (self[id] !== oldVal) {
+                    fn.call(self, id, oldVal, self[id]);
+                    oldVal = self[id];
+                }
+            }, 250)
+        );
+ 
+    });
+ 
+    return self;
+};
+ 
+jQuery.fn.unwatch = function( id ) {
+ 
+    return this.each(function(){
+        clearInterval( $(this).data('watch_timer') );
+    });
+ 
+};
+
+function gerarCsv(dados, cabecalho, nomeArquivo = "arquivo", separador = ",")
+{
+	var header  = "data:text/csv;charset=utf-8;";
+	var csvContent =  "";
+	var encodedUri;
+	var link;
+	
+	if(	$.isArray(dados))
+	{
+		dados.forEach(function(rowArray)
+		{
+			if(typeof rowArray === "string")
+			{
+				row = rowArray;
+			}
+			else if($.isArray(rowArray))
+			{
+				row = rowArray.join(separador);
+			}
+			
+			csvContent += row + "\r\n";
+		});
+	}	
+	else if(typeof dados === "object" )
+	{
+		for (var key in dados) 
+		{
+			if(typeof dados[key] == "string")
+			{
+				row = dados[key];
+				csvContent += row + "\r\n";
+			}
+		}
+	}
+
+	else
+	{
+		csvContent = "Formato dos dados é inválido.";
+	}
+	
+	
+	if(typeof cabecalho != "string")
+	{
+		cabecalho = "Formato do cabeçalho é inválido.";
+	}
+	
+	if(typeof nomeArquivo != "string")
+	{
+		nomeArquivo = "nomeInvalido";
+	}
+	csvContent = "@\r\n," + cabecalho + "\r\n" + csvContent; // a primeira linha será cortada por isso o '@' ali
+	encodedUri = encodeURI(csvContent);
+	encodedUri = header + encodedUri;
+	
+	link = document.createElement("a");
+	link.setAttribute("href", " " + encodedUri + " ");
+	link.setAttribute("download", nomeArquivo+".csv");
+	document.body.appendChild(link); // Required for FF
+
+	link.click(); // This will download the data file	
+	
+}
+
+function msgAguardeProcessamento(hideDialog = false, esmaecerBackground = true)
+{
+	msgAlert("Operação em andamento", "Aguarde o processamento...");
+	$('#dialogMsg').closest(".ui-dialog").find(".ui-button-text").hide();
+	$('#dialogMsg').closest(".ui-dialog").find(".ui-button").hide();
+	$('#dialogMsg').closest(".ui-dialog").find(".ui-dialog-titlebar-close").hide();
+	$('#dialogMsg').closest(".ui-dialog").find(".ui-dialog-buttonset").hide();
+	
+	if(hideDialog)
+	{
+		$('#dialogMsg').closest(".ui-dialog").hide();
+	}
+	
+	
+	if(!esmaecerBackground)
+	{
+		$(".ui-widget-overlay").css("background", "none");
+	}
+	
+}
+
+function fecharDialogMsg()
+{
+	$('#dialogMsg').closest(".ui-dialog-content").dialog("close");	
+}
+
+function b64EncodeUnicode(str) {
+    // first we use encodeURIComponent to get percent-encoded UTF-8,
+    // then we convert the percent encodings into raw bytes which
+    // can be fed into btoa.
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+            return String.fromCharCode('0x' + p1);
+    }));
+}
+
+function b64DecodeUnicode(str) {
+    // Going backwards: from bytestream, to percent-encoding, to original string.
+    return decodeURIComponent(atob(str).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+

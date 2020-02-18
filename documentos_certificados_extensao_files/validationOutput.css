@@ -1,0 +1,20 @@
+.vValidationOutput
+{
+	border: 1px dashed #999;
+    padding: 1em;
+    padding-top: 0px;
+    background: lemonchiffon;
+    margin-bottom: 1em;
+    display:none;
+}
+
+.vValidationOutput ol
+{
+	margin-top: 0px;
+}
+
+.vValidationOutput *
+{
+	background: lemonchiffon !important;
+	background-color: lemonchiffon  !important;
+}

@@ -1,0 +1,956 @@
+//vEnabled:			classe que ativa validação para os filhos;
+//vValidator:		classe que transforma um elemento em validador, ou seja, quando clicado executará a validação;
+//vAllowZero:		Para o tipo vMoney, permite que o valor seja 0,00.
+//vAllowNegative:	Para o tipo vMoney, permite que o valor seja negativo.
+//data-vFunction:	Atributo que se presente em um botão, colocará automaticamente a classe .vValidator nele, e fará com que em seu click ele realize a validação de seu grupo, e se o grupo estiver válido, chamará a função cujo nome
+//						estiver associado como valor desse atributo.
+//data-vReference:	atributo que indica outro elemento a ser validado, caso o ponto de partida para validação não seja ele mesmo;
+//data-vFunction:	Se presente em um botão, transforma ele no validador do grupo, e caso validação ok, roda a função especificada nesse atributo.
+var vSingleParams =
+{
+	vRequerido:				{ param: "vRequired",					checkValidation: vCheckRequired, 		type: "single",	msgPrefix: "Campo ",	msgSufix: " é obrigatório;", showLabel: true },
+	vEmail:					{ param: "vMail",						checkValidation: vCheckMail,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um e-mail válido;", showLabel: true },
+	vUrl:					{ param: "vUrl",						checkValidation: vCheckUrl,				type: "single",	msgPrefix: "Campo ",	msgSufix: " não é uma URL válida;", showLabel: true },
+	vData:					{ param: "vDate",						checkValidation: vCheckDate,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é uma data válida;", showLabel: true },
+	vTelefone:				{ param: "vPhone",						checkValidation: vCheckPhone,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um telefone válido;", showLabel: true },
+	vHora:					{ param: "vTime",						checkValidation: vCheckTime,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um valor de hora válido;", showLabel: true },
+	vCpf:					{ param: "vCpf",						checkValidation: vCheckCpf,				type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um CPF válido;", showLabel: true },
+	vCnpj:					{ param: "vCnpj",						checkValidation: vCheckCnpj,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um CNPJ válido;", showLabel: true },
+	vNumber:				{ param: "vNumber",						checkValidation: vCheckNumber,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um número válido;", showLabel: true },
+	vInteger:				{ param: "vInteger",					checkValidation: vCheckInteger,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um número Inteiro válido;", showLabel: true },
+	vSenha:					{ param: "vPassword",					checkValidation: vCheckPassword,		type: "single",	msgPrefix: "Campo ",	msgSufix: " não é uma senha válida, 8 caracteres são necessários;", showLabel: true },
+	vCep:					{ param: "vCep",						checkValidation: vCheckCep,				type: "single",	msgPrefix: "Campo ",	msgSufix: " não é um CEP válido;", showLabel: true },
+	vVerificacao:			{ param: "data-vVerify",				checkValidation: vCheckVerify,			type: "single",	msgPrefix: "Campo ",	msgSufix: " não está igual ao campo de confirmação;", showLabel: true },
+	vTamanhoMaximo:			{ param: "data-vMaxLength",				checkValidation: vCheckMaxLength,		type: "single",	msgPrefix: "Campo ",	msgSufix: " ultrapassou o limite de @@maxLength@ caracteres;", showLabel: true },
+	vTamanhoMaximoAnexo:	{ param: "data-vMaxSize",				checkValidation: vCheckMaxSize,			type: "single",	msgPrefix: "Campo ",	msgSufix: " ultrapassou o limite de @@maxSize@ megabytes;", showLabel: true },
+	vFileExtension:			{ param: "vFileExtension",				checkValidation: vCheckFileExtension, 	type: "single",	msgPrefix: "Campo ",	msgSufix: " com extensão inválida. É esperada a extensão: @@extensao@. ", showLabel: true }	
+};
+
+var vGroupParams =
+{
+	vRequerido: { param: "vRequired", checkValidation: vCheckGroupRequired, type: "group",	msgPrefix: "Campo ",	msgSufix: " é obrigatório;", showLabel: true }
+};
+
+var vMultipleValidationParams =
+{
+	vRequerido: { param: "data-vMultipleRequiredGroup", checkValidation: vCheckMultipleRequired, type: "multiple", msgPrefix: "Os campos ", msgSufix: " devem ser preenchidos em conjunto;", showLabel: true}
+};
+
+function vCheckGroupRequired(elem)
+{
+	if (elem.attr("name") && elem.closest(".vEnabled").find("label[for=\"" + elem.attr("name").replace("[", "\\[").replace("]", "\\]") + "\"]").hasClass(vGroupParams["vRequerido"].param))
+		return group = elem.closest(".vEnabled").find("[name=" + elem.attr("name").replace("[", "\\[").replace("]", "\\]") + "]").is(":checked");
+
+	return true;
+}
+
+function addCustomValidation(defaultValidation, isGroup)
+{
+	var customValidation = $("#idxDivInnerContent :first").data("vCustomValidation");
+	var	vArray = [];
+	var	vMultiple = [];
+
+	if (customValidation != null)
+	{
+		for (var a in defaultValidation) { vArray[a] = defaultValidation[a]; }
+		for (var c in vMultipleValidationParams) { vMultiple[c] = vMultipleValidationParams[c]; }
+		for (var b in customValidation)
+		{
+			if (customValidation[b].type != undefined)
+			{
+				if (((customValidation[b].type.toUpperCase() == "SINGLE") && !isGroup) || ((customValidation[b].type.toUpperCase() == "GROUP") && isGroup))
+				{
+					vArray[b] = customValidation[b];
+				}
+
+				if (customValidation[b].type.toUpperCase() == "MULTIPLE")
+				{
+					vMultiple[b] = customValidation[b];
+				}
+			}
+		}
+
+		$("#idxDivInnerContent :first").data("vMultipleCustomValidation", vMultiple);
+
+		return vArray;
+	}
+	else return defaultValidation;
+}
+
+/*
+	sender = objeto que está invocando o evento;
+	reference = objeto que deve ser considerado como objeto pai de validação. Caso ele possua a classe .vEnabled, seus filhos serão validados, caso contrario, os filhos do primeiro pai .vEnabled desse objeto;
+	groupValidation = O usuário normal raramente utilizará esse parâmetro, sendo ele voltado para controle interno. Indica se deve ou não ser executada a validação de grupos;
+	closestReference = Se true, a validação vai ser feita pelo grupo de validação ao qual o sender pertence (seu parent .vEnabled) atingindo todos os seus filhos, caso contrário validar-se-á apenas o objeto sender.
+*/
+function vValidate(sender = null, reference = null)
+{
+	var e = null;
+	var validElement = null;
+	var result = null;
+	var hasError = false; //controle de erro por elemento;
+	var msgSufix = null;
+	var msgPrefix = null;
+	var isGroup = false;
+	var vParams = null;
+	var currentValidationOutput = null;
+	var outputErrors = [];
+	var validatedGroups = [];
+	var isValid = true; //controle de erro por grupo;
+
+	if (reference == null && sender != null)
+	{
+		if ($(sender).attr("data-vReference") != undefined && $(sender).attr("data-vReference") != null)
+			reference = $("#" + $(sender).attr("data-vReference"));
+		else
+			reference = sender;
+	}
+
+	if (reference == null)
+	{
+		elem = $("#idxDivInnerContent");
+	}
+	else
+	{
+		if (typeof reference == "string")
+			reference = $("#" + reference);
+
+		if ($(reference).is(".vEnabled"))
+			elem = $(reference);
+		else
+			elem = $(reference).closest(".vEnabled");
+	}
+
+	elem.each(function()
+	{
+		e = $(this);
+		var tab = e.closest(".ui-tabs-panel");
+		if(tab.length>0)
+		{
+			tab = $("[aria-controls=\""+tab.attr("id")+"\"][role=\"tab\"]");
+			//if(tab.hasClass("vValidationTab"))
+			if(!tab.hasClass("vNotValidationTab"))
+			{
+				tab.removeClass("vInvalidTab");
+				tab.addClass("vValidTab");
+			}
+		}
+	});
+
+	elem = elem.filter("select, input, textarea").add(elem.find("select, input, textarea").not(function(index, val)
+	{
+		return $(elem).find($(val).closest(".vNotEnabled")).length;
+	}));
+	elem.each(function()
+	{
+		e = $(this);
+		isGroup = e.is(":radio") || e.is(":checkbox");
+		validElement = null;
+
+		if (e.parents('.vEnabled').length > 0)
+		{
+			hasError = false;
+
+			if ((isGroup && ($.inArray(e.attr("name"), validatedGroups) == -1)) || !isGroup)
+			{
+				if (isGroup)
+				{
+					validatedGroups.push(e.attr("name"));
+					vParams = vGroupParams;
+					if(e.attr("name"))
+					{
+						validElement = e.closest(".vEnabled").find("label[for=\"" + e.attr("name").replace("[", "\\[").replace("]", "\\]") + "\"]");
+					}
+					else
+					{
+						validElement = null;
+					}
+				}
+				else vParams = vSingleParams;
+
+				if (validElement == undefined || validElement == null)
+					validElement = e;
+
+				vParams = addCustomValidation(vParams, isGroup);
+
+				currentValidationOutput = validElement.closest(".vEnabled").find(".vValidationOutput");
+
+				if (outputErrors[currentValidationOutput.attr("id")] == undefined)
+					outputErrors[currentValidationOutput.attr("id")] = "";
+
+				for (var p in vParams)
+				{
+					if ((!isGroup && e.hasClass(vParams[p].param)) || e.is("[" + vParams[p].param + "]") || isGroup)
+					{
+						result = vParams[p].checkValidation(e);
+
+						if (result == undefined || (typeof result == "boolean" && !result) || (typeof result == "string"))
+						{
+							msgSufix = null;
+							msgPrefix = null;
+
+							if (typeof result == "boolean")
+								msgSufix = vParams[p].msgSufix;
+							else
+								msgSufix = result;
+
+							msgPrefix = vParams[p].msgPrefix;
+
+							outputErrors[currentValidationOutput.attr("id")] += "<li>" + msgPrefix + (vParams[p].showLabel ? vGetCaption(e, isGroup) : "") + msgSufix + "</li>";
+
+							var tab = e.closest(".ui-tabs-panel");
+							if(tab.length>0)
+							{
+								tab = $("[aria-controls=\""+tab.attr("id")+"\"][role=\"tab\"]");
+								//if(tab.hasClass("vValidationTab"))
+								if(!tab.hasClass("vNotValidationTab"))
+								{
+									if(!tab.hasClass("vInvalidTab"))
+										tab.addClass("vInvalidTab");
+									if(tab.hasClass("vValidTab"))
+										tab.removeClass("vValidTab");
+								}
+							}
+
+							hasError = true;
+							isValid = false;
+							break;
+						}
+					}
+				}
+
+				vSetValidationStatus(validElement, hasError);
+			}
+		}
+	});
+
+	result = vCheckMultipleValidation(elem, outputErrors);
+
+	if(!result["valid"])
+	{
+		hasError = true;
+		isValid = false;
+	}
+
+	for (var o in result["outputErrors"])
+	{
+		if (!elem.not(".vValidator").is("select, input, textarea") || $("#" + o).css("display") != "none" || $(sender).is(".vValidator"))
+		{
+			if (result["outputErrors"][o].length > 0)
+			{
+				$("#" + o).find("ol").html(result["outputErrors"][o]).promise().done(function()
+				{
+					$("#" + o).slideDown("fast");
+				});
+			}
+			else
+			{
+				$("#" + o).slideUp("fast", function(){
+					$("#" + o).find("ol").html(result["outputErrors"][o]);
+				});
+			}
+		}
+	}
+
+	return isValid;
+}
+
+function vCheckMultipleValidation(elem, outputErrors)
+{
+	var groupList = [];
+	var outputId = null;
+	var paramGroup = null;
+	var mvElements = null;
+	var e = null;
+	var result = null;
+	var filteredElements = null;
+	var r = {};
+	var mvpArray = $("#idxDivInnerContent :first").data("vMultipleCustomValidation");
+
+	r["valid"] = true;
+	r["outputsList"] = {};
+
+	for (var mvp in mvpArray)
+	{
+		mvElements = elem.filter("[" + mvpArray[mvp].param + "]");
+
+		mvElements.each(function()
+		{
+			e = $(this);
+			paramGroup = mvpArray[mvp].param + "_" + e.attr(mvpArray[mvp].param);
+
+			if ($.inArray(paramGroup, groupList) == -1)
+			{
+				filteredElements = mvElements.filter("[" + mvpArray[mvp].param + "=" + e.attr(mvpArray[mvp].param) + "]");
+				result = mvpArray[mvp].checkValidation(filteredElements);
+
+				if (!result)
+				{
+					$(filteredElements).not(".vInvalid").removeClass("vValid");
+					$(filteredElements).not(".vInvalid").addClass("vInvalid");
+
+					r["valid"] = false;
+
+					filteredElements.each(function()
+					{
+						outputId = $(this).closest(".vEnabled").find(".vValidationOutput").attr("id");
+
+						if (!(outputId in r["outputsList"]))
+						{
+							r["outputsList"][outputId] = {};
+						}
+
+						if (!(paramGroup in r["outputsList"][outputId]))
+						{
+							r["outputsList"][outputId][paramGroup] = [];
+						}
+
+						r["outputsList"][outputId][paramGroup].push(vGetCaption($(this), ($(this).is(":radio") || $(this).is(":checkbox"))));
+					});
+
+					if (!(outputId in outputErrors))
+					{
+						outputErrors[outputId] = "";
+					}
+
+					outputErrors[outputId] += "<li>" + (mvpArray[mvp].showLabel ? vBuildErrorMsg(mvpArray[mvp].msgPrefix, r["outputsList"][outputId][paramGroup], mvpArray[mvp].msgSufix, ', ', ' e ') : mvpArray[mvp].msgPrefix + mvpArray[mvp].msgSufix) + "</li>";
+				}
+
+				groupList.push(paramGroup);
+			}
+		});
+	}
+
+	r["outputErrors"] = outputErrors;
+
+	return r;
+}
+
+function vSetValidationStatus(e, hasError)
+{
+	if (hasError)
+	{
+		if (e.hasClass("vValid"))
+			e.removeClass("vValid");
+
+		if (!e.hasClass("vInvalid"))
+			e.addClass("vInvalid");
+	}
+	else
+	{
+		if (e.hasClass("vInvalid"))
+			e.removeClass("vInvalid");
+
+		if (!e.hasClass("vValid"))
+			e.addClass("vValid");
+	}
+}
+
+function vSetValidationEvent(e)
+{
+	if ((e.closest(".vEnabled").length) > 0 && !e.is(".vValidator"))
+	{
+		if (e.is(".vMoney"))
+		{
+			e.blur(function() { thisJqueryLocal = $(this); setTimeout(function(){vValidate(thisJqueryLocal)}, 0);});
+		}
+		else
+		{
+			e.change(function() { vValidate($(this)); });
+		}
+	}
+}
+
+
+/*
+masks: Aplica máscaras padrão;
+customValidation: objeto no seguinte formato:
+	var customValidation =
+	{
+		nomeDaValidacao: {param: "nomeClasse", checkValidation: nomeFuncaoDeValidacao, type: "single", msgPrefix: "O campo", msgSufix: "é obrigatório", showLabel: true }
+	};
+	Onde:
+		param: Nome da classe que determina quais inputs rodarão a validação. Nesse exemplo, todos os inputs que possuem a classe "nomeClasse" serão validados pela função informada em "checkValidation".
+			Pode ser também um atributo do tipo data ao invés de uma classe caso seja necessário passar um valor como parâmetro para a validação, por exemplo, poderia-se colocar no lugar de "nomeClasse" o valor "data-vMaxLength",
+			e nesse caso, todos os elementos que possuíssem este atributo seriam validados pela função "checkValidation" informada, que poderia se utilizar do valor do atributo "data-vMaxLength" para validar se o campo possui ou
+			não a quantidade máxima de caracteres permitida;
+		checkValidation: É a função que validará os elementos compatíveis com o critério definido em "param";
+		type: pode ser:
+			"single": Validação de um campo isoladamente, por exemplo, campo requerido;
+			"group": Validação de grupos de informação do tipo radio ou checkbox;
+			"multiple": Validação interdependente de vários elementos, como por exemplo para verificar se a data final é maior que a inicial, onde se a informação não for válida, ambos os campos são marcados como inválidos e é
+				gerada uma linha única de erro na div de output;
+			"msgPrefix": Início da frase de erro para aquela validação;
+			"msgSufix": Final da frase de erro para aquela validação;
+			"showLabel": Mostra o nome dos campos na mensagem de erro.
+msg: Mensagem que aparecerá no topo da div de output de erros.
+
+ */
+function vApplyValidations(masks = true, customValidation = null, msg = null)
+{
+	var v = $(".vEnabled");
+	var eId = null;
+	var div = null;
+
+	if (msg === null) msg = "Favor verificar as observações abaixo:";
+	if (customValidation != null) $("#idxDivInnerContent :first").data("vCustomValidation", customValidation);
+
+	v.find("[data-vFunction]").each(function()
+	{
+		if ($(this).is(":button"))
+		{
+			if (!$(this).is(".vValidator"))
+			{
+				$(this).addClass("vValidator");
+			}
+
+			$(this).click(function()
+			{
+				if (vValidate($(this)))
+				{
+					window[$(this).attr("data-vFunction")]($(this));
+				}
+			});
+		}
+	});
+
+	v.not(".vValidator").find("select, input, textarea").not(".vMoney").change(function() { vValidate($(this)); });
+	v.not(".vValidator").find("select, input, textarea").filter(".vMoney").blur(function()
+	{
+		thisJqueryLocal = $(this);
+		// a linha abaixo ésó para jogar para jogar o validate para o fim da fila e evitar bugs, pois o maskmoney seta "0,00" no focus e tira no blur, e o validate do campo anterior, quando se dá tab para o campo vMoney
+		// já seta "0,00" no blur do vMoney antes do validate ter terminado de rodar, e pode pegar o "0,00" como val(), tornando o campo valido para vRequired mesmo sem input. Aí quando o usuário sai do campo vMoney sem digitar nada
+		// como o change não dispararia para validar de novo, ficaria o "vValid" mesmo com o campo vMoney vazio. Esse setTimeout coloca o vValidate como última coisa da fila, inclusive depois do blur que retira o "0,00" no caso de não haver
+		// input. Por esse motivo, excepcionalmente em campos como os vMoney que usam mask q dão set em val(), é necessário que a verificação seja no evento blur em vez de change, e com settimeout para ser a última coisa do blur.
+		setTimeout(function(){vValidate(thisJqueryLocal)}, 0);
+	});
+
+	v.not(".vValidator").each(function(index, value)
+	{
+		vValidate($(value), null, {}, false);
+	});
+
+	$.get("html/templates/validationOutput.html", function(data)
+	{
+		v.each(function(idx)
+		{
+			eId = $(this).attr("id");
+			if (eId === undefined || eId == "")	eId = "";
+
+			div = data.replace(new RegExp("@id@", 'g'), "div" + eId + "Validation" + ($("[id^='div" + eId + "Validation']").length == 0 ? "" : $("[id^='div" + eId + "Validation']").length));
+			div = div.replace("@msg@", msg);
+			$(this).prepend(div);
+		})
+	});
+
+	if (masks) vApplyMasks();
+}
+
+function vApplyMasks()
+{
+	$(".vEnabled").find(".vCpf, vCnpj, .vDate, .vPhone, .vNumber, .vInteger, .vTime").unmask();
+	$(".vEnabled").find(".vMail").not("[placeholder]").attr("placeholder", 'email@exemplo.com.br');
+	$(".vEnabled").find(".vUrl").not("[placeholder]").attr("placeholder", 'http://www.exemplo.com.br');
+	$(".vEnabled").find(".vPassword").not("[placeholder]").attr("placeholder", 'Digite a Senha...');
+	$(".vEnabled").find(".vCpf").inputmask({ mask: "999.999.999-99", showMaskOnHover: false, placeholder: " "}).not("[placeholder]").attr("placeholder", '999.999.999-99');
+	$(".vEnabled").find(".vTime").inputmask({ mask: "99:99", showMaskOnHover: false, placeholder: " "}).not("[placeholder]").attr("placeholder", '99:99');
+	$(".vEnabled").find(".vCnpj").inputmask({ mask: "99.999.999/9999-99", showMaskOnHover: false, placeholder: " " }).not("[placeholder]").attr("placeholder",'99.999.999/9999-99');
+	$(".vEnabled").find(".vCep").inputmask({ mask: "99999-999", showMaskOnHover: false, placeholder: " " }).not("[placeholder]").attr("placeholder",'99999-999');
+
+	$(".vEnabled").find(".vMoney").each(function()
+	{
+		vMoneyParams = {thousands:'.', decimal:',', affixesStay: false};
+
+		if ($(this).is(".vAllowZero")) vMoneyParams.allowZero = true;
+		if ($(this).is(".vAllowNegative")) vMoneyParams.allowNegative = true;
+
+		$(this).maskMoney(vMoneyParams).not("[placeholder]").attr("placeholder",'0,00');
+	});
+
+	$(".vEnabled").find(".vNumber").inputmask('Regex', {regex: "^-?[0-9]+(\\,\\d+)?$"});
+	$(".vEnabled").find(".vInteger").each(function()
+	{
+		var regex = "[0-9]+(\\,\\d+)?$";
+		if ($(this).is(".vDontAllowNegative"))
+		{
+			regex = "^" + regex;
+		}
+		else
+		{
+			regex = "^-?" + regex;
+		}
+
+		$(this).inputmask('Regex', {regex: regex});
+
+	});
+
+	$(".vEnabled").find(".vRegex").each(function()
+	{
+		if($(this).is("[data-vRegex]"))
+		{
+			regex = "^" + $(this).attr("data-vRegex") + "$";
+		}
+		else
+		{
+			regex = null;
+		}
+		
+
+		$(this).inputmask('Regex', {regex: regex});
+
+	});	
+
+	$(".vEnabled").find(".vDate").inputmask({ mask: "99/99/9999", showMaskOnHover: false, placeholder: " " }).datepicker(
+	{
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '-50:+10',
+        dateFormat: 'dd/mm/yy',
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        nextText: 'Próximo',
+        prevText: 'Anterior',
+        beforeShow:function(input)
+        {
+        	var zindex =  $(input).attr("data-customDatePickerZindex");
+        	if(!zindex)
+        	{
+        		zindex = 100;
+        	}
+
+            $(input).css({
+                "position": "relative",
+                "z-index": zindex
+            });
+
+            var readonly = $(input).attr("data-customDatePickerDontShowReadOnly");
+
+            if(readonly)
+            {
+            	if($(input).attr("readonly"))
+            	{
+            		return false;
+            	}
+            }
+
+        },
+        onSelect: function(input)
+        {
+        	if($(this).attr("data-vDateFillTimeOnSelectId") && $(this).attr("data-vDateFillTimeOnSelectValue"))
+        	{
+        		if($("#"+ $(this).attr("data-vDateFillTimeOnSelectId")).length)
+        		{
+        			$("#"+ $(this).attr("data-vDateFillTimeOnSelectId")).val
+        			(
+    					$(this).attr("data-vDateFillTimeOnSelectValue")
+        			);
+        		}
+        	}
+        	
+        	if($(this).attr("data-chamarfuncao"))
+        	{
+        		var chamar = $(this).attr("data-chamarFuncao");
+        		
+        		window[chamar]();
+        		
+        	}
+        	
+        }
+    }).not("[placeholder]").attr("placeholder", "DD/MM/AAAA");
+	$(".vEnabled").find(".vPhone").inputmask({ mask: ["(99) 9999-9999", "(99) 99999-9999" ], showMaskOnHover: false, placeholder: " ", greedy: false }).not("[placeholder]").attr("placeholder", "(99) 99999-9999");
+
+	$(".vEnabled").find("[" + vSingleParams["vVerificacao"].param + "]").not("[placeholder]").attr("placeholder", 'Digite novamente...');
+}
+
+function vCheckCep(elem)
+{
+    var objER = /^[0-9]{5}-[0-9]{3}$/;
+
+    strCEP = elem.val().trim();
+
+    if (strCEP.length > 0)
+    	return objER.test(strCEP);
+    else
+        return true;
+}
+
+function vCheckNumber(elem)
+{
+	if (elem.val() == "" || elem.val() == "0") return true;
+
+	var regex = new RegExp("^-?[0-9]+(\\,\\d+)?$");
+	return regex.test(elem.val());
+}
+
+function vCheckInteger(elem)
+{
+	if (elem.val() == "" || elem.val() == "0") return true;
+
+	var regex = new RegExp("^-?[0-9]+?$");
+	return regex.test(elem.val());
+}
+
+function vCheckMultipleRequired(elem)
+{
+	var e = null;
+	var empty = 0;
+	var notEmpty = 0;
+
+	elem.each(function()
+	{
+		e = $(this);
+
+		if (vCheckRequired($(this)))
+			notEmpty++;
+		else
+			empty++;
+	});
+
+	return !(notEmpty != 0 && empty != 0)
+}
+
+function vRequiredGroupInvalid(e, outputList)
+{
+	$("[data-vMultipleRequiredGroup=" + e.attr("data-vMultipleRequiredGroup") + "]").not(".vInvalid").removeClass("vValid");
+	$("[data-vMultipleRequiredGroup=" + e.attr("data-vMultipleRequiredGroup") + "]").not(".vInvalid").addClass("vInvalid");
+
+	$("[data-vMultipleRequiredGroup=" + e.attr("data-vMultipleRequiredGroup") + "]").each(function()
+	{
+		var outputId = $(this).closest(".vEnabled").find(".vValidationOutput").attr("id");
+
+		if (!(outputId in outputList))
+		{
+			outputList[outputId] = [];
+		}
+
+		outputList[outputId].push(vGetCaption($(this), ($(this).is(":radio") || $(this).is(":checkbox"))));
+	});
+
+	return outputList;
+}
+
+function vBuildErrorMsg(prefix, errors, sufix, glue, lastGlue)
+{
+	var r = prefix;
+	auxGlue = "";
+
+	if (errors.length == 0)
+	{
+		return "";
+	}
+	else
+	{
+		for (var i = 0; i < errors.length; i++)
+		{
+			r += auxGlue + errors[i];
+
+			if (i == (errors.length - 2))
+				auxGlue = lastGlue;
+			else
+				auxGlue = glue;
+		}
+
+		r += sufix;
+	}
+
+	return r;
+}
+
+function vCheckRequired(elem)
+{
+	if (elem.is("select"))
+	{
+		if (elem.attr("data-vInvalidOption") == elem.val())
+			return false;
+	}
+	return (elem.val().trim() != "");
+}
+
+function vCheckMail(elem)
+{
+	return (elem.val() == "") || (new RegExp(/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/)).test($.trim(elem.val()));
+}
+
+function vCheckUrl(elem)
+{
+	return (elem.val() == "") || (new RegExp("^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?")).test($.trim(elem.val()));
+}
+
+function vCheckDate(elem)
+{
+	var valid = false;
+	var regex = new RegExp("^([0-9]{2})/([0-9]{2})/([0-9]{4})$");
+	var matches = regex.exec(elem.val());
+	var day = null;
+	var month = null;
+	var year = null;
+	var date = null;
+
+	if (matches != null)
+	{
+		day = parseInt(matches[1], 10);
+		month = parseInt(matches[2], 10) - 1;
+		year = parseInt(matches[3], 10);
+
+		date = new Date(year, month, day, 0, 0, 0, 0);
+		valid = date.getUTCFullYear() == year && date.getUTCMonth() == month && date.getUTCDate() == day;
+	}
+
+	return valid || elem.val() == "";
+}
+
+function vCheckTime(elem)
+{
+	return (elem.val() == "") || (new RegExp(/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/)).test($.trim(elem.val()));
+}
+
+function vCheckPhone(elem)
+{
+	return (elem.val() == "") || (new RegExp(/^\([0-9]{2}\) [0-9]{4,5}-[0-9]{4}$/)).test($.trim(elem.val()));
+}
+
+function vCheckCpf(elem)
+{
+	var sum;
+	var mod;
+	var algUnico = true;
+	var cpf = elem.val().replace(/\D/g,'');
+
+	if (elem.val() == "")
+		return true;
+
+	if (cpf == "" || cpf == "00000000000")
+		return false;
+
+	sum = 0;
+
+	for (i = 1; algUnico && i < cpf.length; i++)
+	{
+		algUnico = (cpf[i - 1] == cpf[i]);
+	}
+
+	if (algUnico)
+		return false;
+
+	for (i = 1; i <= 9; i++)
+		sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+
+	mod = (sum * 10) % 11;
+
+	if ((mod == 10) || (mod == 11)) mod = 0;
+
+	if (mod != parseInt(cpf.substring(9, 10))) return false;
+
+	sum = 0;
+
+	for (i = 1; i <= 10; i++)
+		sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+
+	mod = (sum * 10) % 11;
+
+	if ((mod == 10) || (mod == 11)) mod = 0;
+
+	return (mod == parseInt(cpf.substring(10, 11)));
+}
+
+function vCheckCnpj(elem)
+{
+	var error = false;
+	var equals = true;
+	var sum = 0;
+	var fator = 5;
+	var digits;
+	var result;
+	var cnpj = elem.val().replace(/\D/g,'');
+
+	if (elem.val() == "")
+		return true;
+
+	if (cnpj == "" || cnpj.length != 14)
+		return false;
+
+	digits = cnpj.split('');
+
+	for (j = 1; j < 14; j++)
+	{
+		if (digits[j] != digits[0])
+		{
+			equals = false;
+			break;
+		}
+	}
+
+	if (equals) error = true;
+
+	for (j = 0; j < 12; j++)
+	{
+		sum += fator * digits[j];
+		fator--;
+
+		if (fator == 1)
+			fator = 9;
+	}
+
+	result = sum % 11;
+
+	if (result == 1 || result == 0)
+	{
+		if (digits[12] != 0) error = true;
+	}
+	else
+	{
+		if (digits[12] != 11 - result) error = true;
+	}
+
+	sum = 0;
+	fator = 6;
+
+	for (j = 0; j < 13; j++)
+	{
+		sum += fator * digits[j];
+		fator--;
+
+		if (fator == 1)
+			fator = 9;
+	}
+
+	result = sum % 11;
+
+	if (result == 1 || result == 0)
+	{
+		if (digits[13] != 0)
+			error = true;
+	}
+	else
+	{
+		if (digits[13] != 11 - result)
+			error = true;
+	}
+
+	return !error;
+}
+
+function vCheckPassword(elem)
+{
+	return (elem.val().length >= 8 && elem.val().length <= 50) || (elem.val() == "");
+}
+
+function vCheckVerify(elem)
+{
+	if (elem.attr(vSingleParams["vVerificacao"].param) !== undefined && elem.attr(vSingleParams["vVerificacao"].param) !== "")
+	{
+		var ref = $("#" + elem.attr(vSingleParams["vVerificacao"].param));
+
+		if (elem.val() != ref.val())
+			return "está com valor diferente do campo " + vGetCaption(ref, false);
+	}
+
+	return true;
+}
+
+function vCheckMaxLength(elem)
+{
+	if (elem.val() == "")
+		return true;
+
+	if (elem.val().length > parseInt(elem.attr(vSingleParams.vTamanhoMaximo.param), 10))
+		return vSingleParams.vTamanhoMaximo.msgSufix.replace("@@maxLength@", elem.attr(vSingleParams.vTamanhoMaximo.param));
+
+	return true;
+}
+
+function vCheckMaxSize(elem)
+{
+	if (elem[0].files && elem[0].files[0] != null && elem[0].files[0].size >	elem.attr(vSingleParams.vTamanhoMaximoAnexo.param)  )
+	{
+		
+		var bytes = elem.attr(vSingleParams.vTamanhoMaximoAnexo.param);
+		
+		var mb = Math.ceil(bytes / 1048576) ;
+		
+		return vSingleParams.vTamanhoMaximoAnexo.msgSufix.replace("@@maxSize@", mb);
+	}
+	return true;
+}
+
+function vCheckFileExtension(elem)
+{
+	if (elem[0].files && elem[0].files[0] != null && elem[0].files[0].size >	0 )
+	{
+		var extensao = elem[0].files[0].name.slice((elem[0].files[0].name.lastIndexOf(".") - 1 >>> 0) + 2);
+		var accept = elem.attr("accept");
+		var valido = false;
+		
+		if(!accept)
+		{
+			return true;
+		}
+		
+		accept = accept.split(",");
+		accept.forEach(function(item)
+		{
+			if(  ("." + extensao)  == item.trim()  )
+			{
+				valido = true;
+			}
+			
+		});
+		
+		if(valido)
+		{
+			return true;
+		}
+		else
+		{
+			return vSingleParams.vFileExtension.msgSufix.replace("@@extensao@", elem.attr("accept"));
+		}
+	}
+	
+	return true;
+}
+
+function vGetCaption(elem, isGroup)
+{
+	var caption = null;
+
+	if (isGroup) elem = elem.closest(".vEnabled").find("label[for=\"" + elem.attr("name").replace("[", "\\[").replace("]", "\\]") + "\"]");
+	caption = elem.attr("data-vCaption");
+
+	if (caption != "" && caption !== undefined) return "<strong>" + vFixCaption(caption) + "</strong>";
+	else caption = elem.closest(".vEnabled").find('label[for=\"' + elem.attr("id") + '\"]').html();
+
+	if (caption != "" && caption !== undefined) return "<strong>" + vFixCaption(caption) + "</strong>";
+	else{
+		var labelHTML = elem.closest("label").html();
+		if(labelHTML !== undefined){
+			caption = labelHTML.replace(/<.*>/g, '');
+		}
+	}
+
+	if (caption != "" && caption !== undefined) return "<strong>" + vFixCaption(caption) + "</strong>";
+	else caption = elem.filter("label").html();
+
+	if (caption != "" && caption !== undefined) return "<strong>" + vFixCaption(caption) + "</strong>";
+	else caption = elem.attr("name");
+
+	if (caption != "" && caption !== undefined) return "<strong>" + vFixCaption(caption) + "</strong>";
+	else caption = elem.attr("id");
+
+	if (caption != "" && caption !== undefined) return "<strong>" + caption + "</strong>";
+
+	return "<strong>sem nome</strong>";
+}
+
+function vFixCaption(c)
+{
+	c = c.trim();
+
+	if (c.endsWith(":"))
+		c = c.substring(0, c.length - 1);
+	c = c.replace(/&nbsp;/g,'');
+
+	return c;
+}

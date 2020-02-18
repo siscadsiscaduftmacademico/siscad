@@ -1,0 +1,484 @@
+/** @file core/javascript/default.js
+	@brief Arquivo com as funções javascript padrão utilizada no Titan.
+*/
+
+function bissext (year)
+{
+    return (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+}
+
+function dateValidate (id)
+{
+	var dayOfMonth = new Array(0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
+	
+	var day 	= document.getElementById('dayId' + id);
+	var month 	= document.getElementById('monthId' + id);
+	var year 	= document.getElementById('yearId' + id);
+	
+	if (day.value == 0 || month.value == 0 || year.value == 0)
+		return;
+		
+	if (bissext (year.value))
+		dayOfMonth [2]++;
+	
+	yearDate = dayOfMonth [Number (month.value)];
+	
+	if (yearDate < Number (day.value))
+		document.getElementById('dayId' + id).value = yearDate;
+}
+
+function formatInteger (campo, e)
+{
+	if(e)
+		car = (window.Event) ? e.which : e.keyCode;
+	else
+		car = 48;
+	
+	if(car >= 48 && car <= 57)
+	{
+		if(e)
+			car -= 48;
+		else
+			car = '';
+					
+		num = String(campo.value);
+		num = num.replace(/\./g,'');
+		num = String(parseInt(num,10));
+		
+		if(num == "NaN")
+			num = String("0");
+		
+		if(num.length < 17)
+		{
+			num = num + car;
+			if(num.length == 0)
+				num = String("0");
+			campo.value = num;
+		}
+	}
+	else if (car == 8 || car == 15 || car == 0 || car == 99 || car == 118 || car == 13)
+		return true;
+	
+	return false;
+}
+
+function formatAmount (campo, e)
+{
+	if(e)
+		car = (window.Event) ? e.which : e.keyCode;
+	else
+		car = 48;
+	
+	if(car >= 48 && car <= 57)
+	{
+		if(e)
+			car -= 48;
+		else
+			car = '';
+					
+		num = String(campo.value);
+		num = num.replace(/\./g,'');
+		num = String(parseInt(num,10));
+		
+		if(num == "NaN")
+			num = String("0");
+		
+		if(num.length < 17)
+		{
+			num = num + car;
+			if(num.length == 0)
+				num = String("0");
+			else
+			{
+				tam = num.length
+				prefixo = num.substring(tam-3, tam);
+				tam -=3 ;
+				while(tam > 0)
+				{
+					prefixo = num.substring(tam-3, tam) + "." + prefixo;
+					tam -= 3;
+				}
+				num = prefixo;
+			}
+			campo.value = num;
+		}
+	}
+	else if (car == 8)
+		return true;
+	
+	return false;
+}
+
+function formatFloat (campo, e)
+{
+	var car, num, tam, prefixo;
+	
+	if(e)
+		car = (window.Event) ? e.which : e.keyCode;
+	else
+		car = 48;
+	
+	if(car >= 48 && car <= 57)
+	{
+		if(e)
+			car -= 48;
+		else
+			car = '';
+					
+		num = String(campo.value);
+		num = num.replace(/\./g,'');
+		num = num.replace(/,/g,'');
+		num = String(parseInt(num,10));
+		
+		if(num == "NaN")
+			num = String("0");
+		if(num.length < 17)
+		{
+			num = num + car;
+			while(num.length <= 2)
+				num = String("0") + num;
+			aux = num.substring(0,num.length-2)
+			tam = aux.length
+			prefixo = aux.substring(tam-3, tam);
+			tam -=3 ;
+			while(tam > 0)
+			{
+				prefixo = aux.substring(tam-3, tam) + "." + prefixo;
+				tam -= 3;
+			}
+	 		num = prefixo + "," + num.substring(num.length-2, num.length)
+			campo.value = num;
+		}
+	}
+	else 
+		if (car == 8)
+			return true;
+	
+	return false;
+}
+
+function formatCpf (campo, e)
+{
+	if (!e)
+		return false;
+	
+	car = (window.Event) ? e.which : e.keyCode;
+	
+	if (car == 8)
+		return true;
+
+	if (car >= 48 && car <= 57 && campo.value.length < 14)
+	{
+		if (campo.value.length == 3)
+			campo.value = campo.value + '.';
+		else
+			if (campo.value.length == 7)
+				campo.value = campo.value + '.';
+			else
+				if (campo.value.length == 11)
+					campo.value = campo.value + '-';
+		
+		return true;
+	}
+	
+	return false;
+}
+
+function formatRga (campo, e)
+{
+	if (!e)
+		return false;
+	
+	car = (window.Event) ? e.which : e.keyCode;
+	
+	if (car == 8 || car == 15 || car == 0 || car == 99 || car == 118 || car == 13)
+		return true;
+
+	if (car >= 48 && car <= 57 && campo.value.length < 15)
+	{
+		if (campo.value.length == 4)
+			campo.value = campo.value + '.';
+		else
+			if (campo.value.length == 9)
+				campo.value = campo.value + '.';
+			else
+				if (campo.value.length == 13)
+					campo.value = campo.value + '-';
+		
+		return true;
+	}
+	
+	return false;
+}
+
+function formatDisciplina (campo, e)
+{
+	if (!e)
+		return false;
+	
+	car = (window.Event) ? e.which : e.keyCode;
+
+	if (car == 8 || car == 15 || car == 0 || car == 99 || car == 118 || car == 13)
+		return true;
+
+	if (car >= 48 && car <= 57 && campo.value.length < 15)
+	{
+		if (campo.value.length == 4)
+			campo.value = campo.value + '.';
+		else
+			if (campo.value.length == 8)
+				campo.value = campo.value + '.';
+			else
+				if (campo.value.length == 12)
+					campo.value = campo.value + '-';
+		
+		return true;
+	}
+	
+	return false;
+}
+
+function formatCnpj (campo, e)
+{	
+	if (!e)
+		return false;
+	
+	car = (window.Event) ? e.which : e.keyCode;
+	
+	if (car == 8)
+		return true;
+
+	if (car >= 48 && car <= 57 && campo.value.length < 19)
+	{
+		if (campo.value.length == 3)
+			campo.value = campo.value + '.';
+		else
+			if (campo.value.length == 7)
+				campo.value = campo.value + '.';
+			else
+				if (campo.value.length == 11)
+					campo.value = campo.value + '/';
+				else
+					if (campo.value.length == 16)
+						campo.value = campo.value + '-';
+		
+		return true;
+	}
+	
+	return false;
+}
+
+function formatCep (campo, e)
+{
+	if (!e)
+		return false;
+	
+	car = (window.Event) ? e.which : e.keyCode;
+	
+	if (car == 8)
+		return true;
+
+	if (car >= 48 && car <= 57 && campo.value.length < 10)
+	{
+		if (campo.value.length == 2)
+			campo.value = campo.value + '.';
+		else
+			if (campo.value.length == 6)
+				campo.value = campo.value + '-';
+		
+		return true;
+	}
+	
+	return false;
+}
+
+function openPopup (Url, Name, Wi, He, scrolling, status, resizable) 
+{
+	if (!scrolling)
+		scrolling = 'auto';
+		
+	if (!status)
+		status = 'no';
+	
+	if (!resizable)
+		resizable = 'no';
+	
+	PopUp = window.open(Url,Name,'width='+Wi+',height='+He+',scrollbars=' + scrolling + ',toolbar=no,location=no,status=' + status + ',menubar=no,resizable=' + resizable + ',left=100,top=100');
+}
+
+function loadCity (cityId)
+{
+	var urlAux, campoMun, campoEst;
+	campoEst = document.getElementById ('state'+cityId);
+	urlAux = 'titan.php?target=city&stateId=' + campoEst[campoEst.selectedIndex].value + '&cityId=' + cityId;
+	campoMun = document.getElementById (cityId);
+	campoMun.options.length = 0;
+	addItem(campoMun,"Aguarde...","",false,campoMun.length);
+	cityIframe.location = urlAux;
+	campoMun.focus();
+}
+
+function startCity (cityId)
+{
+	var quantidade, i, campoMun, cidades = new Array();
+	cidades = cityIframe.atividade;
+	campoMun = document.getElementById (cityId);
+	quantidade = cidades.length;
+	campoMun.options.length = 0;
+	addItem(campoMun,'Selecione','',false,campoMun.length);
+	for (i = 0 ; i < quantidade ; i++)
+ 		addItem(campoMun,cidades[i][1],cidades[i][0],false,campoMun.length);
+}
+
+function addItem (obj,strText,strValue,blSel,intPos)
+{
+	var newOpt,i,ArTemp,selIndex; 
+	selIndex = (blSel)?intPos:obj.selectedIndex; 
+	newOpt = new Option(strText,strValue); 
+	Len = obj.options.length+1;
+	if (intPos > Len) return;
+	obj.options.length = Len;
+	if (intPos != Len) 
+	{ 
+		ArTemp = new Array(); 
+		for(i=intPos;i<obj.options.length-1;i++) 
+			ArTemp[i] = Array(obj.options[i].text,obj.options[i].value); 
+		for(i=intPos+1;i<Len;i++) 
+			obj.options[i] = new Option(ArTemp[i-1][0],ArTemp[i-1][1]); 
+	} 
+	obj.options[intPos] = newOpt; 
+	if (selIndex > intPos) 
+		obj.selectedIndex = selIndex+1; 
+	else 
+		if (selIndex == intPos)
+			obj.selectedIndex = intPos; 
+}
+
+function openPrintPopup (QueryString) 
+{	
+	PopUp = window.open('titan.php?target=print&' + QueryString, 'Imprimir', 'width=500,height=300,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,left=100,top=100');
+}
+
+function alterCheckbox (assign)
+{
+	var field = document.getElementById ('fieldForCheck' + assign);
+	
+	field.value = (field.value == 1) ? 0 : 1;
+}
+
+function changeAction (newAction, formName)
+{
+	var form = document.getElementById (formName);
+	
+	form.action = newAction;
+	
+	if (form.onsubmit())
+	{
+		form.submit();
+	}
+}
+
+function passwordValidate (assign)
+{
+	var passwd = document.getElementById ('passwd_' + assign);
+	var reply  = document.getElementById ('reply_' + assign);
+	
+	if (passwd.value != '')
+		if (passwd.value == reply.value)
+			return true;
+		else
+			alert ('Atenção! A senha e a confirmação não conferem.');
+	else
+		alert ('Atenção! Você deve inserir uma senha.');
+
+	return false;
+}
+
+function start ()
+{
+	if (typeof window.event != 'undefined')
+		document.onkeydown = function ()
+		{
+			if(event.keyCode == 8)
+				window.event.keyCode = 127;
+		}
+	
+	if (this.runOnLoad == null)
+		return false;
+
+	runOnLoad ();
+}
+
+function end ()
+{    
+	if (this.runOnUnload == null)
+        return false;
+	runOnUnLoad ();
+}
+
+ //validador padrão de todo form gerado pelo Titan, disparado no evento onSubmit
+function validate()
+{    
+	if (this.runOnSubmit == null)
+        return true;
+	runOnSubmit ();
+}
+
+function sendLetter (counter, cchar)
+{
+	var hidden = document.getElementById ('keyboardHiddenValue' + counter);
+	
+	if (cchar)
+		hidden.value = cchar;
+}
+
+function concluiRegistraSaida(retorno)
+{   	
+    eval(retorno);
+}
+
+
+var arrayPageSize;
+/*Função retorna respectivamente (largura do conteúdo, altura do conteúdo, largura da janela, altura da janela)*/
+function getPageSize(){
+	  
+	  var xScroll, yScroll;
+	  
+	  if (window.innerHeight && window.scrollMaxY) {  
+	    xScroll = document.body.scrollWidth;
+	    yScroll = window.innerHeight + window.scrollMaxY;
+	  } else if (document.body.scrollHeight > document.body.offsetHeight){ 
+	    xScroll = document.body.scrollWidth;
+	    yScroll = document.body.scrollHeight;
+	  } else { 
+	    xScroll = document.body.offsetWidth;
+	    yScroll = document.body.offsetHeight;
+	  }
+	  
+	  var windowWidth, windowHeight;
+	  if (self.innerHeight) {
+	    windowWidth = self.innerWidth;
+	    windowHeight = self.innerHeight;
+	  } else if (document.documentElement && document.documentElement.clientHeight) { 
+	    windowWidth = document.documentElement.clientWidth;
+	    windowHeight = document.documentElement.clientHeight;
+	  } else if (document.body) { 
+	    windowWidth = document.body.clientWidth;
+	    windowHeight = document.body.clientHeight;
+	  } 
+	  
+	  
+	  if(yScroll < windowHeight){
+	    pageHeight = windowHeight;
+	  } else { 
+	    pageHeight = yScroll;
+	  }
+
+	  // for small pages with total width less then width of the viewport
+	  if(xScroll < windowWidth){  
+	    pageWidth = windowWidth;
+	  } else {
+	    pageWidth = xScroll;
+	  }
+	  arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight);
+}
